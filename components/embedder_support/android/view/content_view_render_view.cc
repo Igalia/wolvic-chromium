@@ -107,7 +107,7 @@ void ContentViewRenderView::SurfaceChanged(
   if (current_surface_format_ != format) {
     current_surface_format_ = format;
     compositor_->SetSurface(surface,
-                            true /* can_be_used_with_surface_control */,
+                            false /* can_be_used_with_surface_control */,
                             browser_input_token);
   }
   compositor_->SetWindowBounds(gfx::Size(width, height));
