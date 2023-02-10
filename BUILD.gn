@@ -479,6 +479,7 @@ group("gn_all") {
           "//dbus:dbus_unittests",
         ]
       }
+      deps += [ "//wolvic:empty_group" ]
 
       if (is_chrome_branded && is_official_build) {
         # TODO(dpranke): add the linux_dump_symbols flag?
