@@ -10,6 +10,7 @@ import org.chromium.mojo.system.Handle;
 import org.chromium.mojo.system.MessagePipeHandle;
 import org.chromium.mojo.system.Pair;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -72,8 +73,8 @@ public class Encoder {
             }
             ByteBuffer newBuffer = ByteBuffer.allocateDirect(targetSize);
             newBuffer.order(ByteOrder.nativeOrder());
-            byteBuffer.position(0);
-            byteBuffer.limit(byteBuffer.capacity());
+            ((Buffer) byteBuffer).position(0);
+            ((Buffer) byteBuffer).limit(byteBuffer.capacity());
             newBuffer.put(byteBuffer);
             byteBuffer = newBuffer;
         }
@@ -90,8 +91,8 @@ public class Encoder {
 
     /** Returns the result message. */
     public Message getMessage() {
-        mEncoderState.byteBuffer.position(0);
-        mEncoderState.byteBuffer.limit(mEncoderState.dataEnd);
+        ((Buffer) mEncoderState.byteBuffer).position(0);
+        ((Buffer) mEncoderState.byteBuffer).limit(mEncoderState.dataEnd);
         return new Message(mEncoderState.byteBuffer, mEncoderState.handles);
     }
 
@@ -324,7 +325,7 @@ public class Encoder {
         byte[] bytes = packBoolsToBitfield(v, 1);
         Encoder encoder = encoderForArrayByTotalSize(bytes.length, v.length, offset);
 
-        encoder.mEncoderState.byteBuffer.position(encoder.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) encoder.mEncoderState.byteBuffer).position(encoder.mBaseOffset + DataHeader.HEADER_SIZE);
         encoder.append(bytes);
     }
 
@@ -352,7 +353,7 @@ public class Encoder {
         Encoder encoder =
                 encoderForArrayByTotalSize(
                         hasValueBitfield.length + packed.length, v.length, offset);
-        encoder.mEncoderState.byteBuffer.position(encoder.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) encoder.mEncoderState.byteBuffer).position(encoder.mBaseOffset + DataHeader.HEADER_SIZE);
         encoder.append(hasValueBitfield);
         encoder.append(packed);
     }
@@ -599,7 +600,7 @@ public class Encoder {
                         (values.length * elementSizeInByte) + bitField.length,
                         values.length,
                         offset);
-        encoder.mEncoderState.byteBuffer.position(encoder.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) encoder.mEncoderState.byteBuffer).position(encoder.mBaseOffset + DataHeader.HEADER_SIZE);
         encoder.mEncoderState.byteBuffer.put(bitField);
         return encoder;
     }
@@ -611,7 +612,7 @@ public class Encoder {
     private Encoder encoderForArrayOfElements(
             int elementSizeInByte, int length, int offset, int expectedLength) {
         Encoder encoder = encoderForArray(elementSizeInByte, length, offset, expectedLength);
-        encoder.mEncoderState.byteBuffer.position(encoder.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) encoder.mEncoderState.byteBuffer).position(encoder.mBaseOffset + DataHeader.HEADER_SIZE);
         return encoder;
     }
 
