@@ -14,6 +14,7 @@ import org.chromium.mojo.system.MessagePipeHandle;
 import org.chromium.mojo.system.SharedBufferHandle;
 import org.chromium.mojo.system.UntypedHandle;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -292,7 +293,7 @@ public class Decoder {
         }
         DataHeader si = d.readDataHeaderForBooleanArray(expectedLength, false);
         byte[] bytes = new byte[(si.elementsOrVersion + 7) / BindingsHelper.ALIGNMENT];
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
         d.mMessage.getData().get(bytes);
         boolean[] result = new boolean[si.elementsOrVersion];
         for (int i = 0; i < bytes.length; ++i) {
@@ -314,7 +315,7 @@ public class Decoder {
             return null;
         }
         DataHeader si = d.readDataHeaderForBooleanArray(expectedLength, true);
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
 
         boolean[] hasValueBitfield = readBitfield(1, si.elementsOrVersion, d.mMessage.getData());
         boolean[] values = readBitfield(1, si.elementsOrVersion, d.mMessage.getData());
@@ -338,7 +339,7 @@ public class Decoder {
         }
         DataHeader si = d.readDataHeaderForArray(1, expectedLength, false);
         byte[] result = new byte[si.elementsOrVersion];
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
         d.mMessage.getData().get(result);
         return result;
     }
@@ -351,7 +352,7 @@ public class Decoder {
             return null;
         }
         DataHeader si = d.readDataHeaderForArray(1, expectedLength, true);
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
 
         boolean[] hasValueBitfield = readBitfield(1, si.elementsOrVersion, d.mMessage.getData());
         byte[] values = new byte[si.elementsOrVersion];
@@ -376,7 +377,7 @@ public class Decoder {
         }
         DataHeader si = d.readDataHeaderForArray(2, expectedLength, false);
         short[] result = new short[si.elementsOrVersion];
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
         d.mMessage.getData().asShortBuffer().get(result);
         return result;
     }
@@ -389,7 +390,7 @@ public class Decoder {
             return null;
         }
         DataHeader si = d.readDataHeaderForArray(2, expectedLength, true);
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
 
         boolean[] hasValueBitfield = readBitfield(2, si.elementsOrVersion, d.mMessage.getData());
         short[] values = new short[si.elementsOrVersion];
@@ -414,7 +415,7 @@ public class Decoder {
         }
         DataHeader si = d.readDataHeaderForArray(4, expectedLength, false);
         int[] result = new int[si.elementsOrVersion];
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
         d.mMessage.getData().asIntBuffer().get(result);
         return result;
     }
@@ -427,7 +428,7 @@ public class Decoder {
             return null;
         }
         DataHeader si = d.readDataHeaderForArray(4, expectedLength, true);
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
 
         boolean[] hasValueBitfield = readBitfield(4, si.elementsOrVersion, d.mMessage.getData());
         int[] values = new int[si.elementsOrVersion];
@@ -452,7 +453,7 @@ public class Decoder {
         }
         DataHeader si = d.readDataHeaderForArray(4, expectedLength, false);
         float[] result = new float[si.elementsOrVersion];
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
         d.mMessage.getData().asFloatBuffer().get(result);
         return result;
     }
@@ -465,7 +466,7 @@ public class Decoder {
             return null;
         }
         DataHeader si = d.readDataHeaderForArray(4, expectedLength, true);
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
 
         boolean[] hasValueBitfield = readBitfield(4, si.elementsOrVersion, d.mMessage.getData());
         float[] values = new float[si.elementsOrVersion];
@@ -490,7 +491,7 @@ public class Decoder {
         }
         DataHeader si = d.readDataHeaderForArray(8, expectedLength, false);
         long[] result = new long[si.elementsOrVersion];
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
         d.mMessage.getData().asLongBuffer().get(result);
         return result;
     }
@@ -503,7 +504,7 @@ public class Decoder {
             return null;
         }
         DataHeader si = d.readDataHeaderForArray(8, expectedLength, true);
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
 
         boolean[] hasValueBitfield = readBitfield(8, si.elementsOrVersion, d.mMessage.getData());
         long[] values = new long[si.elementsOrVersion];
@@ -528,7 +529,7 @@ public class Decoder {
         }
         DataHeader si = d.readDataHeaderForArray(8, expectedLength, false);
         double[] result = new double[si.elementsOrVersion];
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
         d.mMessage.getData().asDoubleBuffer().get(result);
         return result;
     }
@@ -541,7 +542,7 @@ public class Decoder {
             return null;
         }
         DataHeader si = d.readDataHeaderForArray(8, expectedLength, true);
-        d.mMessage.getData().position(d.mBaseOffset + DataHeader.HEADER_SIZE);
+        ((Buffer) d.mMessage.getData()).position(d.mBaseOffset + DataHeader.HEADER_SIZE);
 
         boolean[] hasValueBitfield = readBitfield(8, si.elementsOrVersion, d.mMessage.getData());
         double[] values = new double[si.elementsOrVersion];
