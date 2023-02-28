@@ -10,6 +10,7 @@ import org.chromium.mojo.system.Handle;
 import org.chromium.mojo.system.MessagePipeHandle;
 import org.chromium.mojo.system.Pair;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -72,8 +73,8 @@ public class Encoder {
             }
             ByteBuffer newBuffer = ByteBuffer.allocateDirect(targetSize);
             newBuffer.order(ByteOrder.nativeOrder());
-            byteBuffer.position(0);
-            byteBuffer.limit(byteBuffer.capacity());
+            ((Buffer) byteBuffer).position(0);
+            ((Buffer) byteBuffer).limit(byteBuffer.capacity());
             newBuffer.put(byteBuffer);
             byteBuffer = newBuffer;
         }
@@ -90,8 +91,8 @@ public class Encoder {
 
     /** Returns the result message. */
     public Message getMessage() {
-        mEncoderState.byteBuffer.position(0);
-        mEncoderState.byteBuffer.limit(mEncoderState.dataEnd);
+        ((Buffer) mEncoderState.byteBuffer).position(0);
+        ((Buffer) mEncoderState.byteBuffer).limit(mEncoderState.dataEnd);
         return new Message(mEncoderState.byteBuffer, mEncoderState.handles);
     }
 
