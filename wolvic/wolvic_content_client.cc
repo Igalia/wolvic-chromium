@@ -42,9 +42,7 @@ gfx::Image& WolvicContentClient::GetNativeImageNamed(int resource_id) {
 }
 
 void WolvicContentClient::AddAdditionalSchemes(Schemes* schemes) {
-#if BUILDFLAG(IS_ANDROID)
   schemes->local_schemes.push_back(url::kContentScheme);
-#endif
 }
 
 }  // namespace content
