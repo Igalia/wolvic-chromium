@@ -1,14 +1,15 @@
+// Copyright 2023 The Chromium Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "wolvic/wolvic_content_client.h"
 
-#include "base/strings/string_piece.h"
-#include "base/strings/utf_string_conversions.h"
-#include "base/values.h"
-#include "build/build_config.h"
-#include "content/shell/grit/shell_resources.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/resource/resource_bundle.h"
 
 namespace content {
+
+// Copied from //content/shell/common/shell_content_client.cc
 
 WolvicContentClient::WolvicContentClient() {}
 
