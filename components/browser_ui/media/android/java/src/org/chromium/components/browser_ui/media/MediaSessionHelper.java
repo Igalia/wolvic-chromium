@@ -190,7 +190,8 @@ public class MediaSessionHelper implements MediaImageCallback {
             }
 
             @Override
-            public void mediaSessionStateChanged(boolean isControllable, boolean isPaused) {
+            public void mediaSessionStateChanged(
+                    boolean isControllable, boolean isPaused, boolean isActive) {
                 if (!isControllable) {
                     hideNotificationDelayed();
                     return;
