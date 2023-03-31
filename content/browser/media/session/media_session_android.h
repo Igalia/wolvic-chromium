@@ -60,6 +60,12 @@ class MediaSessionAndroid final
             const jlong millis);
   void SeekTo(JNIEnv* env,
               const jlong millis);
+  void ScrubTo(JNIEnv* env,
+               const base::android::JavaParamRef<jobject>& j_obj,
+               const jlong millis);
+  void SetMute(JNIEnv* env,
+               const base::android::JavaParamRef<jobject>& j_obj,
+               const jboolean mute);
   void DidReceiveAction(JNIEnv* env,
                         jint action);
   void RequestSystemAudioFocus(JNIEnv* env);
@@ -79,6 +85,7 @@ class MediaSessionAndroid final
 
   bool is_paused_ = false;
   bool is_controllable_ = false;
+  bool is_active_ = false;
 
   mojo::Receiver<media_session::mojom::MediaSessionObserver> observer_receiver_{
       this};
