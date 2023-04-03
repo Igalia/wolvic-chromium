@@ -19,10 +19,9 @@ base::android::ScopedJavaLocalRef<jobject> JNI_Tab_CreateWebContents(
   auto* delegate = content::WolvicContentMainDelegate::Get();
   CHECK(delegate->browser_context() != nullptr);
 
-  WebContents::CreateParams create_params(
-      static_cast<BrowserContext*>(delegate->browser_context()), nullptr);
   std::unique_ptr<WebContents> web_contents =
-      WebContents::Create(create_params);
+      WebContents::Create(content::WebContents::CreateParams(
+          static_cast<BrowserContext*>(delegate->browser_context())));
 
   // TODO: This is just for the proof-of-concept and URL should be loaded
   // explicitly by `NavigationController.loadUrl` after creating WebContents.
