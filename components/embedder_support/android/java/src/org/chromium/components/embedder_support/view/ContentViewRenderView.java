@@ -301,7 +301,9 @@ public class ContentViewRenderView extends FrameLayout {
     }
 
     @NativeMethods
-    interface Natives {
+    // TODO: `public` keyword is added in temporary for using interfaces in
+    // `wolvic`. It should be removed once wolvic has its own compositor client.
+    public interface Natives {
         long init(ContentViewRenderView self, WindowAndroid rootWindow);
 
         void destroy(long nativeContentViewRenderView);
