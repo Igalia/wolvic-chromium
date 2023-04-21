@@ -109,7 +109,9 @@ public class BuildInfo {
                 Build.HARDWARE,
                 isAtLeastT() ? "1" : "0",
                 isAutomotive ? "1" : "0",
-                BuildCompat.isAtLeastU() ? "1" : "0",
+                // TODO(voit): Uncomment when isAtLeastU() is supported by android.core in Wolvic
+                // BuildCompat.isAtLeastU() ? "1" : "0",
+                "0",
                 targetsAtLeastU() ? "1" : "0",
                 Build.VERSION.CODENAME,
         };
@@ -290,7 +292,9 @@ public class BuildInfo {
         int target = ContextUtils.getApplicationContext().getApplicationInfo().targetSdkVersion;
 
         // Logic for pre-API-finalization:
-        return BuildCompat.isAtLeastU() && target == Build.VERSION_CODES.CUR_DEVELOPMENT;
+        // TODO(voit): Uncomment when isAtLeastU() is supported by android.core in Wolvic
+        // return BuildCompat.isAtLeastU() && target == Build.VERSION_CODES.CUR_DEVELOPMENT;
+        return false;
 
         // Logic for after API finalization but before public SDK release has to
         // just hardcode the appropriate SDK integer. This will include Android

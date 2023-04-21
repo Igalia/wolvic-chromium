@@ -90,17 +90,19 @@ public class StylusGestureHandler implements InvocationHandler {
     @OptIn(markerClass = androidx.core.os.BuildCompat.PrereleaseSdkCheck.class)
     public static @Nullable InputConnection maybeProxyInputConnection(
             @Nullable InputConnection inputConnection, Callback<OngoingGesture> onGestureCallback) {
-        if (inputConnection == null || !BuildCompat.isAtLeastU()
-                || !ContentFeatureList.isEnabled(
-                        org.chromium.blink_public.common.BlinkFeatures.STYLUS_RICH_GESTURES)) {
-            return inputConnection;
-        }
+        return inputConnection;
+        // TODO(voit): Uncomment when isAtLeastU() is supported by android.core in Wolvic
+        // if (inputConnection == null || !BuildCompat.isAtLeastU()
+        //         || !ContentFeatureList.isEnabled(
+        //                 org.chromium.blink_public.common.BlinkFeatures.STYLUS_RICH_GESTURES)) {
+        //    return inputConnection;
+        // }
 
-        InputConnection proxy = (InputConnection) Proxy.newProxyInstance(
-                InputConnection.class.getClassLoader(), new Class<?>[] {InputConnection.class},
-                new StylusGestureHandler(inputConnection, onGestureCallback));
+        // InputConnection proxy = (InputConnection) Proxy.newProxyInstance(
+        //         InputConnection.class.getClassLoader(), new Class<?>[] {InputConnection.class},
+        //         new StylusGestureHandler(inputConnection, onGestureCallback));
 
-        return proxy;
+        // return proxy;
     }
 
     public static void logGestureType(@UmaGestureType int gestureType) {

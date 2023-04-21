@@ -212,6 +212,7 @@ dist_aar("content_aar") {
     "//base",
     "//base:base_java",
     "//base:jni_java",
+    "//base/test:test_trace_processor",
     "//components/browser_ui/media/android:java",
     "//components/embedder_support/android:view_java",
     "//components/metrics:metrics_java",
@@ -228,6 +229,7 @@ dist_aar("content_aar") {
   ]
   native_libraries = [
     "$root_build_dir/libcontent_native.so",
+    "$root_build_dir/libtest_trace_processor.so",
     # TODO: Replace with shared library
     # "$root_build_dir/obj/device/vr/libdevice_vr.a",
   ]
