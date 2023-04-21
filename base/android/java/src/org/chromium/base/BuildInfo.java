@@ -109,7 +109,8 @@ public class BuildInfo {
                 Build.HARDWARE,
                 isAtLeastT() ? "1" : "0",
                 isAutomotive ? "1" : "0",
-                BuildCompat.isAtLeastU() ? "1" : "0",
+                // TODO(voit): We don't support Android U in wolvic yet, update this once it's released.
+                "0",
                 targetsAtLeastU() ? "1" : "0",
                 Build.VERSION.CODENAME,
         };
@@ -287,10 +288,8 @@ public class BuildInfo {
      */
     @OptIn(markerClass = androidx.core.os.BuildCompat.PrereleaseSdkCheck.class)
     public static boolean targetsAtLeastU() {
-        int target = ContextUtils.getApplicationContext().getApplicationInfo().targetSdkVersion;
-
-        // Logic for pre-API-finalization:
-        return BuildCompat.isAtLeastU() && target == Build.VERSION_CODES.CUR_DEVELOPMENT;
+        // TODO(voit): We don't support Android U in Wolvic yet, remove this after it's released.
+        return false;
 
         // Logic for after API finalization but before public SDK release has to
         // just hardcode the appropriate SDK integer. This will include Android

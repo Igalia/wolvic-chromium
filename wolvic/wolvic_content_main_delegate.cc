@@ -122,6 +122,9 @@ class ShellVariationsServiceClient
     return false;
   }
   bool IsEnterprise() override { return false; }
+  // Profiles aren't supported, so nothing to do here.
+  void RemoveGoogleGroupsFromPrefsForDeletedProfiles(
+      PrefService* local_state) override {}
 };
 
 // Returns the full user agent string for the content shell.
@@ -345,7 +348,7 @@ void WolvicContentMainDelegate::SetUpFieldTrials() {
   std::unique_ptr<metrics::MetricsStateManager> metrics_state_manager =
       metrics::MetricsStateManager::Create(
           local_state_.get(), &enabled_state_provider, std::wstring(),
-          path.AppendASCII("Local State"), metrics::StartupVisibility::kUnknown,
+          path, metrics::StartupVisibility::kUnknown,
           {
               .force_benchmarking_mode = false,
           });
