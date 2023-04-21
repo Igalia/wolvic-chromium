@@ -344,8 +344,8 @@ void WolvicContentMainDelegate::SetUpFieldTrials() {
   base::PathService::Get(SHELL_DIR_USER_DATA, &path);
   std::unique_ptr<metrics::MetricsStateManager> metrics_state_manager =
       metrics::MetricsStateManager::Create(
-          local_state_.get(), &enabled_state_provider, std::wstring(),
-          path.AppendASCII("Local State"), metrics::StartupVisibility::kUnknown,
+          local_state_.get(), &enabled_state_provider, std::wstring(), path,
+          metrics::StartupVisibility::kUnknown,
           {
               .force_benchmarking_mode = false,
           });

@@ -14,7 +14,7 @@ public class VRManager {
     private static long mExternalContext;
 
     @CalledByNative
-    private static synchronized long getExternalContext() {
+    private static long getExternalContext() {
         assert mExternalContext != 0;
         synchronized(VRManager.class) {
             return mExternalContext;
@@ -22,7 +22,7 @@ public class VRManager {
     }
 
     @AnyThread
-    public static synchronized void setExternalContext(final long externalContext) {
+    public static void setExternalContext(final long externalContext) {
         synchronized(VRManager.class) {
             mExternalContext = externalContext;
         }
