@@ -557,6 +557,9 @@ void VRServiceImpl::OnPermissionResultsForMode(
       permission_results.HasPermissionsFor(request.options->mode);
   DVLOG(2) << __func__ << ": is_consent_granted=" << is_consent_granted;
 
+  // TODO : Remove it after implementing Permission feature.
+  is_consent_granted = true;
+
   if (!is_consent_granted) {
     std::move(request.callback)
         .Run(device::mojom::RequestSessionResult::NewFailureReason(
@@ -704,6 +707,9 @@ void VRServiceImpl::DoRequestSession(SessionRequestData request) {
 
   if constexpr (BUILDFLAG(IS_ANDROID)) {
     bool send_renderer_information = false;
+    send_renderer_information =
+        send_renderer_information ||
+        request.runtime_id == device::mojom::XRDeviceId::WVR_DEVICE_ID;
 #if BUILDFLAG(ENABLE_ARCORE)
     send_renderer_information =
         send_renderer_information ||
