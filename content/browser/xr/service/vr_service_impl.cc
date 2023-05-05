@@ -704,7 +704,7 @@ void VRServiceImpl::DoRequestSession(SessionRequestData request) {
   runtime_options->optional_features.assign(request.optional_features.begin(),
                                             request.optional_features.end());
 
-#if BUILDFLAG(IS_ANDROID)  // && BUILDFLAG(ENABLE_ARCORE)
+#if BUILDFLAG(IS_ANDROID) && BUILDFLAG(ENABLE_ARCORE)
   if (request.runtime_id == device::mojom::XRDeviceId::ARCORE_DEVICE_ID ||
       request.runtime_id == device::mojom::XRDeviceId::WVR_DEVICE_ID) {
     runtime_options->render_process_id =
