@@ -231,6 +231,10 @@ BrowserXRRuntimeImpl* XRRuntimeManagerImpl::GetImmersiveVrRuntime() {
     return openxr;
 #endif
 
+  auto* wvr = GetRuntime(device::mojom::XRDeviceId::WVR_DEVICE_ID);
+  if (wvr)
+    return wvr;
+
   return nullptr;
 }
 
