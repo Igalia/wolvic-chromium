@@ -27,6 +27,8 @@ namespace wolvic {
 
 namespace {
 
+const int64_t kFrameTimeOutMilliseconds = 10;
+
 void WvrMatToTransform(const float in[16], gfx::Transform* out) {
   *out = gfx::Transform::RowMajor(in[0], in[1], in[2], in[3], in[4], in[5],
                                   in[6], in[7], in[8], in[9], in[10], in[11],
@@ -305,19 +307,23 @@ void WvrManager::OnWebXrFrameAvailable() {
   if (!webxr_frame_timeout_closure_.IsCancelled())
     webxr_frame_timeout_closure_.Cancel();
 
-  // Frame should be locked. Unlock it.
-  DCHECK(webxr_->GetProcessingFrame()->state_locked);
-  webxr_->GetProcessingFrame()->state_locked = false;
+  // The processing frame would be empty when this method is called again from
+  // Android system after OnWebXrTimedOut.
+  if (webxr_->HaveProcessingFrame()) {
+    // Frame should be locked. Unlock it.
+    DCHECK(webxr_->GetProcessingFrame()->state_locked);
+    webxr_->GetProcessingFrame()->state_locked = false;
 
-  if (!SubmitFrameInternal(webxr_->GetProcessingFrame()->index))
-    return;
+    if (!SubmitFrameInternal(webxr_->GetProcessingFrame()->index))
+      return;
+
+    if (webxr_->HaveRenderingFrame())
+      webxr_->EndFrameRendering();
+    webxr_->TransitionFrameProcessingToRendering();
+  }
 
   // Renderer is waiting for the previous frame to render, unblock it now.
   submit_client_->OnSubmitFrameRendered();
-
-  if (webxr_->HaveRenderingFrame())
-    webxr_->EndFrameRendering();
-  webxr_->TransitionFrameProcessingToRendering();
 
   TryStartAnimatingFrame();
 }
@@ -491,15 +497,21 @@ bool WvrManager::SubmitFrameInternal(int16_t frame_index) {
     externalRect.width = 0.5f;
     externalRect.height = 1.0f;
   }
+
+  last_frame_index_ = frame_index;
   PushState(true);
   PullState([this]() {
-    return (system_state_.displayState.lastSubmittedFrameId >=
+    return (system_state_.displayState.lastSubmittedFrameId ==
             last_frame_index_) ||
            system_state_.displayState.suppressFrames ||
            !system_state_.displayState.isConnected;
   });
 
-  last_frame_index_ = system_state_.displayState.lastSubmittedFrameId;
+  // Avoid racing texture between processing in chromium and consuming in
+  // wolvic.
+  layer.textureHandle = 0;
+  PushState(true);
+
   return true;
 }
 
@@ -561,7 +573,7 @@ void WvrManager::ProcessFrameFromMailbox(int16_t frame_index,
 
   task_runner_->PostDelayedTask(FROM_HERE,
                                 webxr_frame_timeout_closure_.callback(),
-                                base::Milliseconds(100));
+                                base::Milliseconds(kFrameTimeOutMilliseconds));
 }
 
 void WvrManager::SubmitFrameDrawnIntoTexture(int16_t frame_index,
