@@ -27,7 +27,7 @@ namespace wolvic {
 
 namespace {
 
-const int64_t kFrameTimeOutMilliseconds = 10;
+const int64_t kFrameTimeOutMilliseconds = 1000;
 
 void WvrMatToTransform(const float in[16], gfx::Transform* out) {
   *out = gfx::Transform::RowMajor(in[0], in[1], in[2], in[3], in[4], in[5],
