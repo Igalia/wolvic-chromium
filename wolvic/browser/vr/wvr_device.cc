@@ -119,17 +119,17 @@ void WvrDevice::OnWvrGlInitializationComplete(
       &WvrManager::StartWebXRPresentation,
       wvr_thread_->GetWvrManager()->GetWeakPtr(), std::move(options),
       CreateMainThreadCallback(
-          base::BindOnce(&WvrDevice::OnStartPresentResult, GetWeakPtr())),
+          base::BindOnce(&WvrDevice::OnStartPresenting, GetWeakPtr())),
       CreateMainThreadCallback(base::BindOnce(
-          &WvrDevice::StopPresenting, GetWeakPtr(), base::NullCallback()))));
+          &WvrDevice::OnStopPresenting, GetWeakPtr(), base::NullCallback()))));
 }
 
-void WvrDevice::OnStartPresentResult(device::mojom::XRSessionPtr session) {
+void WvrDevice::OnStartPresenting(device::mojom::XRSessionPtr session) {
   DCHECK(IsOnMainThread());
   DCHECK(pending_request_session_callback_);
 
   // Set HasExclusiveSession status to true. This lasts until OnSessionEnded.
-  OnStartPresenting();
+  VRDeviceBase::OnStartPresenting();
 
   DCHECK(!exclusive_controller_receiver_.is_bound());
 
