@@ -107,10 +107,18 @@ std::vector<device::mojom::XRViewPtr> CreateViews(
   return views;
 }
 
+int32_t GetNextTextureHandleId() {
+  static int32_t s_next_texture_handle_id = 0;
+  if (s_next_texture_handle_id == std::numeric_limits<int32_t>::max())
+    s_next_texture_handle_id = 0;
+  return ++s_next_texture_handle_id;
+}
+
 }  // namespace
 
 WvrManager::WvrManager()
-    : task_runner_(base::SingleThreadTaskRunner::GetCurrentDefault()),
+    : texture_handle_id_(GetNextTextureHandleId()),
+      task_runner_(base::SingleThreadTaskRunner::GetCurrentDefault()),
       webxr_(std::make_unique<device::WebXrPresentationState>()) {
   JNIEnv* env = base::android::AttachCurrentThread();
   shmem_ = reinterpret_cast<mozilla::gfx::VRExternalShmem*>(
@@ -123,6 +131,11 @@ WvrManager::~WvrManager() {
   ClosePresentationBindings();
   ExitWebXRPresentation(base::NullCallback());
   webxr_->EndPresentation();
+
+  if (j_surface_texture_) {
+    JNIEnv* env = base::android::AttachCurrentThread();
+    Java_WVRSurfaceTexture_release(env, j_surface_texture_);
+  }
 }
 
 void WvrManager::InitializeGl(const gfx::Size& frame_size,
@@ -170,8 +183,11 @@ void WvrManager::InitializeGl(const gfx::Size& frame_size,
 
 void WvrManager::StartWebXRPresentation(
     device::mojom::XRRuntimeSessionOptionsPtr options,
-    base::OnceCallback<void(device::mojom::XRSessionPtr)> callback) {
+    base::OnceCallback<void(device::mojom::XRSessionPtr)> callback,
+    base::OnceClosure exit_callback) {
   DCHECK(IsOnWvrThread());
+
+  exit_vr_callback_ = std::move(exit_callback);
 
   // Indicate that we are ready to start immersive mode
   browser_state_.presentationActive = true;
@@ -184,6 +200,8 @@ void WvrManager::StartWebXRPresentation(
            system_state_.displayState.isConnected;
   });
 
+  presenting_generation_ = system_state_.displayState.presentingGeneration;
+
   ConnectPresentingService(std::move(options), std::move(callback));
 }
 
@@ -191,9 +209,9 @@ void WvrManager::ExitWebXRPresentation(base::OnceClosure callback) {
   DCHECK(IsOnWvrThread());
 
   browser_state_.presentationActive = false;
-  PushState();
-
-  PullState([&]() { return !system_state_.displayState.isConnected; });
+  browser_state_.layerState[0].type =
+      mozilla::gfx::VRLayerType::LayerType_None;
+  PushState(true);
 
   if (callback)
     std::move(callback).Run();
@@ -213,9 +231,8 @@ void WvrManager::CreateOrResizeWebXrSurface(const gfx::Size& size) {
 
   if (!j_surface_texture_) {
     JNIEnv* env = base::android::AttachCurrentThread();
-    j_surface_texture_ =
-        Java_WVRSurfaceTexture_create(env, texture_id_,
-                                      surface_texture_->j_surface_texture());
+    j_surface_texture_ = Java_WVRSurfaceTexture_create(
+        env, texture_handle_id_, surface_texture_->j_surface_texture());
   }
 
   surface_size_ = size;
@@ -334,6 +351,12 @@ void WvrManager::OnWebXrTimedOut() {
 }
 
 void WvrManager::ClosePresentationBindings() {
+  if (!webxr_frame_timeout_closure_.IsCancelled())
+    webxr_frame_timeout_closure_.Cancel();
+
+  if (!get_frame_data_callback_.is_null())
+    std::move(get_frame_data_callback_).Run(nullptr);
+
   submit_client_.reset();
   presentation_receiver_.reset();
   frame_data_receiver_.reset();
@@ -417,6 +440,10 @@ bool WvrManager::CanStartNewAnimatingFrame() {
     return false;
   }
 
+  if (get_frame_data_callback_.is_null()) {
+    return false;
+  }
+
   return true;
 }
 
@@ -481,11 +508,22 @@ void WvrManager::SetInputSourceButtonListener(
 bool WvrManager::SubmitFrameInternal(int16_t frame_index) {
   DCHECK(IsOnWvrThread());
 
+  // Force exit WebXR before pushing the frame if the presenting generation is
+  // changed by stopping presenting in Wolvic.
+  if (presenting_generation_ != system_state_.displayState.presentingGeneration) {
+    if (!get_frame_data_callback_.is_null())
+      std::move(get_frame_data_callback_).Run(nullptr);
+
+    if (exit_vr_callback_)
+      std::move(exit_vr_callback_).Run();
+    return false;
+  }
+
   auto& layer = browser_state_.layerState[0].layer_stereo_immersive;
   layer.frameId = frame_index;
   layer.textureSize.width = surface_size_.width();
   layer.textureSize.height = surface_size_.height();
-  layer.textureHandle = texture_id_;
+  layer.textureHandle = texture_handle_id_;
 
   // for (auto& view: views) {
   for (int i = 0; i < 2; ++i) {
