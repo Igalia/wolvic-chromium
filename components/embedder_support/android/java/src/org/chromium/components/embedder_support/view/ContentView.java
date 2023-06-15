@@ -344,8 +344,8 @@ public class ContentView extends FrameLayout
             super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
             if (hasValidWebContents()) {
                 getViewEventSink().setHideKeyboardOnBlur(true);
-                // TODO : Remove the condition. We should fix no change the
-                // focus after showing the popup widget.
+                // TODO : Remove the condition. We should fix the problem with
+                // losing focus after showing the popup widget.
                 if (gainFocus)
                     getViewEventSink().onViewFocusChanged(gainFocus);
             }
