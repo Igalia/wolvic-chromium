@@ -54,7 +54,7 @@ public class SelectPopup implements HideablePopup, ViewAndroidDelegate.Container
                 List<SelectPopupItem> items, boolean multiple, int[] selected);
     }
 
-    private static Factory sPopouFactory;
+    private static Factory sPopupFactory;
 
     private final WebContentsImpl mWebContents;
     private View mContainerView;
@@ -129,7 +129,7 @@ public class SelectPopup implements HideablePopup, ViewAndroidDelegate.Container
     }
 
     public static void setFactory(Factory factory) {
-        sPopouFactory = factory;
+        sPopupFactory = factory;
     }
 
     /**
@@ -164,8 +164,8 @@ public class SelectPopup implements HideablePopup, ViewAndroidDelegate.Container
         }
         WebContentsAccessibilityImpl wcax =
                 WebContentsAccessibilityImpl.fromWebContents(mWebContents);
-        if (sPopouFactory != null) {
-            mPopupView = sPopouFactory.create(
+        if (sPopupFactory != null) {
+            mPopupView = sPopupFactory.create(
                 context, this::selectMenuItems, popupItems, multiple, selectedIndices);
         } else if (DeviceFormFactor.isTablet() && !multiple && !wcax.isTouchExplorationEnabled()) {
             mPopupView = new SelectPopupDropdown(context, this::selectMenuItems, anchorView,
