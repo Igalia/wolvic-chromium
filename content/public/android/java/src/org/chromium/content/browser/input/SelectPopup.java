@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.VisibleForTesting;
 
+import org.chromium.base.Callback;
 import org.chromium.base.UserData;
 import org.chromium.base.annotations.CalledByNative;
 import org.chromium.base.annotations.JNINamespace;
@@ -47,6 +48,13 @@ public class SelectPopup implements HideablePopup, ViewAndroidDelegate.Container
          */
         public void hide(boolean sendsCancelMessage);
     }
+
+    public interface Factory {
+        public Ui create(Context windowContext, Callback<int[]> selectionChangedCallback,
+                List<SelectPopupItem> items, boolean multiple, int[] selected);
+    }
+
+    private static Factory sPopupFactory;
 
     private final WebContentsImpl mWebContents;
     private View mContainerView;
@@ -120,6 +128,10 @@ public class SelectPopup implements HideablePopup, ViewAndroidDelegate.Container
         close();
     }
 
+    public static void setFactory(Factory factory) {
+        sPopupFactory = factory;
+    }
+
     /**
      * Called (from native) when the lt&;select&gt; popup needs to be shown.
      * @param anchorView View anchored for popup.
@@ -152,7 +164,10 @@ public class SelectPopup implements HideablePopup, ViewAndroidDelegate.Container
         }
         WebContentsAccessibilityImpl wcax =
                 WebContentsAccessibilityImpl.fromWebContents(mWebContents);
-        if (DeviceFormFactor.isTablet() && !multiple && !wcax.isTouchExplorationEnabled()) {
+        if (sPopupFactory != null) {
+            mPopupView = sPopupFactory.create(
+                context, this::selectMenuItems, popupItems, multiple, selectedIndices);
+        } else if (DeviceFormFactor.isTablet() && !multiple && !wcax.isTouchExplorationEnabled()) {
             mPopupView = new SelectPopupDropdown(context, this::selectMenuItems, anchorView,
                     popupItems, selectedIndices, rightAligned, mWebContents);
         } else {
