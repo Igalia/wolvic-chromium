@@ -13,6 +13,7 @@ import org.jni_zero.CalledByNative;
 import org.jni_zero.JNINamespace;
 import org.jni_zero.NativeMethods;
 
+import org.chromium.base.Callback;
 import org.chromium.base.UserData;
 import org.chromium.build.annotations.NullMarked;
 import org.chromium.build.annotations.Nullable;
@@ -51,6 +52,13 @@ public class SelectPopup
          */
         void hide(boolean sendsCancelMessage);
     }
+
+    public interface Factory {
+        public Ui create(Context windowContext, Callback<int[]> selectionChangedCallback,
+                List<SelectPopupItem> items, boolean multiple, int[] selected);
+    }
+
+    private static Factory sPopupFactory;
 
     private final WebContentsImpl mWebContents;
     private @Nullable View mContainerView;
@@ -123,6 +131,10 @@ public class SelectPopup
         assert mNativeSelectPopupSourceFrame == 0;
     }
 
+    public static void setFactory(Factory factory) {
+        sPopupFactory = factory;
+    }
+
     /**
      * Called (from native) when the lt&;select&gt; popup needs to be shown.
      * @param anchorView View anchored for popup.
@@ -161,7 +173,10 @@ public class SelectPopup
         for (int i = 0; i < items.length; i++) {
             popupItems.add(new SelectPopupItem(items[i], enabled[i]));
         }
-        if (DeviceFormFactor.isTablet()
+        if (sPopupFactory != null) {
+            mPopupView = sPopupFactory.create(
+                context, this::selectMenuItems, popupItems, multiple, selectedIndices);
+        } else if (DeviceFormFactor.isTablet()
                 && !multiple
                 && !AccessibilityState.isTouchExplorationEnabled()) {
             mPopupView =
