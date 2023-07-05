@@ -379,7 +379,9 @@ WvrManager::GetInputSourceState() {
     device::mojom::XRInputSourceStatePtr input_source =
         device::mojom::XRInputSourceState::New();
 
-    // The source_id == 0 is not supported, so we're using a 1-based id here.
+    // ID 0 will cause a DCHECK in the hash table used on the blink side.
+    // To ensure that we don't have any collisions with other ids, increment
+    // all of the ids by one.
     input_source->source_id = i + 1;
     input_source->primary_input_pressed = controller.buttonPressed;
     input_source->primary_input_clicked = controller.buttonTouched;
