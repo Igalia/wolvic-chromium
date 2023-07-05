@@ -57,6 +57,43 @@ device::mojom::VRPosePtr PoseToVRPosePtr(const mozilla::gfx::VRPose* p) {
   return pose;
 }
 
+device::GamepadHand ToGamepadHand(mozilla::gfx::ControllerHand hand) {
+  using mozilla::gfx::ControllerHand;
+
+  switch (hand) {
+    case ControllerHand::Left:
+      return device::GamepadHand::kLeft;
+    case ControllerHand::Right:
+      return device::GamepadHand::kRight;
+    case ControllerHand::_empty:
+    case ControllerHand::EndGuard_:
+      DCHECK(false) << "Unexpected ControllerHand value: "
+                    << static_cast<uint8_t>(hand);
+      return device::GamepadHand::kNone;
+  }
+}
+
+device::Gamepad ToGamepad(const mozilla::gfx::VRControllerState& controller) {
+  device::Gamepad gamepad;
+  gamepad.hand = ToGamepadHand(controller.hand);
+
+  size_t num_buttons = controller.numButtons;
+  if (num_buttons > device::Gamepad::kButtonsLengthCap) {
+    num_buttons = device::Gamepad::kButtonsLengthCap;
+    DLOG(WARNING) << "Controller has too many buttons, truncating to "
+                  << num_buttons;
+  }
+
+  gamepad.buttons_length = num_buttons;
+  for (uint32_t i = 0; i < controller.numButtons; ++i) {
+    gamepad.buttons[i].pressed = controller.buttonPressed & (1 << i);
+    gamepad.buttons[i].touched = controller.buttonTouched & (1 << i);
+    gamepad.buttons[i].value = controller.triggerValue[i];
+  }
+
+  return gamepad;
+}
+
 device::mojom::XRViewPtr CreateView(
     mozilla::gfx::VRDisplayState::Eye eye,
     const mozilla::gfx::VRDisplayState& display_state,
@@ -405,24 +442,13 @@ WvrManager::GetInputSourceState() {
         controller.hand == mozilla::gfx::ControllerHand::Left
             ? device::mojom::XRHandedness::LEFT
             : device::mojom::XRHandedness::RIGHT;
+
     // TODO: Get from external
     input_source->description->profiles = {
         "oculus-touch-v3", "oculus-touch-v2", "oculus-touch",
         "generic-trigger-squeeze-thumbstick"};
 
-    input_source->gamepad = device::Gamepad();
-    input_source->gamepad->buttons_length = controller.numButtons;
-    input_source->gamepad->hand =
-        controller.hand == mozilla::gfx::ControllerHand::Left
-            ? device::GamepadHand::kLeft
-            : device::GamepadHand::kRight;
-    for (uint32_t j = 0; j < controller.numButtons; ++j) {
-      input_source->gamepad->buttons[j].pressed =
-          controller.buttonPressed & (1 << j);
-      input_source->gamepad->buttons[j].touched =
-          controller.buttonTouched & (1 << j);
-      input_source->gamepad->buttons[j].value = controller.triggerValue[j];
-    }
+    input_source->gamepad = ToGamepad(controller);
 
     auto supportsControllerFlag =
         [&controller](mozilla::gfx::ControllerCapabilityFlags flag) {
