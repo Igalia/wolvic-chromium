@@ -6,15 +6,38 @@
 
 #include "components/embedder_support/user_agent_utils.h"
 #include "components/prefs/pref_service.h"
+#include "content/shell/browser/shell.h"
+#include "content/shell/browser/shell_devtools_manager_delegate.h"
+#include "wolvic/wolvic_browser_context.h"
 #include "wolvic/wolvic_content_main_delegate.h"
 #include "wolvic/wolvic_main_parts.h"
 
 namespace content {
 
-WolvicContentBrowserClient::WolvicContentBrowserClient()
-    : browser_main_parts_(nullptr) {}
+namespace {
 
-WolvicContentBrowserClient::~WolvicContentBrowserClient() {}
+WolvicContentBrowserClient* g_instance = nullptr;
+
+}  // namespace
+
+WolvicContentBrowserClient::WolvicContentBrowserClient()
+    : browser_main_parts_(nullptr) {
+  DCHECK(!g_instance);
+  g_instance = this;
+}
+
+WolvicContentBrowserClient::~WolvicContentBrowserClient() {
+  g_instance = nullptr;
+}
+
+// static
+WolvicContentBrowserClient* WolvicContentBrowserClient::Get() {
+  return g_instance;
+}
+
+content::BrowserContext* WolvicContentBrowserClient::GetBrowserContext() {
+  return browser_main_parts_->browser_context();
+}
 
 std::unique_ptr<BrowserMainParts>
 WolvicContentBrowserClient::CreateBrowserMainParts(
@@ -22,6 +45,12 @@ WolvicContentBrowserClient::CreateBrowserMainParts(
   CHECK(!browser_main_parts_);
   browser_main_parts_ = new WolvicMainParts();
   return std::unique_ptr<BrowserMainParts>(browser_main_parts_);
+}
+
+std::unique_ptr<content::DevToolsManagerDelegate>
+WolvicContentBrowserClient::CreateDevToolsManagerDelegate() {
+  return std::make_unique<content::ShellDevToolsManagerDelegate>(
+      GetBrowserContext());
 }
 
 #if BUILDFLAG(ENABLE_VR)
@@ -33,10 +62,6 @@ XrIntegrationClient* WolvicContentBrowserClient::GetXrIntegrationClient() {
   return xr_integration_client_.get();
 }
 #endif
-
-WolvicBrowserContext* WolvicContentBrowserClient::browser_context() {
-  return browser_main_parts_->browser_context();
-}
 
 std::string WolvicContentBrowserClient::GetUserAgent() {
   return embedder_support::GetUserAgent();
