@@ -11,14 +11,36 @@ import org.chromium.base.annotations.NativeMethods;
 
 @JNINamespace("wolvic")
 public class SessionSettings {
+    public enum UserAgentMode {
+        // values have to be synchronized with session_settings.h
+        MOBILE(0),
+        DESKTOP(1),
+        MOBILE_VR(2);
+
+        private static final UserAgentMode[] modes = UserAgentMode.values();
+        private final int value;
+
+        private UserAgentMode(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public static UserAgentMode fromValue(int value) {
+            return modes[value];
+        }
+    };
+
     public SessionSettings() {}
 
-    public void setUserAgentMode(int value) {
-        SessionSettingsJni.get().setUserAgentMode(value);
+    public void setUserAgentMode(UserAgentMode mode) {
+        SessionSettingsJni.get().setUserAgentMode(mode.getValue());
     }
 
-    public int getUserAgentMode() {
-        return SessionSettingsJni.get().getUserAgentMode();
+    public UserAgentMode getUserAgentMode() {
+        return UserAgentMode.fromValue(SessionSettingsJni.get().getUserAgentMode());
     }
 
     public void setUserAgentOverride(@Nullable String value) {

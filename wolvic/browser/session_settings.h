@@ -12,6 +12,7 @@
 namespace wolvic {
 
 enum class UserAgentMode {
+  // values have to be synchronized with SessionSettings.java
   kMobile = 0,
   kDesktop = 1,
   kMobileVR = 2,
