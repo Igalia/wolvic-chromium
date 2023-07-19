@@ -13,7 +13,8 @@ using base::android::ScopedJavaLocalRef;
 namespace wolvic {
 
 void JNI_SessionSettings_SetUserAgentMode(JNIEnv* env, jint value) {
-  SessionSettings::Get()->SetUserAgentMode(static_cast<UserAgentMode>(value));
+  SessionSettings::Get()->SetUserAgentMode(
+      static_cast<SessionSettings::UserAgentMode>(value));
 }
 
 jint JNI_SessionSettings_GetUserAgentMode(JNIEnv* env) {
@@ -42,4 +43,4 @@ ScopedJavaLocalRef<jstring> JNI_SessionSettings_GetUserAgentOverride(
   return base::android::ConvertUTF8ToJavaString(env, *userAgentOverride);
 }
 
-}  // namespace content
+}  // namespace wolvic

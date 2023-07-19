@@ -32,7 +32,7 @@ void SessionSettings::SetUserAgentMode(UserAgentMode value) {
   user_agent_mode_ = value;
 }
 
-UserAgentMode SessionSettings::GetUserAgentMode() {
+SessionSettings::UserAgentMode SessionSettings::GetUserAgentMode() {
   return user_agent_mode_;
 }
 

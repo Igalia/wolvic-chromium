@@ -11,16 +11,16 @@
 
 namespace wolvic {
 
-enum class UserAgentMode {
-  // values have to be synchronized with SessionSettings.java
-  kMobile = 0,
-  kDesktop = 1,
-  kMobileVR = 2,
-};
-
 // A singleton class holding all settings for the current session.
 class SessionSettings {
  public:
+  enum class UserAgentMode {
+    // values have to be synchronized with SessionSettings.java
+    kMobile = 0,
+    kDesktop = 1,
+    kMobileVR = 2,
+  };
+
   explicit SessionSettings();
   SessionSettings(const SessionSettings&) = delete;
   SessionSettings& operator=(const SessionSettings&) = delete;
