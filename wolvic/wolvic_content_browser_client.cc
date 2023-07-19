@@ -24,10 +24,10 @@ WolvicContentBrowserClient* g_instance = nullptr;
 // "Mozilla/5.0 (Linux; Android 8.0.0; Quest 2)", the result will be:
 // "Mozilla/5.0 (Linux; Android 8.0.0; Quest 2; Mobile VR)".
 void AddPlatformToUserAgent(const std::string& platform,
-                            std::string* user_agent) {
-  size_t pos = user_agent->find(')');
+                            std::string& user_agent) {
+  size_t pos = user_agent.find(')');
   if (pos != std::string::npos) {
-    user_agent->insert(pos, "; " + platform);
+    user_agent.insert(pos, "; " + platform);
   }
 }
 
@@ -88,10 +88,10 @@ std::string WolvicContentBrowserClient::GetUserAgent() {
   auto user_agent_mode = wolvic::SessionSettings::Get()->GetUserAgentMode();
   switch (user_agent_mode) {
     case UserAgentMode::kMobile:
-      AddPlatformToUserAgent("Mobile", &user_agent);
+      AddPlatformToUserAgent("Mobile", user_agent);
       break;
     case UserAgentMode::kMobileVR:
-      AddPlatformToUserAgent("Mobile VR", &user_agent);
+      AddPlatformToUserAgent("Mobile VR", user_agent);
       break;
     case UserAgentMode::kDesktop:
       // do nothing
