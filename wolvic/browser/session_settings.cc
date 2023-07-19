@@ -6,7 +6,7 @@
 
 #include "base/check.h"
 
-namespace content {
+namespace wolvic {
 
 namespace {
 
@@ -45,4 +45,4 @@ absl::optional<std::string> SessionSettings::GetUserAgentOverride() {
   return user_agent_override_;
 }
 
-}  // namespace content
+}  // namespace wolvic

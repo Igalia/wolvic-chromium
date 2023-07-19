@@ -10,7 +10,7 @@
 using base::android::JavaParamRef;
 using base::android::ScopedJavaLocalRef;
 
-namespace content {
+namespace wolvic {
 
 void JNI_SessionSettings_SetUserAgentMode(JNIEnv* env, jint value) {
   SessionSettings::Get()->SetUserAgentMode(static_cast<UserAgentMode>(value));

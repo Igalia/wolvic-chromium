@@ -77,20 +77,20 @@ XrIntegrationClient* WolvicContentBrowserClient::GetXrIntegrationClient() {
 #endif
 
 std::string WolvicContentBrowserClient::GetUserAgent() {
-  auto user_agent_override = SessionSettings::Get()->GetUserAgentOverride();
+  auto user_agent_override = wolvic::SessionSettings::Get()->GetUserAgentOverride();
   if (user_agent_override)
     return *user_agent_override;
 
   std::string user_agent = embedder_support::GetUserAgent();
-  auto user_agent_mode = SessionSettings::Get()->GetUserAgentMode();
+  auto user_agent_mode = wolvic::SessionSettings::Get()->GetUserAgentMode();
   switch (user_agent_mode) {
-    case UserAgentMode::kMobile:
+    case wolvic::UserAgentMode::kMobile:
       AddPlatformToUserAgent("Mobile", &user_agent);
       break;
-    case UserAgentMode::kMobileVR:
+    case wolvic::UserAgentMode::kMobileVR:
       AddPlatformToUserAgent("Mobile VR", &user_agent);
       break;
-    case UserAgentMode::kDesktop:
+    case wolvic::UserAgentMode::kDesktop:
       // do nothing
       break;
   }
@@ -99,13 +99,13 @@ std::string WolvicContentBrowserClient::GetUserAgent() {
 
 blink::UserAgentMetadata WolvicContentBrowserClient::GetUserAgentMetadata() {
   auto metadata = embedder_support::GetUserAgentMetadata();
-  auto user_agent_mode = SessionSettings::Get()->GetUserAgentMode();
+  auto user_agent_mode = wolvic::SessionSettings::Get()->GetUserAgentMode();
   switch (user_agent_mode) {
-    case UserAgentMode::kMobile:
-    case UserAgentMode::kMobileVR:
+    case wolvic::UserAgentMode::kMobile:
+    case wolvic::UserAgentMode::kMobileVR:
       metadata.mobile = true;
       break;
-    case UserAgentMode::kDesktop:
+    case wolvic::UserAgentMode::kDesktop:
       metadata.mobile = false;
       break;
   }

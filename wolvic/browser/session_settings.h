@@ -9,7 +9,7 @@
 
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
-namespace content {
+namespace wolvic {
 
 enum class UserAgentMode {
   kMobile = 0,
@@ -38,6 +38,6 @@ class SessionSettings {
   absl::optional<std::string> user_agent_override_;
 };
 
-}  // namespace content
+}  // namespace wolvic
 
 #endif  // WOLVIC_BROWSER_SESSION_SETTINGS_H_

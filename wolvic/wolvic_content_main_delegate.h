@@ -64,7 +64,7 @@ class WolvicContentMainDelegate : public ContentMainDelegate {
   std::unique_ptr<PrefService> CreateLocalState();
   void SetUpFieldTrials();
 
-  std::unique_ptr<SessionSettings> session_settings_;
+  std::unique_ptr<wolvic::SessionSettings> session_settings_;
   std::unique_ptr<PrefService> local_state_;
   std::unique_ptr<WolvicContentBrowserClient> browser_client_;
   std::unique_ptr<ContentGpuClient> gpu_client_;

@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import org.chromium.base.annotations.JNINamespace;
 import org.chromium.base.annotations.NativeMethods;
 
-@JNINamespace("content")
+@JNINamespace("wolvic")
 public class SessionSettings {
     public SessionSettings() {}
 

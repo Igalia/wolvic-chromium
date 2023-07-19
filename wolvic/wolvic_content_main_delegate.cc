@@ -154,7 +154,7 @@ base::flat_set<url::Origin> GetIsolatedContextOriginSetFromFlag() {
 }
 
 WolvicContentMainDelegate::WolvicContentMainDelegate()
-    : session_settings_(std::make_unique<SessionSettings>()) {}
+    : session_settings_(std::make_unique<wolvic::SessionSettings>()) {}
 
 WolvicContentMainDelegate::~WolvicContentMainDelegate() {}
 
