@@ -32,7 +32,7 @@ void SessionSettings::SetUserAgentMode(UserAgentMode value) {
   user_agent_mode_ = value;
 }
 
-SessionSettings::UserAgentMode SessionSettings::GetUserAgentMode() {
+SessionSettings::UserAgentMode SessionSettings::GetUserAgentMode() const {
   return user_agent_mode_;
 }
 
@@ -41,7 +41,7 @@ void SessionSettings::SetUserAgentOverride(
   user_agent_override_ = value;
 }
 
-absl::optional<std::string> SessionSettings::GetUserAgentOverride() {
+absl::optional<std::string> SessionSettings::GetUserAgentOverride() const {
   return user_agent_override_;
 }
 

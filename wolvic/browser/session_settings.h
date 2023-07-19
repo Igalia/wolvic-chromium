@@ -30,9 +30,9 @@ class SessionSettings {
   static SessionSettings* Get();
 
   void SetUserAgentMode(UserAgentMode value);
-  UserAgentMode GetUserAgentMode();
+  UserAgentMode GetUserAgentMode() const;
   void SetUserAgentOverride(const absl::optional<std::string>& value);
-  absl::optional<std::string> GetUserAgentOverride();
+  absl::optional<std::string> GetUserAgentOverride() const;
 
  private:
   UserAgentMode user_agent_mode_ = UserAgentMode::kMobile;
