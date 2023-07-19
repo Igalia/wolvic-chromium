@@ -24,11 +24,11 @@ public class SessionSettings {
             this.value = value;
         }
 
-        public int getValue() {
+        private int getValue() {
             return value;
         }
 
-        public static UserAgentMode fromValue(int value) {
+        private static UserAgentMode fromValue(int value) {
             return modes[value];
         }
     };
