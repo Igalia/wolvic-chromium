@@ -7,6 +7,8 @@
 #ifndef GFX_VR_EXTERNAL_API_H
 #define GFX_VR_EXTERNAL_API_H
 
+#define __ANDROID__ 1
+
 #define GFX_VR_EIGHTCC(c1, c2, c3, c4, c5, c6, c7, c8)                  \
   ((uint64_t)(c1) << 56 | (uint64_t)(c2) << 48 | (uint64_t)(c3) << 40 | \
    (uint64_t)(c4) << 32 | (uint64_t)(c5) << 24 | (uint64_t)(c6) << 16 | \
@@ -151,7 +153,6 @@ enum class VRControllerType : uint8_t {
   PicoGaze,
   PicoG2,
   PicoNeo2,
-  Pico4,
   _end
 };
 
@@ -427,11 +428,6 @@ struct VRControllerState {
   // to the controllers' pose in target ray space:
   // https://immersive-web.github.io/webxr/#dom-xrinputsource-targetrayspace
   VRPose targetRayPose;
-
-  // When Cap_Orientation is set in flags, targetRayOrientation corresponds
-  // to the orientation of the target ray (origin of the ray is determined by
-  // the controller position). Only used by the Chromium backend.
-  float targetRayOrientation[4];
 
   bool isPositionValid;
   bool isOrientationValid;
