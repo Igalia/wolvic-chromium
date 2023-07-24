@@ -49,12 +49,6 @@ gfx::Transform WvrPoseToTransform(const mozilla::gfx::VRPose* pose) {
   return gfx::Transform::Compose(decomp);
 }
 
-gfx::Transform WvrOrientationToTransform(const float orientation[4]) {
-  gfx::Quaternion quaternion(orientation[0], orientation[1], orientation[2],
-                             orientation[3]);
-  return gfx::Transform(quaternion);
-}
-
 device::mojom::VRPosePtr PoseToVRPosePtr(const mozilla::gfx::VRPose* p) {
   device::mojom::VRPosePtr pose = device::mojom::VRPose::New();
   pose->position = gfx::Point3F(p->position[0], p->position[1], p->position[2]);
@@ -470,7 +464,7 @@ WvrManager::GetInputSourceState() {
     if (supportsControllerFlag(
             mozilla::gfx::ControllerCapabilityFlags::Cap_Orientation)) {
       input_source->description->input_from_pointer =
-          WvrOrientationToTransform(controller.targetRayOrientation);
+          WvrPoseToTransform(&controller.targetRayPose);
     }
 
     if (supportsControllerFlag(
