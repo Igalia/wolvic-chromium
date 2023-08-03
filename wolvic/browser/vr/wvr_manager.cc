@@ -4,6 +4,7 @@
 
 #include "wolvic/browser/vr/wvr_manager.h"
 
+#include "device/vr/util/transform_utils.h"
 #include "components/webxr/mailbox_to_surface_bridge_impl.h"
 #include "ui/gfx/geometry/decomposed_transform.h"
 #include "ui/gfx/geometry/quaternion.h"
@@ -87,7 +88,7 @@ device::mojom::XRViewPtr CreateView(
     mozilla::gfx::VRDisplayState::Eye eye,
     const mozilla::gfx::VRDisplayState& display_state,
     const gfx::Size& maximum_size,
-    const mozilla::gfx::VRPose* pose) {
+    const device::mojom::VRPose* mojo_from_head_pose) {
   device::mojom::XRViewPtr view = device::mojom::XRView::New();
   if (eye == mozilla::gfx::VRDisplayState::Eye::Eye_Left) {
     view->eye = device::mojom::XREye::kLeft;
@@ -109,8 +110,9 @@ device::mojom::XRViewPtr CreateView(
   view->field_of_view->left_degrees = eye_fov.leftDegrees;
   view->field_of_view->right_degrees = eye_fov.rightDegrees;
 
-  if (pose) {
-    const gfx::Transform head_mat = WvrPoseToTransform(pose);
+  if (mojo_from_head_pose) {
+    gfx::Transform head_mat =
+        device::vr_utils::VrPoseToTransform(mojo_from_head_pose);
     gfx::Transform eye_from_head;
     WvrMatToTransform(display_state.eyeTransform[eye], &eye_from_head);
     gfx::Transform head_from_eye = eye_from_head.GetCheckedInverse();
@@ -122,7 +124,7 @@ device::mojom::XRViewPtr CreateView(
 
 std::vector<device::mojom::XRViewPtr> CreateViews(
     const mozilla::gfx::VRDisplayState& display_state,
-    const mozilla::gfx::VRPose* pose,
+    const device::mojom::VRPose* pose,
     gfx::Size maximum_size) {
   std::vector<device::mojom::XRViewPtr> views(2);
   views[0] = CreateView(mozilla::gfx::VRDisplayState::Eye::Eye_Left,
@@ -324,6 +326,59 @@ void WvrManager::OnWebXrFrameAvailable() {
 void WvrManager::OnWebXrTimedOut() {
   DCHECK(IsOnWvrThread());
   OnWebXrFrameAvailable();
+}
+
+device::mojom::VRPosePtr WvrManager::GetHeadPose(
+    gfx::Transform* head_mat_out) {
+  NOTIMPLEMENTED_LOG_ONCE();
+
+  // TODO(tiago): I'm quite sure that the head pose is wrong. Refer to
+  // GetVRPosePtrWithNeckModel for ideas.
+  mozilla::gfx::VRSystemState system_state = wvr_api_->get_system_state();
+  const mozilla::gfx::VRPose* pose = &system_state.sensorState.pose;
+  return PoseToVRPosePtr(pose);
+}
+
+void WvrManager::SendVSyncWithNewHeadPose() {
+  gfx::Transform head_mat;
+
+  device::mojom::VRPosePtr pose = GetHeadPose(&head_mat);
+  SendVSync(std::move(pose), head_mat);
+}
+
+void WvrManager::SendVSync(device::mojom::VRPosePtr pose,
+                           const gfx::Transform& head_mat) {
+  DCHECK(!get_frame_data_callback_.is_null());
+
+  device::mojom::XRFrameDataPtr frame_data = device::mojom::XRFrameData::New();
+
+  // The internal frame index is an uint8_t that generates a wrapping 0.255
+  // frame number. We store it in an int16_t to match mojo APIs, and to avoid
+  // it appearing as a char in debug logs.
+  frame_data->frame_id = webxr_.StartFrameAnimating();
+  DVLOG(2) << __func__ << " frame=" << frame_data->frame_id;
+
+  // Process all events. Check for ones we wish to react to.
+  // TODO(tiago): poll Wolvic for events and check for event recenter. See
+  // GvrSchedulerDelegate::SendVSync for further ideas.
+  frame_data->mojo_space_reset = true;
+
+  frame_data->views =
+      CreateViews(wvr_api_->get_system_state().displayState,
+                  pose.get(),
+                  graphics_->webxr_surface_size());
+
+  frame_data->input_state = GetInputSourceState();
+
+  frame_data->mojo_from_viewer = std::move(pose);
+
+  device::WebXrFrame* frame = webxr_.GetAnimatingFrame();
+  frame->head_pose = head_mat;
+  frame->time_pose = base::TimeTicks::Now();
+
+  frame_data->time_delta = pending_time_ - base::TimeTicks();
+
+  std::move(get_frame_data_callback_).Run(std::move(frame_data));
 }
 
 void WvrManager::ClosePresentationBindings() {
@@ -552,30 +607,9 @@ void WvrManager::GetFrameData(
 
 void WvrManager::WebXrTryStartAnimatingFrame() {
   DCHECK(IsOnWvrThread());
-
-  if (!WebVrCanAnimateFrame()) {
-    return;
+  if (WebVrCanAnimateFrame()) {
+    SendVSyncWithNewHeadPose();
   }
-
-  device::mojom::XRFrameDataPtr frame_data = device::mojom::XRFrameData::New();
-  mozilla::gfx::VRSystemState system_state = wvr_api_->get_system_state();
-  const mozilla::gfx::VRPose* pose = &system_state.sensorState.pose;
-
-  frame_data->frame_id = webxr_.StartFrameAnimating();
-  frame_data->views =
-      CreateViews(wvr_api_->get_system_state().displayState,
-                  pose,
-                  graphics_->webxr_surface_size());
-
-  frame_data->mojo_space_reset = true;
-
-  frame_data->input_state = GetInputSourceState();
-
-  frame_data->mojo_from_viewer = PoseToVRPosePtr(pose);
-
-  frame_data->time_delta = pending_time_ - base::TimeTicks();
-
-  std::move(get_frame_data_callback_).Run(std::move(frame_data));
 }
 
 void WvrManager::GetEnvironmentIntegrationProvider(

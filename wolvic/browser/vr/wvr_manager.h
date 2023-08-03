@@ -84,6 +84,11 @@ class WvrManager : public device::mojom::XRPresentationProvider,
       device::mojom::XRRuntimeSessionOptionsPtr options,
       base::OnceCallback<void(device::mojom::XRSessionPtr)> callback);
 
+  // Sends a GetFrameData response to the presentation client.
+  void SendVSyncWithNewHeadPose();
+  void SendVSync(device::mojom::VRPosePtr pose, const gfx::Transform& head_mat);
+  device::mojom::VRPosePtr GetHeadPose(gfx::Transform* head_mat_out);
+
   void DrawFrameSubmitNow();
 
   device::mojom::XRPresentationTransportOptionsPtr
