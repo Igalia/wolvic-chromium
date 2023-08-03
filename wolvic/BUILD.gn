@@ -33,6 +33,8 @@ shared_library("libcontent_native") {
     "browser/session_settings.h",
     "browser/session_settings_jni.cc",
     "browser/tab_jni.cc",
+    "browser/vsync_helper.cc",
+    "browser/vsync_helper.h",
     "browser/vr/moz_external_vr.h",
     "browser/vr/wolvic_xr_integration_client.cc",
     "browser/vr/wolvic_xr_integration_client.h",
@@ -195,6 +197,7 @@ generate_jni("jni_headers") {
     "java/org/chromium/wolvic/SessionSettings.java",
     "java/org/chromium/wolvic/Tab.java",
     "java/org/chromium/wolvic/VRManager.java",
+    "java/org/chromium/wolvic/VSyncHelper.java",
     "java/org/chromium/wolvic/WVRSurfaceTexture.java",
   ]
 }
@@ -205,6 +208,7 @@ android_library("wolvic_java") {
     "java/org/chromium/wolvic/Tab.java",
     "java/org/chromium/wolvic/TabCompositorView.java",
     "java/org/chromium/wolvic/VRManager.java",
+    "java/org/chromium/wolvic/VSyncHelper.java",
     "java/org/chromium/wolvic/WVRSurfaceTexture.java",
   ]
   annotation_processor_deps = [ "//base/android/jni_generator:jni_processor" ]
