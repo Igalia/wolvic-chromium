@@ -17,6 +17,7 @@
 #include "mojo/public/cpp/bindings/receiver.h"
 #include "mojo/public/cpp/bindings/remote.h"
 #include "wolvic/browser/vr/wvr_graphics_delegate.h"
+#include "wolvic/browser/vsync_helper.h"
 
 namespace device {
 class MailboxToSurfaceBridge;
@@ -84,6 +85,8 @@ class WvrManager : public device::mojom::XRPresentationProvider,
       device::mojom::XRRuntimeSessionOptionsPtr options,
       base::OnceCallback<void(device::mojom::XRSessionPtr)> callback);
 
+  void OnVSync(base::TimeTicks frame_time);
+
   // Sends a GetFrameData response to the presentation client.
   void SendVSyncWithNewHeadPose();
   void SendVSync(device::mojom::VRPosePtr pose, const gfx::Transform& head_mat);
@@ -125,9 +128,21 @@ class WvrManager : public device::mojom::XRPresentationProvider,
   void ClosePresentationBindings();
   void OnSubmitClientMojoConnectionError();
 
+  // Attributes tracking WebVR rAF/VSync animation loop state. Blink schedules
+  // a callback using the GetFrameData mojo call which is stored in
+  // get_frame_data_callback_. The callback is executed by SendVSync once
+  // WebVrCanAnimateFrame returns true.
+  //
+  // webxr_vsync_pending_ is set to true in OnVSync and false in SendVSync. It
+  // throttles animation to no faster than the VSync rate. The pending_time_ is
+  // updated in OnVSync and used as the rAF animation timer in SendVSync.
   base::TimeTicks pending_time_;
+  bool webxr_vsync_pending_ = false;
+
   device::mojom::XRFrameDataProvider::GetFrameDataCallback
       get_frame_data_callback_;
+
+  VSyncHelper vsync_helper_;
 
   // Communicate with the renderer.
   mojo::Receiver<device::mojom::XRPresentationProvider> presentation_receiver_{

@@ -145,7 +145,9 @@ bool ValidateRect(const gfx::RectF& bounds) {
 }  // namespace
 
 WvrManager::WvrManager(WvrApi *wvr_api, WvrGraphicsDelegate* graphics)
-    : wvr_api_(wvr_api),
+    : vsync_helper_(base::BindRepeating(&WvrManager::OnVSync,
+                                        base::Unretained(this))),
+      wvr_api_(wvr_api),
       graphics_(graphics),
       task_runner_(base::SingleThreadTaskRunner::GetCurrentDefault()) {}
 
@@ -349,6 +351,10 @@ void WvrManager::SendVSyncWithNewHeadPose() {
 void WvrManager::SendVSync(device::mojom::VRPosePtr pose,
                            const gfx::Transform& head_mat) {
   DCHECK(!get_frame_data_callback_.is_null());
+  // DCHECK(webxr_vsync_pending_);
+
+  // Mark the VSync as consumed.
+  webxr_vsync_pending_ = false;
 
   device::mojom::XRFrameDataPtr frame_data = device::mojom::XRFrameData::New();
 
@@ -566,6 +572,38 @@ void WvrManager::DrawFrameSubmitNow() {
   WebXrTryStartAnimatingFrame();
 }
 
+void WvrManager::OnVSync(base::TimeTicks frame_time) {
+  LOG(WARNING) << __func__
+               << " frame_time_us: "
+               << (frame_time - base::TimeTicks()).InMicrosecondsF();
+
+  vsync_helper_.RequestVSync();
+
+  webxr_vsync_pending_ = true;
+  pending_time_ = frame_time;
+  bool can_animate = WebVrCanAnimateFrame();
+
+  gfx::Transform head_mat;
+  device::mojom::VRPosePtr pose;
+  // We need a new head pose if we're about to start a new animating frame,
+  // or if we don't have a current animating frame from which we could
+  // get a recent one. We don't want to fall back to an identity transform
+  // since that would cause controller position glitches, especially for
+  // 6DoF headsets.
+  if (can_animate || !webxr_.HaveAnimatingFrame()) {
+    pose = GetHeadPose(&head_mat);
+  } else {
+    // Get the most-recently-used head pose from the current animating frame.
+    // (The condition above guarantees that we have one.)
+    head_mat = webxr_.GetAnimatingFrame()->head_pose;
+  }
+
+  // TODO(tiago): Process input here. See ProcessControllerInputForWebXr.
+
+  if (can_animate)
+    SendVSync(std::move(pose), head_mat);
+}
+
 bool WvrManager::WebVrCanAnimateFrame() {
   // If we already have a JS frame that's animating, don't send another one.
   // This check depends on the Renderer calling either SubmitFrame or
@@ -586,12 +624,24 @@ bool WvrManager::WebVrCanAnimateFrame() {
     return false;
   }
 
+  // if (!webxr_vsync_pending_) {
+  //   LOG(WARNING) << __func__ << ": waiting for pending_vsync (too fast)";
+  //   return false;
+  // }
+
   return true;
 }
 
 void WvrManager::GetFrameData(
     device::mojom::XRFrameDataRequestOptionsPtr options,
     device::mojom::XRFrameDataProvider::GetFrameDataCallback callback) {
+  static bool do_it_once = false;
+  if (!do_it_once) {
+    LOG(ERROR) << __func__ << ": OnVSync: do_it_once";
+    // OnVSync(base::TimeTicks::Now());
+    do_it_once = true;
+  }
+
   if (!get_frame_data_callback_.is_null()) {
     DLOG(WARNING) << ": previous get_frame_data_callback_ was not used yet";
     frame_data_receiver_.ReportBadMessage(
@@ -750,6 +800,10 @@ void WvrManager::ProcessWebVrFrameFromMailbox(
   // Notify the client that we're done with the mailbox so that the underlying
   // image is eligible for destruction.
   submit_client_->OnSubmitFrameTransferred(true);
+
+  // Unblock the next animating frame in case it was waiting for this
+  // one to start processing.
+  // WebXrTryStartAnimatingFrame();
 
   webxr_frame_timeout_closure_.Reset(
       base::BindOnce(&WvrManager::OnWebXrTimedOut, GetWeakPtr()));
