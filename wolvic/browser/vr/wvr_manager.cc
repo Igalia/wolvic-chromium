@@ -4,12 +4,13 @@
 
 #include "wolvic/browser/vr/wvr_manager.h"
 
+#include "base/task/bind_post_task.h"
 #include "components/webxr/mailbox_to_surface_bridge_impl.h"
 #include "ui/gfx/geometry/decomposed_transform.h"
 #include "ui/gfx/geometry/quaternion.h"
 #include "ui/gfx/geometry/transform.h"
+#include "ui/gl/gl_fence_android_native_fence_sync.h"
 #include "wolvic/browser/vr/wvr_api.h"
-
 
 namespace wolvic {
 
@@ -282,6 +283,7 @@ WvrManager::GetWebXrFrameTransportOptions(
       device::mojom::XRPresentationTransportOptions::New();
   // Only set boolean options that we need. Default is false, and we should be
   // able to safely ignore ones that our implementation doesn't care about.
+  transport_options->wait_for_gpu_fence = true;
   transport_options->wait_for_transfer_notification = true;
   transport_options->transport_method =
       device::mojom::XRPresentationTransportMethod::SUBMIT_AS_MAILBOX_HOLDER;
@@ -329,9 +331,6 @@ void WvrManager::OnWebXrTimedOut() {
 void WvrManager::ClosePresentationBindings() {
   if (!webxr_frame_timeout_closure_.IsCancelled())
     webxr_frame_timeout_closure_.Cancel();
-
-  if (!get_frame_data_callback_.is_null())
-    std::move(get_frame_data_callback_).Run(nullptr);
 
   submit_client_.reset();
   presentation_receiver_.reset();
@@ -491,6 +490,7 @@ WvrManager::GetInputSourceState() {
 }
 
 void WvrManager::DrawFrameSubmitNow(device::WebXrFrame* processing_frame) {
+  DCHECK(webxr_.HaveProcessingFrame());
   if (!SubmitFrameInternal(processing_frame->index))
     return;
 
@@ -502,12 +502,75 @@ void WvrManager::DrawFrameSubmitNow(device::WebXrFrame* processing_frame) {
   // Renderer is waiting for the previous frame to render, unblock it now.
   submit_client_->OnSubmitFrameRendered();
 
-  if (webxr_.HaveRenderingFrame())
-    webxr_.EndFrameRendering();
+  if (webxr_.HaveRenderingFrame()) {
+    // It's possible, though unlikely, that the previous rendering frame hasn't
+    // finished yet, for example if an unusually slow frame is followed by an
+    // unusually quick one. In that case, wait for that frame to finish
+    // rendering first before proceeding with this one. The state machine
+    // doesn't permit two frames to be in rendering state at once. (Also, adding
+    // even more GPU work in that condition would be counterproductive.)
+    DVLOG(2) << __func__ << ": wait for previous rendering frame to complete";
+    FinishRenderingFrame();
+  }
+
+  CHECK(!webxr_.HaveRenderingFrame());
+  CHECK(webxr_.HaveProcessingFrame());
+  auto* frame = webxr_.GetProcessingFrame();
+  frame->time_copied = base::TimeTicks::Now();
+
+  frame->render_completion_fence = nullptr;
   webxr_.TransitionFrameProcessingToRendering();
 
-  // See if we can animate a new WebXR frame.
-  WebXrTryStartAnimatingFrame();
+  // We finished processing a frame, unblock a potentially waiting next frame.
+  webxr_.TryDeferredProcessing();
+
+  FinishFrame(processing_frame->index);
+
+  if (submit_client_) {
+    // Create a local GpuFence and pass it to the Renderer via IPC.
+    std::unique_ptr<gl::GLFence> gl_fence = gl::GLFence::CreateForGpuFence();
+    std::unique_ptr<gfx::GpuFence> gpu_fence2 = gl_fence->GetGpuFence();
+    submit_client_->OnSubmitFrameGpuFence(
+        gpu_fence2->GetGpuFenceHandle().Clone());
+  }
+
+  if (pending_getframedata_) {
+    std::move(pending_getframedata_).Run();
+  }
+}
+
+void WvrManager::FinishRenderingFrame() {
+  DCHECK(webxr_.HaveRenderingFrame());
+  device::WebXrFrame* frame = webxr_.GetRenderingFrame();
+  DVLOG(3) << __func__ << ": frame=" << frame->index;
+
+  if (!frame->render_completion_fence) {
+    frame->render_completion_fence = gl::GLFence::CreateForGpuFence();
+  }
+
+  // ClearRenderingFrame
+
+  // Ensure that we're totally finished with the rendering frame, then collect
+  // stats and move the frame out of the rendering path.
+  DVLOG(2) << __func__ << ": client wait start";
+  frame->render_completion_fence->ClientWait();
+  DVLOG(2) << __func__ << ": client wait done";
+
+  webxr_.EndFrameRendering(frame);
+}
+
+void WvrManager::FinishFrame(int16_t frame_index) {
+  DVLOG(2) << __func__;
+
+  // TODO(tiago): Swap Buffers?
+
+  // If we have a rendering frame we need to create a GLFence
+  if (!webxr_.HaveRenderingFrame()) {
+    return;
+  }
+
+  device::WebXrFrame* frame = webxr_.GetRenderingFrame();
+  frame->render_completion_fence = gl::GLFence::CreateForGpuFence();
 }
 
 bool WvrManager::WebVrCanAnimateFrame() {
@@ -516,7 +579,12 @@ bool WvrManager::WebVrCanAnimateFrame() {
   // SubmitFrameMissing for each animated frame.
   if (webxr_.HaveAnimatingFrame()) {
     DVLOG(2) << __func__
-             << ": waiting for current animating frame to start processing";
+             << ": deferring, waiting for animating frame to start processing";
+    return false;
+  }
+
+  if (!webxr_.CanStartFrameAnimating()) {
+    DVLOG(2) << __func__ << ": deferring, no available frames in swapchain";
     return false;
   }
 
@@ -525,9 +593,24 @@ bool WvrManager::WebVrCanAnimateFrame() {
     return false;
   }
 
-  if (get_frame_data_callback_.is_null()) {
-    DVLOG(2) << __func__ << ": waiting for get_frame_data_callback_";
-    return false;
+  // If there are already two frames in flight, ensure that the rendering frame
+  // completes first before starting a new animating frame. It may be complete
+  // already, in that case just collect its statistics. (Don't wait if there's a
+  // rendering frame but no processing frame.)
+  if (webxr_.HaveProcessingFrame() && webxr_.HaveRenderingFrame()) {
+    DVLOG(2) << __func__ << ": waiting, have processing&rendering frames";
+    FinishRenderingFrame();
+  }
+
+  // If there is still a rendering frame (we didn't wait for it), check
+  // if it's complete. If yes, collect its statistics now so that the GPU
+  // time estimate for the upcoming frame is up to date.
+  if (webxr_.HaveRenderingFrame()) {
+    auto* frame = webxr_.GetRenderingFrame();
+    if (frame->render_completion_fence &&
+        frame->render_completion_fence->HasCompleted()) {
+      FinishRenderingFrame();
+    }
   }
 
   return true;
@@ -536,26 +619,21 @@ bool WvrManager::WebVrCanAnimateFrame() {
 void WvrManager::GetFrameData(
     device::mojom::XRFrameDataRequestOptionsPtr options,
     device::mojom::XRFrameDataProvider::GetFrameDataCallback callback) {
-  if (!get_frame_data_callback_.is_null()) {
-    DLOG(WARNING) << ": previous get_frame_data_callback_ was not used yet";
-    frame_data_receiver_.ReportBadMessage(
-        "Requested VSync before waiting for response to previous request.");
-    ClosePresentationBindings();
-    return;
-  }
-
-  pending_time_ = base::TimeTicks();
-  get_frame_data_callback_ = std::move(callback);
-  WebXrTryStartAnimatingFrame();
-}
-
-void WvrManager::WebXrTryStartAnimatingFrame() {
   DCHECK(IsOnWvrThread());
+  CHECK(!graphics_->webxr_surface_size().IsEmpty());
 
   if (!WebVrCanAnimateFrame()) {
-    return;
+    // We bind this as a post task so that whatever processing is run when we
+    // attempt to get new frame data can complete before the pending
+    // GetFrameData call actually happens.
+    pending_getframedata_ = base::BindPostTask(
+        task_runner_, base::BindOnce(&WvrManager::GetFrameData,
+                                      weak_ptr_factory_.GetWeakPtr(),
+                                      std::move(options), std::move(callback)));
+      return;
   }
 
+  base::TimeTicks now = base::TimeTicks::Now();
   device::mojom::XRFrameDataPtr frame_data = device::mojom::XRFrameData::New();
   mozilla::gfx::VRSystemState system_state = wvr_api_->get_system_state();
   const mozilla::gfx::VRPose* pose = &system_state.sensorState.pose;
@@ -572,9 +650,9 @@ void WvrManager::WebXrTryStartAnimatingFrame() {
 
   frame_data->mojo_from_viewer = PoseToVRPosePtr(pose);
 
-  frame_data->time_delta = pending_time_ - base::TimeTicks();
+  frame_data->time_delta = now - base::TimeTicks();
 
-  std::move(get_frame_data_callback_).Run(std::move(frame_data));
+  std::move(callback).Run(std::move(frame_data));
 }
 
 void WvrManager::GetEnvironmentIntegrationProvider(
@@ -599,9 +677,6 @@ bool WvrManager::SubmitFrameInternal(int16_t frame_index) {
   // Force exit WebXR before pushing the frame if the presenting generation is
   // changed by stopping presenting in Wolvic.
   if (wvr_api_->PresentingGenerationChanged()) {
-    if (!get_frame_data_callback_.is_null())
-      std::move(get_frame_data_callback_).Run(nullptr);
-
     if (exit_vr_callback_)
       std::move(exit_vr_callback_).Run();
     DLOG(WARNING) << __func__
@@ -648,6 +723,7 @@ bool WvrManager::IsSubmitFrameExpected(int16_t frame_index) {
 
 void WvrManager::SubmitFrameMissing(int16_t frame_index,
                                     const gpu::SyncToken& sync_token) {
+  DVLOG(2) << __func__ << ": frame=" << frame_index;
   if (!IsSubmitFrameExpected(frame_index))
     return;
 
@@ -660,6 +736,7 @@ void WvrManager::SubmitFrameMissing(int16_t frame_index,
   DVLOG(2) << __func__ << ": recycle unused animating frame";
   DCHECK(webxr_.HaveAnimatingFrame());
   webxr_.RecycleUnusedAnimatingFrame();
+  FinishFrame(frame_index);
 }
 
 void WvrManager::SubmitFrame(int16_t frame_index,
