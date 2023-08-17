@@ -18,6 +18,10 @@
 #include "mojo/public/cpp/bindings/remote.h"
 #include "wolvic/browser/vr/wvr_graphics_delegate.h"
 
+namespace gfx {
+class GpuFence;
+}  // namespace gfx
+
 namespace device {
 class MailboxToSurfaceBridge;
 }
@@ -118,6 +122,31 @@ class WvrManager : public device::mojom::XRPresentationProvider,
 
   void ClosePresentationBindings();
   void OnSubmitClientMojoConnectionError();
+
+  //  TODO(tiago): move these to their own class factory.
+  void ProcessFrameDrawnIntoTexture(const gpu::SyncToken& sync_token);
+  void CreateGpuFenceForSyncToken(
+      const gpu::SyncToken& sync_token,
+      base::OnceCallback<void(std::unique_ptr<gfx::GpuFence>)>);
+  void ServerWaitForGpuFence(std::unique_ptr<gfx::GpuFence> gpu_fence);
+  void OnWebXrTokenSignaled(std::unique_ptr<gfx::GpuFence> gpu_fence);
+
+  static bool UseSharedBuffer();
+  void DestroySharedBuffers(device::WebXrPresentationState* webxr);
+
+  // Only valid when using SharedBuffers, this ensures that the current
+  // animating frame is populated with texture information for a valid and
+  // correctly sized shared buffer backed by an EGL image. This returns a
+  // `gpu::MailboxHolder` pointing to this shared buffer suitable to transfer to
+  // another process to allow it to write to the shared buffer.
+  gpu::MailboxHolder TransferFrame(const gfx::Transform& uv_transform);
+
+  virtual std::unique_ptr<device::WebXrSharedBuffer> CreateBuffer();
+
+  // Returns true if the buffer was resized and its sync token updated.
+  bool ResizeSharedBuffer(device::WebXrSharedBuffer* buffer);
+
+  base::android::ScopedJavaGlobalRef<jobject> j_root_texture_;
 
   // Communicate with the renderer.
   mojo::Receiver<device::mojom::XRPresentationProvider> presentation_receiver_{

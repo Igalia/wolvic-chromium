@@ -12,6 +12,18 @@
 #include "ui/gl/gl_fence_android_native_fence_sync.h"
 #include "wolvic/browser/vr/wvr_api.h"
 
+// TODO(tiago)
+#include "gpu/command_buffer/common/shared_image_usage.h"
+#include "gpu/command_buffer/service/ahardwarebuffer_utils.h"
+#include "gpu/ipc/common/gpu_memory_buffer_impl_android_hardware_buffer.h"
+#include "ui/gfx/color_space.h"
+#include "ui/gl/gl_surface.h"
+#include "ui/gl/gl_bindings.h"
+#include "ui/gl/android/surface_texture.h"
+#include "ui/gl/android/scoped_a_native_window.h"
+#include "ui/gl/android/scoped_java_surface.h"
+// #include "wolvic/jni_headers/WVRSurfaceTexture_jni.h"
+
 namespace wolvic {
 
 namespace {
@@ -284,11 +296,21 @@ WvrManager::GetWebXrFrameTransportOptions(
   // Only set boolean options that we need. Default is false, and we should be
   // able to safely ignore ones that our implementation doesn't care about.
   transport_options->wait_for_gpu_fence = true;
-  transport_options->wait_for_transfer_notification = true;
-  transport_options->transport_method =
-      device::mojom::XRPresentationTransportMethod::SUBMIT_AS_MAILBOX_HOLDER;
-  transport_options->wait_for_render_notification = true;
+  if (UseSharedBuffer()) {
+    LOG(ERROR) << __func__
+               << ": UseSharedBuffer()=true, DRAW_INTO_TEXTURE_MAILBOX";
+    transport_options->transport_method =
+        device::mojom::XRPresentationTransportMethod::DRAW_INTO_TEXTURE_MAILBOX;
 
+    graphics_->set_webxr_use_shared_buffer_draw(true);
+  } else {
+    LOG(ERROR) << __func__
+               << ": UseSharedBuffer()=false, SUBMIT_AS_MAILBOX_HOLDER";
+    transport_options->wait_for_transfer_notification = true;
+    transport_options->transport_method =
+        device::mojom::XRPresentationTransportMethod::SUBMIT_AS_MAILBOX_HOLDER;
+    transport_options->wait_for_render_notification = true;
+  }
   return transport_options;
 }
 
@@ -562,7 +584,7 @@ void WvrManager::FinishRenderingFrame() {
 void WvrManager::FinishFrame(int16_t frame_index) {
   DVLOG(2) << __func__;
 
-  // TODO(tiago): Swap Buffers?
+  graphics_->SwapSurfaceBuffers();
 
   // If we have a rendering frame we need to create a GLFence
   if (!webxr_.HaveRenderingFrame()) {
@@ -648,6 +670,11 @@ void WvrManager::GetFrameData(
 
   frame_data->input_state = GetInputSourceState();
 
+  if (UseSharedBuffer()) {
+    // TODO(https://crbug.com/1429099): Do we need to pass a uv_transform?
+    frame_data->buffer_holder = TransferFrame(/*uv_transform=*/gfx::Transform());
+  }
+
   frame_data->mojo_from_viewer = PoseToVRPosePtr(pose);
 
   frame_data->time_delta = now - base::TimeTicks();
@@ -684,8 +711,18 @@ bool WvrManager::SubmitFrameInternal(int16_t frame_index) {
     return false;
   }
 
+  int texture_id;
+  if (UseSharedBuffer()) {
+    device::WebXrSharedBuffer* buffer =
+        webxr_.GetProcessingFrame()->shared_buffer.get();
+    CHECK(buffer);
+    texture_id = buffer->local_texture;
+  } else {
+    texture_id = graphics_->webxr_texture_handle();
+  }
+
   if (!wvr_api_->SyncState(frame_index,
-                           graphics_->webxr_texture_handle(),
+                           texture_id,
                            graphics_->webxr_surface_size().width(),
                            graphics_->webxr_surface_size().height())) {
     DLOG(WARNING) << __func__
@@ -727,11 +764,22 @@ void WvrManager::SubmitFrameMissing(int16_t frame_index,
   if (!IsSubmitFrameExpected(frame_index))
     return;
 
-  // Renderer didn't submit a frame. Wait for the sync token to ensure
-  // that any mailbox_bridge_ operations for the next frame happen after
-  // whatever drawing the Renderer may have done before exiting.
-  if (webxr_.mailbox_bridge_ready())
-    mailbox_bridge_->WaitSyncToken(sync_token);
+  if (UseSharedBuffer()) {
+    // Renderer didn't submit a frame. Stash the sync token in the mailbox
+    // holder, so that we use the dependency before destroying or recycling the
+    // shared image.
+    device::WebXrSharedBuffer* buffer =
+        webxr_.GetAnimatingFrame()->shared_buffer.get();
+    DCHECK(buffer);
+    DCHECK(sync_token.verified_flush());
+    buffer->mailbox_holder.sync_token = sync_token;
+  } else {
+    // Renderer didn't submit a frame. Wait for the sync token to ensure
+    // that any mailbox_bridge_ operations for the next frame happen after
+    // whatever drawing the Renderer may have done before exiting.
+    if (webxr_.mailbox_bridge_ready())
+      mailbox_bridge_->WaitSyncToken(sync_token);
+  }
 
   DVLOG(2) << __func__ << ": recycle unused animating frame";
   DCHECK(webxr_.HaveAnimatingFrame());
@@ -742,6 +790,8 @@ void WvrManager::SubmitFrameMissing(int16_t frame_index,
 void WvrManager::SubmitFrame(int16_t frame_index,
                              const gpu::MailboxHolder& mailbox,
                              base::TimeDelta time_waited) {
+  DCHECK(!UseSharedBuffer());
+
   if (!SubmitFrameCommon(frame_index, time_waited))
     return;
 
@@ -765,6 +815,8 @@ bool WvrManager::SubmitFrameCommon(int16_t frame_index,
 void WvrManager::ProcessWebVrFrameFromMailbox(
     int16_t frame_index,
     const gpu::MailboxHolder& mailbox) {
+  DCHECK(!UseSharedBuffer());
+
   // LIFECYCLE: pending_frames_ should be empty when there's no processing
   // frame. It gets one element here, and then is emptied again before leaving
   // processing state. Swapping twice on a Surface without calling
@@ -804,7 +856,187 @@ void WvrManager::ProcessWebVrFrameFromMailbox(
 void WvrManager::SubmitFrameDrawnIntoTexture(int16_t frame_index,
                                              const gpu::SyncToken& sync_token,
                                              base::TimeDelta time_waited) {
-  NOTREACHED() << "Not implemented.";
+  DCHECK(UseSharedBuffer());
+
+  if (!IsSubmitFrameExpected(frame_index)) {
+    return;
+  }
+
+  // Start processing the frame now if possible. If there's already a current
+  // processing frame, defer it until that frame calls TryDeferredProcessing.
+  webxr_.ProcessOrDefer(
+      base::BindOnce(&WvrManager::ProcessFrameDrawnIntoTexture,
+                     weak_ptr_factory_.GetWeakPtr(), sync_token));
+}
+
+void WvrManager::ProcessFrameDrawnIntoTexture(
+    const gpu::SyncToken& sync_token) {
+  CreateGpuFenceForSyncToken(
+      sync_token,
+      base::BindOnce(&WvrManager::OnWebXrTokenSignaled, GetWeakPtr()));
+}
+
+void WvrManager::CreateGpuFenceForSyncToken(
+    const gpu::SyncToken& sync_token,
+    base::OnceCallback<void(std::unique_ptr<gfx::GpuFence>)> callback) {
+  DCHECK(IsOnWvrThread());
+  DLOG(ERROR) << __func__;
+  mailbox_bridge_->CreateGpuFence(sync_token, std::move(callback));
+}
+
+void WvrManager::OnWebXrTokenSignaled(
+    std::unique_ptr<gfx::GpuFence> gpu_fence) {
+  DLOG(ERROR) << __func__;
+  ServerWaitForGpuFence(std::move(gpu_fence));
+  DrawFrameSubmitNow(webxr_.GetProcessingFrame());
+}
+
+void WvrManager::ServerWaitForGpuFence(
+    std::unique_ptr<gfx::GpuFence> gpu_fence) {
+  DCHECK(IsOnWvrThread());
+  std::unique_ptr<gl::GLFence> local_fence =
+      gl::GLFence::CreateFromGpuFence(*gpu_fence);
+  local_fence->ServerWait();
+}
+
+bool WvrManager::UseSharedBuffer() {
+  return true;
+}
+
+void WvrManager::DestroySharedBuffers(device::WebXrPresentationState* webxr) {
+  DLOG(ERROR) << __func__;
+  DCHECK(IsOnWvrThread());
+
+  if (!webxr || !UseSharedBuffer()) {
+    return;
+  }
+
+  std::vector<std::unique_ptr<device::WebXrSharedBuffer>> buffers =
+      webxr->TakeSharedBuffers();
+  for (auto& buffer : buffers) {
+    if (!buffer->mailbox_holder.mailbox.IsZero()) {
+      DCHECK(mailbox_bridge_);
+      DLOG(ERROR) << ": DestroySharedImage, mailbox="
+          << buffer->mailbox_holder.mailbox.ToDebugString();
+      // Note: the sync token in mailbox_holder may not be accurate. See
+      // comment in TransferFrame below.
+      mailbox_bridge_->DestroySharedImage(buffer->mailbox_holder);
+    }
+  }
+
+  // JNIEnv* env = base::android::AttachCurrentThread();
+  // Java_WVRSurfaceTexture_release(env, j_root_texture_);
+}
+
+std::unique_ptr<device::WebXrSharedBuffer> WvrManager::CreateBuffer() {
+  DCHECK(IsOnWvrThread());
+  std::unique_ptr<device::WebXrSharedBuffer> buffer =
+      std::make_unique<device::WebXrSharedBuffer>();
+  // Local resources
+  glGenTextures(1, &buffer->local_texture);
+
+  // TODO(tiago): XXX.
+  // JNIEnv* env = base::android::AttachCurrentThread();
+  // j_root_texture_ = Java_WVRSurfaceTexture_create(
+  //     env,
+  //     buffer->local_texture,
+  //     nullptr);
+
+  DLOG(ERROR) << __func__;
+  return buffer;
+}
+
+gpu::MailboxHolder WvrManager::TransferFrame(
+  const gfx::Transform& uv_transform) {
+  DCHECK(IsOnWvrThread());
+  CHECK(UseSharedBuffer());
+
+  if (!webxr_.GetAnimatingFrame()->shared_buffer) {
+    webxr_.GetAnimatingFrame()->shared_buffer = CreateBuffer();
+  }
+
+  device::WebXrSharedBuffer* shared_buffer =
+      webxr_.GetAnimatingFrame()->shared_buffer.get();
+  ResizeSharedBuffer(shared_buffer);
+  // Sanity check that the lazily created/resized buffer looks valid.
+  DCHECK(!shared_buffer->mailbox_holder.mailbox.IsZero());
+  DCHECK(shared_buffer->local_eglimage.is_valid());
+  DCHECK_EQ(shared_buffer->size, graphics_->webxr_surface_size());
+
+  // We don't need to create a sync token here. ResizeSharedBuffer has created
+  // one on reallocation, including initial buffer creation, and we can use
+  // that. The shared image interface internally uses its own command buffer ID
+  // and separate sync token release count namespace, and we must not overwrite
+  // that. We don't need a new sync token when reusing a correctly-sized buffer,
+  // it's only eligible for reuse after all reads from it are complete, meaning
+  // that it's transitioned through "processing" and "rendering" states back
+  // to "animating".
+  DCHECK(shared_buffer->mailbox_holder.sync_token.HasData());
+  DLOG(ERROR) << __func__ << ": SyncToken="
+              << shared_buffer->mailbox_holder.sync_token.ToDebugString();
+
+  return shared_buffer->mailbox_holder;
+}
+
+bool WvrManager::ResizeSharedBuffer(
+                                   device::WebXrSharedBuffer* buffer) {
+  CHECK(IsOnWvrThread());
+
+  const gfx::Size size = graphics_->webxr_surface_size();
+  if (buffer->size == size) {
+    return false;
+  }
+
+  // Unbind previous image (if any).
+  if (!buffer->mailbox_holder.mailbox.IsZero()) {
+    DLOG(ERROR) << ": DestroySharedImage, mailbox="
+             << buffer->mailbox_holder.mailbox.ToDebugString();
+    // Note: the sync token in mailbox_holder may not be accurate. See comment
+    // in TransferFrame below.
+    mailbox_bridge_->DestroySharedImage(buffer->mailbox_holder);
+  }
+
+  DLOG(ERROR) << __func__ << ": width=" << size.width()
+           << " height=" << size.height();
+  // Remove reference to previous image (if any).
+  buffer->local_eglimage.reset();
+
+  static constexpr gfx::BufferFormat format = gfx::BufferFormat::RGBA_8888;
+  static constexpr gfx::BufferUsage usage = gfx::BufferUsage::SCANOUT;
+
+  gfx::GpuMemoryBufferId kBufferId(webxr_.next_memory_buffer_id++);
+  buffer->gmb = gpu::GpuMemoryBufferImplAndroidHardwareBuffer::Create(
+      kBufferId, size, format, usage,
+      gpu::GpuMemoryBufferImpl::DestructionCallback());
+
+  uint32_t shared_image_usage = gpu::SHARED_IMAGE_USAGE_SCANOUT |
+                                gpu::SHARED_IMAGE_USAGE_DISPLAY_READ |
+                                gpu::SHARED_IMAGE_USAGE_GLES2;
+  buffer->mailbox_holder = mailbox_bridge_->CreateSharedImage(
+      buffer->gmb.get(), gfx::ColorSpace(), shared_image_usage);
+  DLOG(ERROR) << ": CreateSharedImage, mailbox="
+           << buffer->mailbox_holder.mailbox.ToDebugString() << ", SyncToken="
+           << buffer->mailbox_holder.sync_token.ToDebugString();
+
+  base::android::ScopedHardwareBufferHandle ahb =
+      buffer->gmb->CloneHandle().android_hardware_buffer;
+
+  // Create an EGLImage for the buffer.
+  auto egl_image = gpu::CreateEGLImageFromAHardwareBuffer(ahb.get());
+  if (!egl_image.is_valid()) {
+    DLOG(WARNING) << __func__ << ": ERROR: failed to initialize image!";
+    return false;
+  }
+
+  glBindTexture(GL_TEXTURE_EXTERNAL_OES, buffer->local_texture);
+  glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, egl_image.get());
+  buffer->local_eglimage = std::move(egl_image);
+
+  // Save size to avoid resize next time.
+  DLOG(ERROR) << __func__ << ": resized to " << size.width() << "x"
+           << size.height();
+  buffer->size = size;
+  return true;
 }
 
 void WvrManager::UpdateLayerBounds(int16_t frame_index,

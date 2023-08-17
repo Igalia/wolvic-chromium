@@ -44,12 +44,17 @@ class WvrGraphicsDelegate {
   bool CreateOrResizeWebXrSurface(
       const gfx::Size& size,
       base::RepeatingClosure on_webxr_frame_available);
+  void SwapSurfaceBuffers();
   gl::SurfaceTexture* webxr_surface_texture() {
     return webxr_surface_texture_.get();
+  }
+  void set_webxr_use_shared_buffer_draw(bool use) {
+    webxr_use_shared_buffer_draw_ = use;
   }
   gfx::Size get_screen_size() const { return screen_size_; }
   gfx::Size webxr_surface_size() const { return webxr_surface_size_; }
   int32_t webxr_texture_handle() const { return texture_handle_id_; }
+  scoped_refptr<gl::GLSurface> surface_;
 
  private:
   raw_ptr<device::WebXrPresentationState> webxr_;
@@ -62,8 +67,9 @@ class WvrGraphicsDelegate {
   base::android::ScopedJavaGlobalRef<jobject> j_surface_texture_;
 
   scoped_refptr<gl::GLContext> context_;
-  scoped_refptr<gl::GLSurface> surface_;
   scoped_refptr<gl::SurfaceTexture> webxr_surface_texture_;
+
+  bool webxr_use_shared_buffer_draw_ = false;
 
   gfx::Size screen_size_;
   gfx::Size webxr_surface_size_;

@@ -5,6 +5,8 @@
 #include "wolvic/browser/vr/wvr_graphics_delegate.h"
 
 #include "device/vr/android/web_xr_presentation_state.h"
+#include "ui/gl/android/scoped_a_native_window.h"
+#include "ui/gl/android/scoped_java_surface.h"
 #include "ui/gl/android/surface_texture.h"
 #include "ui/gl/gl_bindings.h"
 #include "ui/gl/gl_context.h"
@@ -41,11 +43,23 @@ base::WeakPtr<WvrGraphicsDelegate> WvrGraphicsDelegate::GetWeakPtr() {
   return weak_ptr_factory_.GetWeakPtr();
 }
 
+scoped_refptr<gl::SurfaceTexture> g_surface_texture;
+gl::ScopedANativeWindow g_widget;
+
 void WvrGraphicsDelegate::InitializeGl(const gfx::Size& frame_size,
                                        base::OnceClosure callback) {
   screen_size_ = frame_size;
 
   gl::init::DisableANGLE();
+
+  // TODO(tiago): Here we likely want to get the Frame Buffer as the
+  // drawing_widget instead. This looks like a big culprit for not getting
+  // shared buffer working.
+  uint texturee = 0;
+  g_surface_texture = gl::SurfaceTexture::Create(texturee);
+  g_widget = g_surface_texture->CreateSurface();
+  gfx::AcceleratedWidget drawing_widget = g_widget.a_native_window();
+  DCHECK(drawing_widget);
 
   gl::GLDisplay* display = nullptr;
   if (gl::GetGLImplementation() == gl::kGLImplementationNone) {
@@ -58,8 +72,8 @@ void WvrGraphicsDelegate::InitializeGl(const gfx::Size& frame_size,
     display = gl::GetDefaultDisplayEGL();
   }
 
-  surface_ = gl::init::CreateOffscreenGLSurface(display, gfx::Size());
-
+  // surface_ = gl::init::CreateOffscreenGLSurface(display, gfx::Size());
+  surface_ = gl::init::CreateViewGLSurface(display, drawing_widget);
   if (!surface_.get()) {
     LOG(ERROR) << "gl::init::CreateOffscreenGLSurface failed";
     return;
@@ -90,6 +104,11 @@ bool WvrGraphicsDelegate::CreateOrResizeWebXrSurface(
     const gfx::Size& size,
     base::RepeatingClosure on_webxr_frame_available) {
   DVLOG(2) << __func__ << ": size=" << size.width() << "x" << size.height();
+  if (webxr_use_shared_buffer_draw_) {
+    webxr_surface_size_ = size;
+    return true;
+  }
+
   if (!webxr_surface_texture_) {
     DCHECK(on_webxr_frame_available)
         << "A callback must be provided to create the surface texture";
@@ -97,11 +116,13 @@ bool WvrGraphicsDelegate::CreateOrResizeWebXrSurface(
     webxr_surface_texture_->SetFrameAvailableCallback(
         std::move(on_webxr_frame_available));
 
+    // TODO(tiago): why texture_handle_id_ exists instead simply using the
+    // actual texture id webvr_texture_id_ like changed below?
     DCHECK(!j_surface_texture_);
     JNIEnv* env = base::android::AttachCurrentThread();
     j_surface_texture_ = Java_WVRSurfaceTexture_create(
         env,
-        texture_handle_id_,
+        webvr_texture_id_,
         webxr_surface_texture_.get()->j_surface_texture());
   }
 
@@ -114,6 +135,11 @@ bool WvrGraphicsDelegate::CreateOrResizeWebXrSurface(
   webxr_surface_texture_->SetDefaultBufferSize(size.width(), size.height());
   webxr_surface_size_ = size;
   return true;
+}
+
+void WvrGraphicsDelegate::SwapSurfaceBuffers() {
+  DCHECK(surface_);
+  surface_->SwapBuffers(base::DoNothing(), gfx::FrameData());
 }
 
 }  // namespace wolvic
