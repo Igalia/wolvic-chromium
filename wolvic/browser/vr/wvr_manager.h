@@ -85,6 +85,8 @@ class WvrManager : public device::mojom::XRPresentationProvider,
       base::OnceCallback<void(device::mojom::XRSessionPtr)> callback);
 
   void DrawFrameSubmitNow(device::WebXrFrame* processing_frame);
+  void FinishFrame(int16_t frame_index);
+  void FinishRenderingFrame();
 
   device::mojom::XRPresentationTransportOptionsPtr
   GetWebXrFrameTransportOptions(
@@ -103,9 +105,6 @@ class WvrManager : public device::mojom::XRPresentationProvider,
   // yet (including deferred processing not having started yet), or timing
   // heuristics indicating that it should be retried later.
   bool WebVrCanAnimateFrame();
-  // Call this after state changes that could result in WebVrCanAnimateFrame
-  // becoming true.
-  void WebXrTryStartAnimatingFrame();
 
   // Shared logic for SubmitFrame variants, including sanity checks.
   // Returns true if OK to proceed.
@@ -119,10 +118,6 @@ class WvrManager : public device::mojom::XRPresentationProvider,
 
   void ClosePresentationBindings();
   void OnSubmitClientMojoConnectionError();
-
-  base::TimeTicks pending_time_;
-  device::mojom::XRFrameDataProvider::GetFrameDataCallback
-      get_frame_data_callback_;
 
   // Communicate with the renderer.
   mojo::Receiver<device::mojom::XRPresentationProvider> presentation_receiver_{
@@ -143,6 +138,13 @@ class WvrManager : public device::mojom::XRPresentationProvider,
   base::CancelableOnceClosure webxr_frame_timeout_closure_;
 
   base::OnceClosure exit_vr_callback_;
+
+  // This closure saves arguments for the next GetFrameData call, including a
+  // mojo callback. Must remain owned by WvrManager, don't pass it off
+  // to the task runner directly. Storing the mojo getframedata callback in a
+  // closure owned by the task runner would lead to inconsistent state on
+  // session shutdown. See https://crbug.com/1065572.
+  base::OnceClosure pending_getframedata_;
 
   base::WeakPtrFactory<WvrManager> weak_ptr_factory_{this};
 };
