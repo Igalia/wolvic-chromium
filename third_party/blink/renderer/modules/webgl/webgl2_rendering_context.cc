@@ -85,12 +85,11 @@ CanvasRenderingContext* WebGL2RenderingContext::Factory::Create(
   // compatible. This scenario occurs if the GPU process is not using the GPU
   // that the VR headset is plugged into. If the GPU process is restarted, the
   // WebGraphicsContext3DProvider must be created using the new one.
-  if (attribs.xr_compatible &&
-      !WebGLRenderingContextBase::MakeXrCompatibleSync(host)) {
-    // If xr compatibility is requested and we can't be xr compatible, return a
-    // context with the flag set to false.
-    attribs.xr_compatible = false;
-  }
+  //
+  // Wolvic: Ignore xr_compatible flag and try to force any context to be XR
+  // compatible. This is a workaround for the following bug in three.js
+  // https://github.com/mrdoob/three.js/issues/21126.
+  attribs.xr_compatible = WebGLRenderingContextBase::MakeXrCompatibleSync(host);
 
   Platform::GraphicsInfo graphics_info;
   std::unique_ptr<WebGraphicsContext3DProvider> context_provider(
