@@ -26,8 +26,9 @@ void IntSetToWorkarounds(const std::vector<int32_t>& enabled_workarounds,
         NOTIMPLEMENTED();
     }
   }
+  // TODO(wolvic-chromium): VR experiences are over 4k.
   if (workarounds->webgl_or_caps_max_texture_size_limit_4096) {
-    workarounds->webgl_or_caps_max_texture_size = 4096;
+    workarounds->webgl_or_caps_max_texture_size = 16384;
   } else if (workarounds->webgl_or_caps_max_texture_size_limit_8192) {
     workarounds->webgl_or_caps_max_texture_size = 8192;
   }
