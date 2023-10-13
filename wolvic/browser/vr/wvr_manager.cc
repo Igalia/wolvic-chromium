@@ -117,6 +117,9 @@ device::Gamepad ToGamepad(const mozilla::gfx::VRControllerState& controller) {
     }
   }
 
+  // TODO: Fill Gamepad data when there are no controllers, e.g during hand-tracking
+  //       https://www.w3.org/TR/webxr-gamepads-module-1/#gamepad-api-integration
+
   return builder.GetGamepad().value();
 }
 
