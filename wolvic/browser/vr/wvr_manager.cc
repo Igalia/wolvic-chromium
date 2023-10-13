@@ -604,15 +604,14 @@ void WvrManager::WebXrTryStartAnimatingFrame() {
     return;
   }
 
-  base::TimeTicks now = base::TimeTicks::Now();
   device::mojom::XRFrameDataPtr frame_data = device::mojom::XRFrameData::New();
-
   frame_data->frame_id = webxr_.StartFrameAnimating();
 
   // Process all events.
   if (!SubmitFrameInternal(frame_data->frame_id))
    return;
 
+  base::TimeTicks now = base::TimeTicks::Now();
   mozilla::gfx::VRSystemState system_state = wvr_api_->get_system_state();
   const mozilla::gfx::VRPose* pose = &system_state.sensorState.pose;
 
