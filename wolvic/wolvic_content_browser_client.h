@@ -49,12 +49,6 @@ class WolvicContentBrowserClient : public ContentBrowserClient {
 #endif
   void AppendExtraCommandLineSwitches(base::CommandLine* command_line,
                                       int child_process_id) override;
-  std::vector<std::unique_ptr<content::URLLoaderRequestInterceptor>>
-  WillCreateURLLoaderRequestInterceptors(
-      content::NavigationUIData* navigation_ui_data,
-      int frame_tree_node_id,
-      int64_t navigation_id,
-      scoped_refptr<base::SequencedTaskRunner> navigation_response_task_runner) override;
   void BindMediaServiceReceiver(RenderFrameHost *render_frame_host, mojo::GenericPendingReceiver receiver) override;
 
  private:
