@@ -98,25 +98,26 @@ public class PermissionManagerBridge {
                                            boolean isOffTheRecord,
                                            long inProgressRequestPtr) {
         PermissionManagerBridge bridge = get();
-        if (bridge.mDelegate != null) {
-            bridge.mDelegate.onPermissionRequest(
-                    Arrays.stream(permissionTypes)
-                            .mapToObj(PermissionType::fromValue)
-                            .toArray(PermissionType[]::new),
-                    url,
-                    isOffTheRecord,
-                    new PermissionCallback() {
-                        @Override
-                        public void onPermissionResult(PermissionStatus[] results) {
-                            PermissionManagerBridgeJni.get().onPermissionResult(
-                                    isOffTheRecord,
-                                    inProgressRequestPtr,
-                                    Arrays.stream(results)
-                                            .mapToInt(PermissionStatus::getValue)
-                                            .toArray());
-                        }
-                    });
+        if (bridge.mDelegate == null) {
+            return;
         }
+        bridge.mDelegate.onPermissionRequest(
+                Arrays.stream(permissionTypes)
+                        .mapToObj(PermissionType::fromValue)
+                        .toArray(PermissionType[]::new),
+                url,
+                isOffTheRecord,
+                new PermissionCallback() {
+                    @Override
+                    public void onPermissionResult(PermissionStatus[] results) {
+                        PermissionManagerBridgeJni.get().onPermissionResult(
+                                isOffTheRecord,
+                                inProgressRequestPtr,
+                                Arrays.stream(results)
+                                        .mapToInt(PermissionStatus::getValue)
+                                        .toArray());
+                    }
+        });
     }
 
     @NativeMethods
