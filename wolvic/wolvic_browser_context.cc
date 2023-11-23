@@ -98,6 +98,11 @@ void WolvicBrowserContext::FinishInitWhileIOAllowed() {
   SimpleKeyMap::GetInstance()->Associate(this, key_.get());
   CreateUserPrefService();
 
+  if (off_the_record_) {
+    // Do not need to initialize visitedlink_writer in off the record context.
+    return;
+  }
+
   visitedlink_writer_ =
       std::make_unique<visitedlink::VisitedLinkWriter>(this, this, true);
   visitedlink_writer_->Init();
@@ -257,6 +262,11 @@ WolvicBrowserContext* WolvicBrowserContext::FromWebContents(content::WebContents
 
 void
 WolvicBrowserContext::AddVisitedURLs(const std::vector<GURL>& urls) {
+  if (off_the_record_) {
+    // Do not save visited links in the off the record context.
+    return;
+  }
+
   DCHECK(visitedlink_writer_);
   visitedlink_writer_->AddURLs(urls);
 }
