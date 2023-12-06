@@ -7,6 +7,7 @@
 
 #include "base/memory/raw_ptr.h"
 #include "content/public/browser/content_browser_client.h"
+#include "wolvic/browser/dialogs/user_dialog_manager_bridge.h"
 #include "wolvic/browser/vr/wolvic_xr_integration_client.h"
 
 namespace content {
@@ -54,6 +55,7 @@ class WolvicContentBrowserClient : public ContentBrowserClient {
 #if BUILDFLAG(ENABLE_VR)
   std::unique_ptr<wolvic::WolvicXrIntegrationClient> xr_integration_client_;
 #endif
+  std::unique_ptr<wolvic::UserDialogManagerBridge> user_dialog_manager_bridge_;
 };
 
 }  // namespace content
