@@ -22,6 +22,7 @@ void WolvicJavascriptDialogManager::RunJavaScriptDialog(
     DialogClosedCallback callback,
     bool* did_suppress_message) {
   auto* bridge = UserDialogManagerBridge::GetInstance();
+  *did_suppress_message = false;
   switch (dialog_type) {
     case content::JavaScriptDialogType::JAVASCRIPT_DIALOG_TYPE_ALERT:
       bridge->ShowAlertDialog(message_text, std::move(callback));

@@ -5,6 +5,7 @@
 #ifndef WOLVIC_BROWSER_DIALOGS_USER_DIALOG_MANAGER_BRIDGE_H_
 #define WOLVIC_BROWSER_DIALOGS_USER_DIALOG_MANAGER_BRIDGE_H_
 
+#include "base/no_destructor.h"
 #include "content/public/browser/javascript_dialog_manager.h"
 
 namespace wolvic {
@@ -21,10 +22,8 @@ enum class DialogResult {
 // Implements a bridge used to forward dialog requests from Chromium to Wolvic.
 class UserDialogManagerBridge {
  public:
-  UserDialogManagerBridge();
   UserDialogManagerBridge(const UserDialogManagerBridge&) = delete;
   UserDialogManagerBridge& operator=(const UserDialogManagerBridge&) = delete;
-  ~UserDialogManagerBridge();
 
   static UserDialogManagerBridge* GetInstance();
 
@@ -41,6 +40,11 @@ class UserDialogManagerBridge {
                       const std::u16string& user_input);
 
  private:
+  UserDialogManagerBridge();
+  ~UserDialogManagerBridge();
+
+  friend base::NoDestructor<UserDialogManagerBridge>;
+
   std::vector<std::unique_ptr<InProgressDialog>> in_progress_dialogs_;
 };
 

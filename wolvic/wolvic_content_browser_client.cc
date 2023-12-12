@@ -63,9 +63,7 @@ void CreateMediaDrmStorage(
 }  // namespace
 
 WolvicContentBrowserClient::WolvicContentBrowserClient()
-    : browser_main_parts_(nullptr),
-      user_dialog_manager_bridge_(
-          std::make_unique<wolvic::UserDialogManagerBridge>()) {
+    : browser_main_parts_(nullptr) {
   DCHECK(!g_instance);
   g_instance = this;
 }

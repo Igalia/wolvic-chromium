@@ -19,10 +19,6 @@ using base::android::ScopedJavaGlobalRef;
 
 namespace wolvic {
 
-namespace {
-UserDialogManagerBridge* g_instance = nullptr;
-}
-
 struct InProgressDialog {
   explicit InProgressDialog(DialogCallback callback);
   InProgressDialog(const InProgressDialog&) = delete;
@@ -37,19 +33,13 @@ InProgressDialog::InProgressDialog(DialogCallback callback)
 
 InProgressDialog::~InProgressDialog() = default;
 
-UserDialogManagerBridge::UserDialogManagerBridge() {
-  DCHECK(!g_instance);
-  g_instance = this;
-}
+UserDialogManagerBridge::UserDialogManagerBridge() = default;
 
-UserDialogManagerBridge::~UserDialogManagerBridge() {
-  DCHECK(g_instance);
-  g_instance = nullptr;
-}
+UserDialogManagerBridge::~UserDialogManagerBridge() = default;
 
 UserDialogManagerBridge* UserDialogManagerBridge::GetInstance() {
-  DCHECK(g_instance);
-  return g_instance;
+  static base::NoDestructor<UserDialogManagerBridge> instance;
+  return instance.get();
 }
 
 void UserDialogManagerBridge::ShowAlertDialog(const std::u16string& message,

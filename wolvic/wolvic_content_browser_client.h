@@ -55,7 +55,6 @@ class WolvicContentBrowserClient : public ContentBrowserClient {
 #if BUILDFLAG(ENABLE_VR)
   std::unique_ptr<wolvic::WolvicXrIntegrationClient> xr_integration_client_;
 #endif
-  std::unique_ptr<wolvic::UserDialogManagerBridge> user_dialog_manager_bridge_;
 };
 
 }  // namespace content
