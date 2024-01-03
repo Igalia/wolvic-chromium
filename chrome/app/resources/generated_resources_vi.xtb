@@ -3551,7 +3551,7 @@ Bạn có thể quản lý các tùy chọn cài đặt của tài khoản này 
 <translation id="3784472333786002075">Cookie là tệp do các trang web tạo ra. Có 2 loại cookie: Cookie của bên thứ nhất do trang web mà bạn truy cập tạo ra. Trang web này hiển thị trên thanh địa chỉ. Cookie của bên thứ ba do các trang web khác tạo ra. Các trang web này sở hữu một số nội dung như quảng cáo hoặc hình ảnh mà bạn thấy trên trang web mình truy cập.</translation>
 <translation id="3785308913036335955">Hiển thị lối tắt cho ứng dụng</translation>
 <translation id="3785727820640310185">Đã lưu mật khẩu cho trang web này</translation>
-<translation id="3786834302860277193">Hiện đường gạch chân văn bản khi soạn</translation>
+<translation id="3786834302860277193">Hiện dấu gạch chân khi soạn văn bản</translation>
 <translation id="3787434344076711519">Đang chờ bản dịch</translation>
 <translation id="3788301286821743879">Không chạy được ứng dụng kiosk.</translation>
 <translation id="3788331399335602504">các tệp này</translation>
@@ -3965,7 +3965,7 @@ Thông tin này có thể bao gồm thông tin về phần mềm đã cài đặ
 <translation id="4097560579602855702">Tìm kiếm trên Google</translation>
 <translation id="4098667039111970300">Công cụ bút cảm ứng trên thanh công cụ</translation>
 <translation id="4099874310852108874">Đã xảy ra lỗi mạng.</translation>
-<translation id="4100020874626534113">Cho phép gán dấu phụ linh hoạt. Ví dụ: Bạn có thể nhập "anhs" hoặc "asnh" để nhập từ "ánh".</translation>
+<translation id="4100020874626534113">Cho phép gán dấu linh hoạt. Ví dụ: Bạn có thể nhập "anhs" hoặc "asnh" để gõ "ánh".</translation>
 <translation id="4100733287846229632">Dung lượng của thiết bị quá thấp</translation>
 <translation id="4100853287411968461">Giới hạn mới về thời gian sử dụng thiết bị</translation>
 <translation id="4101352914005291489">SSID ẩn</translation>
@@ -5296,7 +5296,7 @@ Nhấn tổ hợp phím Ctrl + Alt + Giảm độ sáng để thu nhỏ.</transl
 <translation id="5225463052809312700">Bật máy ảnh</translation>
 <translation id="5227679487546032910">Hình đại diện màu xanh két mặc định</translation>
 <translation id="5228579091201413441">Bật đồng bộ hóa</translation>
-<translation id="5230190638672215545">Nhập "uow" để nhập cụm "ươ"</translation>
+<translation id="5230190638672215545">Nhập "uow" để gõ "ươ"</translation>
 <translation id="5230516054153933099">Cửa sổ</translation>
 <translation id="5231427103154766313">Sử dụng điều khiển từ xa để dừng truyền.</translation>
 <translation id="5233019165164992427">Cổng gỡ lỗi NaCl</translation>
@@ -6424,7 +6424,7 @@ Các quyền bạn từng cấp cho trang web và ứng dụng có thể áp d�
 <translation id="6148576794665275391">Mở ngay</translation>
 <translation id="614890671148262506">Luôn cho phép trang web này gửi thông báo</translation>
 <translation id="6149015141270619212">Không thể kết nối Internet</translation>
-<translation id="6149791593592044995">Dùng vị trí dấu thanh hiện đại</translation>
+<translation id="6149791593592044995">Dùng cách đặt dấu thanh kiểu mới</translation>
 <translation id="6150116777338468525">Chất lượng âm thanh</translation>
 <translation id="6150278227694566734">Một số người liên hệ</translation>
 <translation id="6150961653851236686">Ngôn ngữ này được sử dụng khi dịch các trang</translation>
@@ -6735,7 +6735,7 @@ Các quyền bạn từng cấp cho trang web và ứng dụng có thể áp d�
 <translation id="6414618057231176439">Chọn phiên bản <ph name="VM_NAME" /> bạn muốn cài đặt.</translation>
 <translation id="641469293210305670">Cài đặt bản cập nhật và ứng dụng</translation>
 <translation id="6414878884710400018">Mở Tùy chọn hệ thống</translation>
-<translation id="6415757856498750027">Nhập "w" để nhập chữ "ư"</translation>
+<translation id="6415757856498750027">Nhập "w" để gõ "ư"</translation>
 <translation id="6415816101512323589">Bật tính năng khôi phục dữ liệu cục bộ để bảo vệ dữ liệu của bạn?</translation>
 <translation id="6415900369006735853">Kết nối Internet qua điện thoại</translation>
 <translation id="6416743254476733475">Hãy cho phép hoặc chặn trên máy tính của bạn.</translation>
@@ -7338,7 +7338,9 @@ Bạn còn # mật khẩu bị lộ nữa. Trình quản lý mật khẩu của 
 <translation id="6897972855231767338">Tìm hiểu thêm về việc duyệt web với tư cách khách</translation>
 <translation id="6898438890765871056">Mở thư mục OneDrive</translation>
 <translation id="6898440773573063262">Ứng dụng kiosk giờ đây có thể được định cấu hình để tự động chạy trên thiết bị này.</translation>
-<translation id="6899427698619335650">Cho phép gán dấu phụ linh hoạt. Ví dụ: Bạn có thể nhập "anh1" hoặc "a1nh" để nhập từ "ánh".</translation>
+<translation id="6899427698619335650">Cho phép gán dấu linh hoạt. Ví dụ: Bạn có thể nhập "anh1" hoặc "a1nh" để gõ "ánh".
+
+</translation>
 <translation id="6900284862687837908">Ứng dụng nền: <ph name="BACKGROUND_APP_URL" /></translation>
 <translation id="6900532703269623216">Chế độ bảo vệ nâng cao</translation>
 <translation id="6900651018461749106">Đăng nhập lại để cập nhật <ph name="USER_EMAIL" /></translation>
@@ -9422,7 +9424,7 @@ Giữ tệp khóa của bạn ở nơi an toàn. Bạn sẽ cần tệp khóa đ
 <translation id="8571213806525832805">4 tuần qua</translation>
 <translation id="8571687764447439720">Thêm vé Kerberos</translation>
 <translation id="8572052284359771939">Gửi URL của các trang web bạn truy cập và một mẫu nhỏ nội dung trang, nội dung tải xuống, hoạt động của tiện ích và thông tin hệ thống cho dịch vụ Duyệt web An toàn của Google để kiểm tra xem các nội dung đó có gây hại hay không.</translation>
-<translation id="8573111744706778015">Nhập "uo7" để nhập cụm "ươ"</translation>
+<translation id="8573111744706778015">Nhập "uo7" để gõ "ươ"</translation>
 <translation id="8574990355410201600">Luôn cho phép phát âm thanh trên <ph name="HOST" /></translation>
 <translation id="8575286410928791436">Giữ phím <ph name="KEY_EQUIVALENT" /> để thoát</translation>
 <translation id="8576359558126669548">Tìm hiểu thêm về việc chặn cookie của bên thứ ba ở Chế độ ẩn danh</translation>
