@@ -132,7 +132,7 @@ Bu ayarı değiştirmek için <ph name="BEGIN_LINK" />hesabınızdaki Chrome ver
 <translation id="1612730193129642006">Sekme Kılavuzunu Göster</translation>
 <translation id="1620510694547887537">Kamera</translation>
 <translation id="1622717322707146952">"Google Takvim'e ekle" veya "Apple Takvim'e ekle"yi seçin.</translation>
-<translation id="1626771852476987600">Yeniden Kullanılan <ph name="COUNT" /> Şifre</translation>
+<translation id="1626771852476987600">Yeniden kullanılan <ph name="COUNT" /> şifre</translation>
 <translation id="1641113438599504367">Güvenli Tarama</translation>
 <translation id="1644574205037202324">Geçmiş</translation>
 <translation id="165008673352427892">Yeni özellik</translation>
@@ -153,7 +153,7 @@ Bu ayarı değiştirmek için <ph name="BEGIN_LINK" />hesabınızdaki Chrome ver
 <translation id="1750238553597293878">Google Hesabınızdaki şifreleri kullanmaya devam edin</translation>
 <translation id="1752547299766512813">Şifreleri Kaydet</translation>
 <translation id="1753905327828125965">En Çok Ziyaret Edilenler</translation>
-<translation id="1757699834933698436">{count,plural, =1{{count} Zayıf Şifre}other{{count} Zayıf Şifre}}</translation>
+<translation id="1757699834933698436">{count,plural, =1{{count} zayıf şifre}other{{count} zayıf şifre}}</translation>
 <translation id="1767766085187034454">Google Çeviri</translation>
 <translation id="1789803444939621101">Tekrar hoş geldiniz <ph name="USER_NAME" /></translation>
 <translation id="1803264062614276815">Kart Sahibinin Adı</translation>
@@ -302,7 +302,7 @@ Siteler, örneğin reklamları kişiselleştirmek amacıyla farklı sitelerde ta
 <translation id="2577522251608256362">Mahalle</translation>
 <translation id="2578571896248130439">Web sayfasını gönder</translation>
 <translation id="2584132361465095047">Hesap Ekle…</translation>
-<translation id="2587010742985678408">{count,plural, =0{Güvenliği İhlal Edilmiş Şifre Yok}=1{Güvenliği İhlal Edilmiş {count} Şifre}other{Güvenliği İhlal Edilmiş {count} Şifre}}</translation>
+<translation id="2587010742985678408">{count,plural, =0{Güvenliği ihlal edilmiş şifre yok}=1{Güvenliği ihlal edilmiş {count} şifre}other{Güvenliği ihlal edilmiş {count} şifre}}</translation>
 <translation id="2595587704210555261">{COUNT,plural, =1{En çok kullandığınız sekmelere kolayca odaklanabilmeniz için, bir gün veya daha uzun süre kullanılmayan açık sekmeler Etkin Olmayan Sekmeler bölümüne taşınır. Bunu Ayarlar'dan istediğiniz zaman değiştirebilirsiniz.}other{En sık kullandığınız sekmelere kolayca odaklanabilmeniz için, {COUNT} gün veya daha uzun süre kullanılmayan açık sekmeler Etkin Olmayan Sekmeler bölümüne taşınır. Bunu Ayarlar'dan istediğiniz zaman değiştirebilirsiniz.}}</translation>
 <translation id="2600682495497606169">Site Çerezlerini Temizle</translation>
 <translation id="260378315836159338">Ekranın üst tarafındaki + simgesine dokunun.</translation>
@@ -779,7 +779,7 @@ Arama geçmişinizi silmek için arama motorunuzun bununla ilgili talimatların�
 <translation id="5126465625664020024">Oturum aç ve Senkronize et</translation>
 <translation id="5131062416352684089">Aile üyeleriniz artık Google Şifre Yöneticisi'nin yardımıyla <ph name="BEGIN_BOLD" /><ph name="WEBSITE" /><ph name="END_BOLD" /> sitesinde oturum açarken kullanıcı adınızı ve şifrenizi kullanabilir. <ph name="BEGIN_LINK" />Daha fazla bilgi<ph name="END_LINK" /></translation>
 <translation id="5132942445612118989">Tüm cihazlardaki şifreleriniz, geçmişiniz ve diğer öğelerinizi senkronize edin</translation>
-<translation id="5142890110117755815">{COUNT,plural, =1{{COUNT} Zayıf Şifre}other{{COUNT} Zayıf Şifre}}</translation>
+<translation id="5142890110117755815">{COUNT,plural, =1{{COUNT} zayıf şifre}other{{COUNT} zayıf şifre}}</translation>
 <translation id="5149188072385105201">Şifre Ekleyin..</translation>
 <translation id="5150492518600715772">Cihazıma Gönder</translation>
 <translation id="5157638238828697074">Bir hata oluştu. Uygulama açılamadı.</translation>
@@ -1005,7 +1005,7 @@ Handoff'un ayrıca, Ayarlar'ın Genel bölümünde de etkinleştirilmesi ve ciha
 <translation id="6321526113093607004">Yer İşaretlerine Ekle</translation>
 <translation id="6324669097367352121">Oturum açma ayarları</translation>
 <translation id="6328337032497818759">Menüyü Özelleştir</translation>
-<translation id="6331180460633101391">Yeniden Kullanılan <ph name="COUNT" /> Şifre</translation>
+<translation id="6331180460633101391">Yeniden kullanılan <ph name="COUNT" /> şifre</translation>
 <translation id="6337234675334993532">Şifreleme</translation>
 <translation id="633809752005859102">Bir şeyler gerçekten ters gitti. Bu sorun üzerinde çalışacağız.</translation>
 <translation id="6339793034470834130">Web Denetleyicisi'ni kullanmak için bilgisayarınızdan Safari'ye bir kablo kullanarak bağlanın ve Geliştirme menüsünden iPhone'unuza erişin. Bilgisayarınızda Safari ayarlarının Gelişmiş bölümünden geliştirme menüsünü etkinleştirebilirsiniz.</translation>
