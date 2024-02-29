@@ -25,6 +25,13 @@ import org.chromium.wolvic.WolvicWebContentsDelegate;
 
 @JNINamespace("wolvic")
 public class Tab {
+    // The following key and value must be set on a navigation entry extra data to let browser
+    // know that the entry must be skipped when going back/forward.
+    public static final String NAVIGATION_ENTRY_MARKED_AS_SKIPPED_KEY =
+            "NAVIGATION_ENTRY_MARKED_AS_SKIPPED_KEY";
+    public static final String NAVIGATION_ENTRY_MARKED_AS_SKIPPED_VALUE =
+            "NAVIGATION_ENTRY_MARKED_AS_SKIPPED_VALUE";
+
     private ActivityWindowAndroid mWindowAndroid;
     private ContentView mContentView;
     private NavigationController mNavigationController;
@@ -65,11 +72,15 @@ public class Tab {
     }
 
     public void goBack() {
-        mNavigationController.goBack();
+        if (mNavigationController != null) {
+          mNavigationController.goToOffset(findBackForwardNavigationOffset(/*goBack=*/true));
+        }
     }
 
     public void goForward() {
-        mNavigationController.goForward();
+        if (mNavigationController != null) {
+          mNavigationController.goToOffset(findBackForwardNavigationOffset(/*goBack=*/false));
+        }
     }
 
     public void reload() {
@@ -116,6 +127,30 @@ public class Tab {
         return ThreadUtils.runOnUiThreadBlockingNoException(() -> {
             return TabJni.get().getCurrentZoomLevel(mWebContents);
         });
+    }
+
+    private boolean isEntryMarkedAsSkipped(int entryIndex) {
+        return NAVIGATION_ENTRY_MARKED_AS_SKIPPED_VALUE.equals(
+                mNavigationController.getEntryExtraData(entryIndex, NAVIGATION_ENTRY_MARKED_AS_SKIPPED_KEY));
+    }
+
+    private int findBackForwardNavigationOffset(boolean goBack) {
+        if (mNavigationController == null) {
+            return 0;
+        }
+
+        int currentIndex = mNavigationController.getLastCommittedEntryIndex();
+        int offset = 0;
+        do {
+            offset += goBack ? -1 : 1;
+            // When the offset is out of bounds it means that we couldn't find a suitable entry
+            // to go to. Return 0 to stay at the current entry.
+            if (!mNavigationController.canGoToOffset(offset)) {
+                return 0;
+            }
+        } while (isEntryMarkedAsSkipped(currentIndex + offset));
+
+        return offset;
     }
 
     @NativeMethods
