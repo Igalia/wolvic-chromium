@@ -32,6 +32,8 @@ public class Tab {
     public static final String NAVIGATION_ENTRY_MARKED_AS_SKIPPED_VALUE =
             "NAVIGATION_ENTRY_MARKED_AS_SKIPPED_VALUE";
 
+    private enum NavigationDirection { BACK, FORWARD };
+
     private ActivityWindowAndroid mWindowAndroid;
     private ContentView mContentView;
     private NavigationController mNavigationController;
@@ -72,15 +74,11 @@ public class Tab {
     }
 
     public void goBack() {
-        if (mNavigationController != null) {
-          mNavigationController.goToOffset(findBackForwardNavigationOffset(/*goBack=*/true));
-        }
+        mNavigationController.goToOffset(findBackForwardNavigationOffset(NavigationDirection.BACK));
     }
 
     public void goForward() {
-        if (mNavigationController != null) {
-          mNavigationController.goToOffset(findBackForwardNavigationOffset(/*goBack=*/false));
-        }
+        mNavigationController.goToOffset(findBackForwardNavigationOffset(NavigationDirection.FORWARD));
     }
 
     public void reload() {
@@ -134,15 +132,11 @@ public class Tab {
                 mNavigationController.getEntryExtraData(entryIndex, NAVIGATION_ENTRY_MARKED_AS_SKIPPED_KEY));
     }
 
-    private int findBackForwardNavigationOffset(boolean goBack) {
-        if (mNavigationController == null) {
-            return 0;
-        }
-
+    private int findBackForwardNavigationOffset(NavigationDirection direction) {
         int currentIndex = mNavigationController.getLastCommittedEntryIndex();
         int offset = 0;
         do {
-            offset += goBack ? -1 : 1;
+            offset += direction == NavigationDirection.BACK ? -1 : 1;
             // When the offset is out of bounds it means that we couldn't find a suitable entry
             // to go to. Return 0 to stay at the current entry.
             if (!mNavigationController.canGoToOffset(offset)) {
