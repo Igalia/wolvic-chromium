@@ -2666,7 +2666,7 @@ You can manage this account’s settings by installing the Family Link app on yo
 <translation id="3001614333383288217">{COUNT,plural, =0{No keys customised}=1{1 customised key}other{{COUNT} customised keys}}</translation>
 <translation id="3001835006423291524">Touch the fingerprint sensor at the bottom right corner of your keyboard. Your fingerprint data is stored securely and never leaves your <ph name="DEVICE_TYPE" />.</translation>
 <translation id="3003144360685731741">Preferred networks</translation>
-<translation id="3003253259757197230">URLs you visit are sent to Google to predict what sites you might visit next and to show you additional info about the page you're visiting</translation>
+<translation id="3003253259757197230">URLs that you visit are sent to Google to predict what sites you might visit next and to show you additional info about the page that you're visiting</translation>
 <translation id="3003623123441819449">CSS Cache</translation>
 <translation id="3003828226041301643">Can't join the device to the domain. Check your account to make sure that you have privileges to add devices.</translation>
 <translation id="3003967365858406397">Your <ph name="PHONE_NAME" /> will create a private Wi-Fi connection.</translation>
@@ -3795,7 +3795,7 @@ This can include information about installed software, files, your browser and t
 <translation id="3905761538810670789">Repair app</translation>
 <translation id="3908288065506437185">Block third-party cookies in Incognito mode</translation>
 <translation id="3908501907586732282">Enable extension</translation>
-<translation id="3909701002594999354">Show All &amp;Controls</translation>
+<translation id="3909701002594999354">Show all &amp;controls</translation>
 <translation id="3909791450649380159">Cu&amp;t</translation>
 <translation id="39103738135459590">Activation code</translation>
 <translation id="3911824782900911339">New Tab page</translation>
@@ -7419,7 +7419,7 @@ You have # more compromised passwords. Google Password Manager recommends checki
 <translation id="6821439254917412979">Unpin <ph name="EXTENSION_NAME" /></translation>
 <translation id="6823174134746916417">Touchpad tap-to-click</translation>
 <translation id="6823429960180594870">Manage files as they download and open them when they're done</translation>
-<translation id="6823561724060793716">From the address bar, you can open page info to see additional info about the page you're visiting</translation>
+<translation id="6823561724060793716">From the address bar, you can open page info to see additional info about the page that you're visiting</translation>
 <translation id="6824564591481349393">Copy &amp;Email Address</translation>
 <translation id="6824584962142919697">&amp;Inspect elements</translation>
 <translation id="6824725898506587159">Manage languages</translation>
