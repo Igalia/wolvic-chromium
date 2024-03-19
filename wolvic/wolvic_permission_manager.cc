@@ -297,10 +297,7 @@ InProgressRequest* WolvicPermissionManager::FindInProgressRequest(
                                   request->description.permissions ==
                                       description.permissions;
                          });
-  if (it == in_progress_requests_.end()) {
-    return nullptr;
-  }
-  return it->get();
+  return it == in_progress_requests_.end() ?  nullptr : it->get();
 }
 
 static void JNI_PermissionManagerBridge_OnPermissionResult(
