@@ -1556,6 +1556,14 @@ void AutofillAgent::ShowSuggestions(
       is_popup_possibly_visible_ = true;
       return;
     }
+    // [Wolvic] Do not show suggestions if the field is not empty since we have
+    // a different UX.
+    if (trigger_source !=
+        AutofillSuggestionTriggerSource::kFormControlElementClicked ||
+        (!element.Value().IsEmpty() && element.UserHasEditedTheField())) {
+      return;
+    }
+
     bool password_agent_handled_request = TryShowPasswordSuggestions(
         input_element, IsPasswordsAutofillManuallyTriggered(trigger_source),
         password_request);
