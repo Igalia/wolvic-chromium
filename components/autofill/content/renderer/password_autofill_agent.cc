@@ -784,10 +784,14 @@ bool PasswordAutofillAgent::TextDidChangeInTextField(
     const WebInputElement& element,
     const SynchronousFormCache& form_cache) {
   CHECK(element);
+  // [Wolvic] Do not show suggestions whenever text filed is changed since
+  // we has a different UX.
+  return false;
+
   // Show the popup with the list of available usernames.
-  return ShowSuggestions(
-      element, AutofillSuggestionTriggerSource::kTextFieldValueChanged,
-      form_cache);
+  // return ShowSuggestions(
+  //     element, AutofillSuggestionTriggerSource::kTextFieldValueChanged,
+  //     form_cache);
 }
 
 // LINT.IfChange
