@@ -769,9 +769,14 @@ PasswordAutofillAgent::CreateRequestForChangeInTextField(
     const WebInputElement& element,
     const SynchronousFormCache& form_cache) {
   CHECK(element);
-  return CreateRequestForDomain(
-      element, AutofillSuggestionTriggerSource::kTextFieldValueChanged,
-      form_cache);
+  // [Wolvic] Do not show suggestions whenever text field is changed since
+  // we have a different UX.
+  return std::nullopt;
+
+  // Show the popup with the list of available usernames.
+  // return CreateRequestForDomain(
+  //     element, AutofillSuggestionTriggerSource::kTextFieldValueChanged,
+  //     form_cache);
 }
 
 // LINT.IfChange

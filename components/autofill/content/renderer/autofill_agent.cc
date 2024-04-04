@@ -1641,6 +1641,13 @@ void AutofillAgent::ShowSuggestions(
         return;
       }
     }
+    // [Wolvic] Do not show suggestions if the field is not empty since we have
+    // a different UX.
+    if (trigger_source !=
+        AutofillSuggestionTriggerSource::kFormControlElementClicked ||
+        (!element.Value().IsEmpty() && element.UserHasEditedTheField())) {
+      return;
+    }
   }
 
   if (config_.secure_context_required &&
