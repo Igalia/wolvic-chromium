@@ -784,9 +784,13 @@ void PasswordAutofillAgent::PasswordValueGatekeeper::ShowValue(
 bool PasswordAutofillAgent::TextDidChangeInTextField(
     const WebInputElement& element) {
   CHECK(element);
+  // [Wolvic] Do not show suggestions whenever text filed is changed since
+  // we has a different UX.
+  return false;
+
   // Show the popup with the list of available usernames.
-  return ShowSuggestions(element,
-                         AutofillSuggestionTriggerSource::kTextFieldDidChange);
+  // return ShowSuggestions(element,
+  //                        AutofillSuggestionTriggerSource::kTextFieldDidChange);
 }
 
 // LINT.IfChange
