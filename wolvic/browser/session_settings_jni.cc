@@ -5,6 +5,7 @@
 #include "wolvic/jni_headers/SessionSettings_jni.h"
 
 #include "base/android/jni_string.h"
+#include "content/public/browser/web_contents.h"
 #include "wolvic/browser/session_settings.h"
 
 using base::android::JavaParamRef;
@@ -46,6 +47,14 @@ ScopedJavaLocalRef<jstring> JNI_SessionSettings_GetUserAgentOverride(
 ScopedJavaLocalRef<jstring> JNI_SessionSettings_GetDefaultUserAgent(JNIEnv* env, jint value) {
   return base::android::ConvertUTF8ToJavaString(
       env, SessionSettings::Get()->GetDefaultUserAgent(static_cast<SessionSettings::UserAgentMode>(value)));
+}
+
+void JNI_SessionSettings_SetWebContents(JNIEnv* env,
+                                        const JavaParamRef<jobject>& web_contents) {
+  content::WebContents* contents =
+      content::WebContents::FromJavaWebContents(web_contents);
+  auto* settings = SessionSettings::Get();
+  settings->SetWebContents(contents);
 }
 
 }  // namespace wolvic

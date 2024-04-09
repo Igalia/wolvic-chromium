@@ -7,12 +7,13 @@
 
 #include <string>
 
+#include "content/public/browser/web_contents_observer.h"
 #include "third_party/abseil-cpp/absl/types/optional.h"
 
 namespace wolvic {
 
 // A singleton class holding all settings for the current session.
-class SessionSettings {
+class SessionSettings : public content::WebContentsObserver {
  public:
   enum class UserAgentMode {
     // values have to be synchronized with SessionSettings.java
@@ -24,7 +25,7 @@ class SessionSettings {
   explicit SessionSettings();
   SessionSettings(const SessionSettings&) = delete;
   SessionSettings& operator=(const SessionSettings&) = delete;
-  ~SessionSettings();
+  ~SessionSettings() override;
 
   // Returns the singleton instance.
   static SessionSettings* Get();
@@ -36,7 +37,14 @@ class SessionSettings {
 
   std::string GetDefaultUserAgent(UserAgentMode mode) const;
 
+  void SetWebContents(content::WebContents* web_contents);
+
  private:
+  // WebContentsObserver overrides:
+  void RenderViewHostChanged(content::RenderViewHost* old_host,
+                             content::RenderViewHost* new_host) override;
+  void WebContentsDestroyed() override;
+
   UserAgentMode user_agent_mode_ = UserAgentMode::kMobile;
   absl::optional<std::string> user_agent_override_;
 };
