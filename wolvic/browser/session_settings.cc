@@ -44,41 +44,8 @@ SessionSettings::UserAgentMode SessionSettings::GetUserAgentMode() const {
 }
 
 void SessionSettings::SetUserAgentOverride(
-    const absl::optional<std::string>& ua_string_override) {
-  user_agent_override_ = ua_string_override;
-  if (!ua_string_override || !web_contents()) {
-    return;
-  }
-
-  blink::UserAgentOverride override_ua_with_metadata;
-  override_ua_with_metadata.ua_string_override = *ua_string_override;
-
-  // If kUACHOverrideBlank is enabled, set user-agent metadata with the
-  // default blank value.
-  if (ua_string_override && !ua_string_override->empty() &&
-      base::FeatureList::IsEnabled(blink::features::kUACHOverrideBlank)) {
-    override_ua_with_metadata.ua_metadata_override =
-      blink::UserAgentMetadata();
-  }
-
-  // Generate user-agent client hints in the following three cases:
-  // 1. If user provide the user-agent metadata overrides, we use the
-  // override data to populate the user-agent client hints.
-  // 2. Otherwise, if override user-agent contains default user-agent, we
-  // use system default user-agent metadata to populate the user-agent
-  // client hints.
-  // 3. Finally, if the above two cases don't match, we only populate system
-  // default low-entropy client hints.
-  if (base::FeatureList::IsEnabled(blink::features::kUserAgentClientHint)) {
-    // TODO(jfernandez): Implement the user-agent client hints logic
-  }
-
-  // Set overridden user-agent and default client hints metadata if applied.
-  web_contents()->SetUserAgentOverride(override_ua_with_metadata, true);
-
-  content::NavigationController& controller = web_contents()->GetController();
-  for (int i = 0; i < controller.GetEntryCount(); ++i)
-    controller.GetEntryAtIndex(i)->SetIsOverridingUserAgent(true);
+    const absl::optional<std::string>& value) {
+  user_agent_override_ = value;
 }
 
 void SessionSettings::SetWebContents(content::WebContents* web_contents) {
@@ -117,13 +84,36 @@ void SessionSettings::RenderViewHostChanged(content::RenderViewHost* old_host,
                                             content::RenderViewHost* new_host) {
   DCHECK_EQ(new_host, web_contents()->GetRenderViewHost());
 
-  //UpdateEverything();
+  UpdateEverything();
 }
 
-void SessionSettings::WebContentsDestroyed() {
-  // The destroyed WebContents instance is removed from the Observers
-  // lists, calling to the ResetWebContents private functtion, which
-  // assignes nullptr to the web_contents_ attribute.
+void SessionSettings::UpdateEverything() {
+  UpdateUserAgent();
+}
+
+void SessionSettings::UpdateUserAgent() {
+  if (!user_agent_override_ || user_agent_override_->empty() || !web_contents()) {
+    return;
+  }
+
+  blink::UserAgentOverride override_ua_with_metadata;
+  override_ua_with_metadata.ua_string_override = *user_agent_override_;
+
+  // If kUACHOverrideBlank is enabled, set user-agent metadata with the
+  // default blank value.
+  if (base::FeatureList::IsEnabled(blink::features::kUACHOverrideBlank)) {
+    override_ua_with_metadata.ua_metadata_override =
+      blink::UserAgentMetadata();
+  }
+
+  // TODO(jfernandez): Implement the user-agent client hints logic, if enabled.
+
+  // Set overridden user-agent and default client hints metadata if applied.
+  web_contents()->SetUserAgentOverride(override_ua_with_metadata, true);
+
+  content::NavigationController& controller = web_contents()->GetController();
+  for (int i = 0; i < controller.GetEntryCount(); ++i)
+    controller.GetEntryAtIndex(i)->SetIsOverridingUserAgent(true);
 }
 
 }  // namespace wolvic

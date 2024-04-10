@@ -43,7 +43,9 @@ class SessionSettings : public content::WebContentsObserver {
   // WebContentsObserver overrides:
   void RenderViewHostChanged(content::RenderViewHost* old_host,
                              content::RenderViewHost* new_host) override;
-  void WebContentsDestroyed() override;
+
+  void UpdateEverything();
+  void UpdateUserAgent();
 
   UserAgentMode user_agent_mode_ = UserAgentMode::kMobile;
   absl::optional<std::string> user_agent_override_;
