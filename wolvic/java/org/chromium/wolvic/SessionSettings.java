@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import org.chromium.base.annotations.JNINamespace;
 import org.chromium.base.annotations.NativeMethods;
 
+import org.chromium.content_public.browser.WebContents;
+
 @JNINamespace("wolvic")
 public class SessionSettings {
     public enum UserAgentMode {
@@ -56,6 +58,12 @@ public class SessionSettings {
         return SessionSettingsJni.get().getDefaultUserAgent(mode.getValue());
     }
 
+    public void setWebContents(@Nullable WebContents webContents) {
+      if (webContents != null) {
+        SessionSettingsJni.get().setWebContents(webContents);
+      }
+    }
+
     @NativeMethods
     public interface Natives {
         void setUserAgentMode(int value);
@@ -64,5 +72,6 @@ public class SessionSettings {
         @Nullable
         String getUserAgentOverride();
         String getDefaultUserAgent(int value);
+        void setWebContents(@Nullable WebContents webContents);
     }
 }
