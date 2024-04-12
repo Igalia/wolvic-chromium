@@ -47,8 +47,8 @@ device::mojom::VRPosePtr PoseToVRPosePtr(const mozilla::gfx::VRPose* p) {
 
 gfx::Transform GetFloorTransform(const float matrix[16]) {
   gfx::Transform transform;
-  WvrMatToTransform(matrix, &transform);
-  return transform.GetCheckedInverse();
+  transform.Translate3d(0, -1 * matrix[13], 0);
+  return transform;
 }
 
 device::mojom::XRHandedness ToXRHandness(mozilla::gfx::ControllerHand hand) {
