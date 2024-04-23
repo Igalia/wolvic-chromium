@@ -8,6 +8,7 @@ import("//build/config/chrome_build.gni")
 import("//build/config/clang/clang.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("//build_overrides/build.gni")
+import("//third_party/jni_zero/jni_zero.gni")
 
 assert(
     is_android || is_robolectric,
