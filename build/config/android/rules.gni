@@ -7,6 +7,7 @@ import("//build/config/android/copy_ex.gni")
 import("//build/config/clang/clang.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("//build_overrides/build.gni")
+import("//third_party/jni_zero/jni_zero.gni")
 
 assert(
     is_android || is_robolectric,
