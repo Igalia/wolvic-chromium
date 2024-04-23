@@ -304,7 +304,6 @@ android_library("wolvic_java") {
   srcjar_deps = [ ":jni_headers" ]
   deps = [
     "//base:base_java",
-    "//base:jni_java",
     "//build/android:build_java",
     "//components/embedder_support/android:content_view_java",
     "//components/embedder_support/android:view_java",
@@ -312,6 +311,7 @@ android_library("wolvic_java") {
     "//components/url_formatter/android:url_formatter_java",
     "//content/public/android:content_full_java",
     "//third_party/androidx:androidx_annotation_annotation_java",
+    "//third_party/jni_zero:jni_zero_java",
     "//ui/android:ui_full_java",
     "//ui/android:ui_no_recycler_view_java",
     "//url:gurl_java",
@@ -325,7 +325,6 @@ dist_aar("content_aar") {
     ":wolvic_java",
     "//base",
     "//base:base_java",
-    "//base:jni_java",
     "//components/browser_ui/media/android:java",
     "//components/embedder_support/android:view_java",
     "//components/metrics:metrics_java",
@@ -337,6 +336,7 @@ dist_aar("content_aar") {
     "//services/data_decoder/public/cpp/android:safe_json_java",
     "//services/device/public/java:nfc_java",
     "//ui/android:ui_full_java",
+    "//third_party/jni_zero:jni_zero_java",
   ]
   native_libraries = [
     "$root_build_dir/libcontent_native.so",
