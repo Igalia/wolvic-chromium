@@ -6,6 +6,7 @@ import("//build/config/android/config.gni")
 import("//build/config/android/rules.gni")
 import("//device/vr/buildflags/buildflags.gni")
 import("//tools/grit/repack.gni")
+import("//third_party/jni_zero/jni_zero.gni")
 
 assert(enable_vr)
 assert(is_android)
@@ -262,7 +263,6 @@ static_library("content_native_lib") {
 
 generate_build_config_srcjar("build_config_gen") {
   use_final_fields = true
-  enable_multidex = true
 }
 
 jinja_template("content_manifest") {
@@ -372,7 +372,7 @@ dist_aar("content_aar") {
     "org/chromium/ui/touch_selection/*.class",
     "org/chromium/url/*.class",
     "org/chromium/wolvic/*.class",
-    "org/jni_zero/GEN_JNI.class",
+    "org/jni_zero/*.class",
   ]
   resource_included_patterns = [ "*/content/public/*" ]
   jar_excluded_patterns = [
