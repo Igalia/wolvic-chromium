@@ -35,6 +35,7 @@
 #include "components/variations/service/variations_field_trial_creator.h"
 #include "components/variations/service/variations_service.h"
 #include "components/variations/service/variations_service_client.h"
+#include "components/variations/variations_safe_seed_store_local_state.h"
 #include "components/variations/variations_switches.h"
 #include "content/app/android/content_main_android.h"
 #include "content/common/content_constants_internal.h"
@@ -371,7 +372,9 @@ void WolvicContentMainDelegate::SetUpFieldTrials() {
       &variations_service_client,
       std::make_unique<variations::VariationsSeedStore>(
           local_state_.get(), std::move(initial_seed),
-          /*signature_verification_enabled=*/true),
+          /*signature_verification_enabled=*/true,
+          std::make_unique<variations::VariationsSafeSeedStoreLocalState>(
+              local_state_.get())),
       variations::UIStringOverrider());
 
   variations::SafeSeedManager safe_seed_manager(local_state_.get());
