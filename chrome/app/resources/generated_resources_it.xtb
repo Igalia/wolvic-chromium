@@ -27,7 +27,7 @@
 <translation id="1015041505466489552">TrackPoint</translation>
 <translation id="1015318665228971643">Modifica nome cartella</translation>
 <translation id="1015578595646638936">{NUM_DAYS,plural, =1{Ultimo giorno per aggiornare questo <ph name="DEVICE_TYPE" />}other{Aggiorna questo <ph name="DEVICE_TYPE" /> entro {NUM_DAYS} giorni}}</translation>
-<translation id="1016566241875885511">Informazioni aggiuntive (facoltativo)</translation>
+<translation id="1016566241875885511">(Facoltativo) Informazioni aggiuntive</translation>
 <translation id="1017280919048282932">&amp;Aggiungi al dizionario</translation>
 <translation id="1018656279737460067">Operazione annullata</translation>
 <translation id="1022522674678746124">PowerPoint</translation>
@@ -507,7 +507,7 @@ Controlla le password in qualsiasi momento in <ph name="GOOGLE_PASSWORD_MANAGER"
 <translation id="139013308650923562">Autorizzati a utilizzare i caratteri installati sul tuo dispositivo</translation>
 <translation id="1390306150250850355">L'app <ph name="APP_TYPE" /> è preinstallata su <ph name="DEVICE_TYPE" /></translation>
 <translation id="1390548061267426325">Apri in una scheda normale</translation>
-<translation id="139085829239861233">oppure riprova più tardi</translation>
+<translation id="139085829239861233">oppure riprovare più tardi</translation>
 <translation id="1390907927270446471">L'utente <ph name="PROFILE_USERNAME" /> non è autorizzato a stampare dalla stampante <ph name="PRINTER_NAME" />. Contatta l'amministratore.</translation>
 <translation id="1392047138650695757">Dizionari utente</translation>
 <translation id="139300021892314943">Limita gli utenti che possono accedere</translation>
@@ -2333,7 +2333,7 @@ Puoi gestire le impostazioni dell'account installando l'app Family Link su quest
 <translation id="2730647855013151888">Includi tutte le informazioni personali</translation>
 <translation id="2730901670247399077">Suggerimenti di emoji</translation>
 <translation id="273093730430620027">Questa pagina sta accedendo alla webcam.</translation>
-<translation id="2730956943403103181">Non autorizzati a utilizzare lo strumento per ottimizzare V8</translation>
+<translation id="2730956943403103181">Non autorizzati a utilizzare lo strumento di ottimizzazione V8</translation>
 <translation id="2731392572903530958">R&amp;iapri finestra chiusa</translation>
 <translation id="2731700343119398978">Attendi...</translation>
 <translation id="2731971182069536520">La prossima volta che riavvii il dispositivo, il tuo amministratore eseguirà un aggiornamento una tantum che eliminerà i tuoi dati locali.</translation>
@@ -2888,7 +2888,7 @@ Puoi gestire le impostazioni dell'account installando l'app Family Link su quest
 <translation id="3159978855457658359">Modifica nome del dispositivo</translation>
 <translation id="3160928651883997588">Preferenze VPN</translation>
 <translation id="3161522574479303604">Tutte le lingue</translation>
-<translation id="3162766632262775911">Sempre autorizzati a utilizzare lo strumento per ottimizzare V8</translation>
+<translation id="3162766632262775911">Sempre autorizzati a utilizzare lo strumento di ottimizzazione V8</translation>
 <translation id="3162853326462195145">Account della scuola</translation>
 <translation id="3162899666601560689">I siti possono utilizzare i cookie per migliorare la tua esperienza di navigazione, ad esempio per mantenere l'accesso o memorizzare gli articoli aggiunti al carrello.</translation>
 <translation id="3163201441334626963">Prodotto sconosciuto <ph name="PRODUCT_ID" /> del fornitore <ph name="VENDOR_ID" /></translation>
@@ -3513,7 +3513,7 @@ Puoi gestire le impostazioni dell'account installando l'app Family Link su quest
 <translation id="3666196264870170605">Dump di debug delle NIC WiFi Intel</translation>
 <translation id="3670113805793654926">Dispositivi di qualsiasi fornitore</translation>
 <translation id="3670229581627177274">Attiva il Bluetooth</translation>
-<translation id="3670480940339182416">I siti possono utilizzare lo strumento per ottimizzare V8</translation>
+<translation id="3670480940339182416">I siti possono utilizzare lo strumento di ottimizzazione V8</translation>
 <translation id="3672681487849735243">È stato rilevato un errore di fabbrica</translation>
 <translation id="3673097791729989571">Accesso ospitato da <ph name="SAML_DOMAIN" /></translation>
 <translation id="3673622964532248901">Non disponi dell'autorizzazione per trasmettere a questo dispositivo.</translation>
@@ -7390,7 +7390,7 @@ Hai altre # password compromesse. Gestore delle password di Google consiglia di 
 <translation id="6716798148881908873">Connessione di rete interrotta. Controlla la connessione o prova a usare un'altra rete Wi-Fi.</translation>
 <translation id="6718849325281682232">I colori del tema di Chrome sono stati aggiornati per essere più adatti a tutti, sia in modalità Buio sia in modalità Luce</translation>
 <translation id="671928215901716392">Blocca schermo</translation>
-<translation id="6721744718589119342">Potremmo inviarti un'email per maggiori informazioni o aggiornamenti</translation>
+<translation id="6721744718589119342">Possiamo inviarti un'email per maggiori informazioni o aggiornamenti</translation>
 <translation id="6721972322305477112">&amp;File</translation>
 <translation id="672208878794563299">Questo sito chiederà di nuovo l'autorizzazione la prossima volta.</translation>
 <translation id="6722744767592605627">Puoi recuperare l'account <ph name="EMAIL" />, ma i dati locali verranno eliminati.</translation>
@@ -7503,7 +7503,7 @@ Hai altre # password compromesse. Gestore delle password di Google consiglia di 
 <translation id="6802031077390104172"><ph name="USAGE" /> (<ph name="OID" />)</translation>
 <translation id="6803766346203101854">Questo sito è autorizzato a salvare dati sul dispositivo.</translation>
 <translation id="680488281839478944">Deve esistere la VM "<ph name="DEFAULT_VM_NAME" />"</translation>
-<translation id="6805478749741295868">Si tratta di una funzionalità IA sperimentale che non funzionerà sempre correttamente.</translation>
+<translation id="6805478749741295868">Si tratta di una funzionalità di AI che non funzionerà sempre in modo corretto.</translation>
 <translation id="6805647936811177813">Accedi a <ph name="TOKEN_NAME" /> per importare il certificato client da <ph name="HOST_NAME" />.</translation>
 <translation id="680572642341004180">Attiva monitoraggio RLZ su <ph name="SHORT_PRODUCT_OS_NAME" />.</translation>
 <translation id="6806089545527108739">Non consentire, ma chiedi in seguito</translation>
@@ -8210,7 +8210,7 @@ Hai altre # password compromesse. Gestore delle password di Google consiglia di 
 <translation id="7365076891350562061">Dimensioni monitor</translation>
 <translation id="7365995455115045224"><ph name="WINDOW_TITLE" /> - Bloccata</translation>
 <translation id="7366316827772164604">Ricerca di dispositivi nelle vicinanze…</translation>
-<translation id="7366415735885268578">Aggiunta di un sito</translation>
+<translation id="7366415735885268578">Aggiungi un sito</translation>
 <translation id="7366909168761621528">Dati di navigazione</translation>
 <translation id="7367714965999718019">Generatore codice QR</translation>
 <translation id="7368695150573390554">I dati offline verranno eliminati</translation>
@@ -9253,7 +9253,7 @@ Conserva il file di chiave in un luogo sicuro. Ti servirà per creare nuove vers
 <translation id="8124313775439841391">ONC gestito</translation>
 <translation id="8125651784723647184">La condivisione delle password è gestita dall'amministratore</translation>
 <translation id="8129265306888404830">Per utilizzare il tuo indirizzo email della tua organizzazione (<ph name="EMAIL_DOMAIN" />), devi usare la registrazione aziendale. Se questo dispositivo è per uso personale, accedi con il tuo Account Google personale.</translation>
-<translation id="8130476996317833777">Non consentire ai siti di utilizzare lo strumento per ottimizzare V8</translation>
+<translation id="8130476996317833777">Non consentire ai siti di utilizzare lo strumento di ottimizzazione V8</translation>
 <translation id="813082847718468539">Visualizza informazioni sul sito</translation>
 <translation id="8131740175452115882">Conferma</translation>
 <translation id="8133297578569873332">Accettabile - FM</translation>
