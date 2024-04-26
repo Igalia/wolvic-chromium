@@ -8,8 +8,8 @@
       このポリシーを有効に設定するか未設定のままにした場合、<ph name="PRODUCT_NAME" /> 機能は有効になります。このポリシーを無効に設定した場合、この機能は使用できません。</translation>
 <translation id="1001728814256572466">このポリシーを False に設定した場合、Cookie とウェブサイトのローカル ストレージを含む <ph name="PRODUCT_NAME" /> データは、iCloud と iOS のローカル バックアップから除外されます。
           このポリシーを True に設定するか未設定のままにした場合、<ph name="PRODUCT_NAME" /> はバックアップに含められる可能性があります。</translation>
-<translation id="1002439864875515590">このポリシーが空の文字列または未設定の場合は、<ph name="PRODUCT_OS_NAME" /> でユーザーのログインフロー時にオートコンプリートのオプションは表示されません。
-      このポリシーがドメイン名を表す文字列に設定されている場合は、<ph name="PRODUCT_OS_NAME" /> でユーザーがログインする際にオートコンプリートのオプションが表示されます。この場合、ユーザーはドメイン名の部分を省略してユーザー名を入力するだけで済みます。また、ユーザーはこのドメイン名の部分を上書きすることもできます。
+<translation id="1002439864875515590">このポリシーが空の文字列または未設定の場合は、<ph name="PRODUCT_OS_NAME" /> でユーザーのログインフロー時に予測入力のオプションは表示されません。
+      このポリシーがドメイン名を表す文字列に設定されている場合は、<ph name="PRODUCT_OS_NAME" /> でユーザーがログインする際に予測入力のオプションが表示されます。この場合、ユーザーはドメイン名の部分を省略してユーザー名を入力するだけで済みます。また、ユーザーはこのドメイン名の部分を上書きすることもできます。
       ポリシーの値が有効なドメインではない場合、ポリシーは適用されません。</translation>
 <translation id="1002829167638728809">ドメインの信頼性に関するデータのレポートを許可する</translation>
 <translation id="1004590217607585595">ウェブアプリ管理設定</translation>
@@ -5262,7 +5262,7 @@ URI テンプレートに <ph name="HTTP_VARIABLE_DNS" /> 変数が含まれて�
 <translation id="5466596281866046569">アプリ情報を報告する</translation>
 <translation id="5467175549232776406">ポリシーテストのページへのアクセスを許可する</translation>
 <translation id="546726650689747237">画面が暗くなるまでの時間（AC 電源での実行時）</translation>
-<translation id="546830339470589966">新しい Kerberos チケットのドメインをオートコンプリートする</translation>
+<translation id="546830339470589966">新しい Kerberos チケットのドメインを予測入力する</translation>
 <translation id="5469143988693423708">ユーザーは Crostini を実行できます</translation>
 <translation id="5469825884154817306">これらのサイトの画像をブロックする</translation>
 <translation id="5470500958458209831">Ansible playbook をダウンロードすることのできる URL です。</translation>
@@ -6206,7 +6206,7 @@ Origin-Agent-Cluster HTTP ヘッダーは、オリジンキー エージェン�
 <translation id="6303278429164386663">EphemeralNetworkPolicies 機能の有効化を制御する</translation>
 <translation id="6305373713165475629">このポリシーでは、デフォルトのカラー印刷モードをオーバーライドできます。このモードを使用できない場合、このポリシーは無視されます。</translation>
 <translation id="6308109234708949641">ファミリー リンクのユーザーの場合は、このポリシーがスクリーンキャストの機能を有効にし、画面録画の作成および文字起こしと Google ドライブへのアップロードの権限をスクリーンキャストに付与します。ファミリー リンク以外のユーザーには影響しません。企業ユーザーに対する <ph name="PROJECTOR_ENABLED_POLICY_NAME" /> ポリシーには影響しません。このポリシーを有効にすると、ファミリー リンクのユーザーに対してスクリーンキャスト dogfood が有効になります。このポリシーを無効にすると、ファミリー リンクのユーザーに対してスクリーンキャスト dogfood が無効になります。このポリシーを設定しないと、ファミリー リンクのユーザーに対してスクリーンキャスト dogfood がデフォルトで無効になります。</translation>
-<translation id="6310223829319187614">ユーザーのログイン中にドメイン名のオートコンプリートを有効にする</translation>
+<translation id="6310223829319187614">ユーザーのログイン中にドメイン名の予測入力を有効にする</translation>
 <translation id="6310756730808079944">スクリーンキャストを有効にする</translation>
 <translation id="631081324835911099">ユーザーのメインのアカウントの認証トークンが無効になると、強制的にログアウトします。
         これにより、Google ウェブ プロパティの制限付きコンテンツにユーザーがアクセスしないよう保護できます。
@@ -8459,7 +8459,7 @@ Internet Explorer の <ph name="IEEM_SITELIST_POLICY" /> ポリシーについ�
 2 = この機能を無効にします。2 は、<ph name="GOOGLE_WORKSPACE_PRODUCT_NAME" /> で管理されている教育機関向けアカウントのデフォルト値です。
 
 生成 AI 機能のデータ処理について詳しくは、https://support.google.com/chrome/a?p=generative_ai_settings をご覧ください。</translation>
-<translation id="8238421250255592181">画面キーボードでオートコンプリートを有効にするかどうかを示すブール値のフラグです。</translation>
+<translation id="8238421250255592181">画面キーボードで予測入力を有効にするかどうかを示すブール値のフラグです。</translation>
 <translation id="8239109177194627162">クレジット カードの自動入力を無効にする</translation>
 <translation id="8239143983379015783">永続的な割り当てを強制的に有効にする</translation>
 <translation id="8244171102276095471">TLS の RC4 暗号スイートを有効にする</translation>
