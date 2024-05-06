@@ -34,8 +34,9 @@ public class ThreadUtils {
      * A helper object to ensure that interactions with a particular object only happens on a
      * particular thread.
      *
-     * <pre>Example:
-     *
+     * Example:
+     * <pre>
+     * {@code
      * class Foo {
      *     // Valid thread is set during construction here.
      *     private final ThreadChecker mThreadChecker = new ThreadChecker();
@@ -46,19 +47,8 @@ public class ThreadUtils {
      * }
      * </pre>
      */
-    // TODO(b/274802355): Add @CheckDiscard once R8 can remove this.
     public static class ThreadChecker {
-        private Thread mThread;
-
-        public ThreadChecker() {
-            resetThreadId();
-        }
-
-        public void resetThreadId() {
-            if (BuildConfig.ENABLE_ASSERTS) {
-                mThread = Thread.currentThread();
-            }
-        }
+        private final Thread mThread = Thread.currentThread();
 
         /**
          * Asserts that the current thread is the same as the one the ThreadChecker was constructed
