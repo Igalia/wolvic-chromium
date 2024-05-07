@@ -262,7 +262,10 @@ public class ExternalAuthUtils {
         // in.
         try (StrictModeContext ignored = StrictModeContext.allowDiskWrites();
                 TraceEvent e = TraceEvent.scoped("checkGooglePlayServicesAvailable")) {
-            return ChromiumPlayServicesAvailability.getGooglePlayServicesConnectionResult(context);
+            // TODO(wolvic): Use ChromiumPlayServicesAvailability once wolvic
+            // can properly depend on GMS services.
+            // return ChromiumPlayServicesAvailability.getGooglePlayServicesConnectionResult(context);
+            return 0;
         }
     }
 
