@@ -99,8 +99,8 @@ gpu::SurfaceHandle SkiaOutputSurfaceDependencyImpl::GetSurfaceHandle() {
   return surface_handle_;
 }
 
-scoped_refptr<gl::Presenter>
-SkiaOutputSurfaceDependencyImpl::CreatePresenter() {
+scoped_refptr<gl::Presenter> SkiaOutputSurfaceDependencyImpl::CreatePresenter(
+    base::WeakPtr<gpu::ImageTransportSurfaceDelegate> stub) {
   DCHECK(!IsOffscreen());
 
   auto context_state = GetSharedContextState();
@@ -115,20 +115,20 @@ SkiaOutputSurfaceDependencyImpl::CreatePresenter() {
 
   auto* dawn_context_provider = context_state->dawn_context_provider();
   auto presenter = gpu::ImageTransportSurface::CreatePresenter(
-      context_state->display(), GetGpuDriverBugWorkarounds(),
-      GetGpuFeatureInfo(), surface_handle_, dawn_context_provider);
+      context_state->display(), stub, surface_handle_, dawn_context_provider);
   if (presenter &&
-      base::FeatureList::IsEnabled(features::kHandleOverlaysSwapFailure)) {
-    presenter->SetNotifyNonSimpleOverlayFailure();
+      GetGpuDriverBugWorkarounds().rely_on_implicit_sync_for_swap_buffers) {
+    presenter->SetRelyOnImplicitSync();
   }
   return presenter;
 }
 
 scoped_refptr<gl::GLSurface> SkiaOutputSurfaceDependencyImpl::CreateGLSurface(
+    base::WeakPtr<gpu::ImageTransportSurfaceDelegate> stub,
     gl::GLSurfaceFormat format) {
   CHECK(!IsOffscreen());
   return gpu::ImageTransportSurface::CreateNativeGLSurface(
-      GetSharedContextState()->display(), surface_handle_, format);
+      GetSharedContextState()->display(), stub, surface_handle_, format);
 }
 
 #if BUILDFLAG(IS_ANDROID)

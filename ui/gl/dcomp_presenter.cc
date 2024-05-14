@@ -28,7 +28,7 @@ DCompPresenter::PendingFrame::~PendingFrame() = default;
 DCompPresenter::PendingFrame& DCompPresenter::PendingFrame::operator=(
     PendingFrame&& other) = default;
 
-DCompPresenter::DCompPresenter(const Settings& settings)
+DCompPresenter::DCompPresenter(GLDisplayEGL* display, const Settings& settings)
     : task_runner_(base::SingleThreadTaskRunner::GetCurrentDefault()),
       layer_tree_(std::make_unique<DCLayerTree>(
           settings.disable_nv12_dynamic_textures,
@@ -41,7 +41,7 @@ DCompPresenter::DCompPresenter(const Settings& settings)
   CHECK(DirectCompositionSupported());
   d3d11_device_ = GetDirectCompositionD3D11Device();
   child_window_.Initialize();
-  layer_tree_->Initialize(child_window_.window(), d3d11_device_);
+  layer_tree_->Initialize(window(), d3d11_device_);
 }
 
 DCompPresenter::~DCompPresenter() {
@@ -250,10 +250,6 @@ void DCompPresenter::EnqueuePendingFrame(PresentationCallback callback,
                            base::BindOnce(&DCompPresenter::CheckPendingFrames,
                                           weak_factory_.GetWeakPtr()));
   }
-}
-
-HWND DCompPresenter::GetWindow() const {
-  return child_window_.window();
 }
 
 }  // namespace gl

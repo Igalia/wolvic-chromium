@@ -239,7 +239,8 @@ class DCompPresenterTestBase : public testing::Test {
   scoped_refptr<DCompPresenter> CreateDCompPresenter() {
     DCompPresenter::Settings settings;
     scoped_refptr<DCompPresenter> presenter =
-        base::MakeRefCounted<DCompPresenter>(settings);
+        base::MakeRefCounted<DCompPresenter>(
+            gl::GLSurfaceEGL::GetGLDisplayEGL(), settings);
 
     // ImageTransportSurfaceDelegate::AddChildWindowToBrowser() is called in
     // production code here. However, to remove dependency from
