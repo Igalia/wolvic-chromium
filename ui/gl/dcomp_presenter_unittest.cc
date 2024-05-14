@@ -237,14 +237,15 @@ class DCompPresenterTest : public testing::Test {
   scoped_refptr<DCompPresenter> CreateDCompPresenter() {
     DCompPresenter::Settings settings;
     scoped_refptr<DCompPresenter> presenter =
-        base::MakeRefCounted<DCompPresenter>(settings);
+        base::MakeRefCounted<DCompPresenter>(
+            gl::GLSurfaceEGL::GetGLDisplayEGL(), settings);
 
     // ImageTransportSurfaceDelegate::AddChildWindowToBrowser() is called in
     // production code here. However, to remove dependency from
     // gpu/ipc/service/image_transport_presenter_delegate.h, here we directly
     // executes the required minimum code.
     if (parent_window_)
-      ::SetParent(presenter->GetWindow(), parent_window_);
+      ::SetParent(presenter->window(), parent_window_);
 
     return presenter;
   }
