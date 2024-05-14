@@ -195,6 +195,10 @@ FeatureInfo::FeatureInfo(
   InitializeBasicState(base::CommandLine::InitializedForCurrentProcess()
                            ? base::CommandLine::ForCurrentProcess()
                            : nullptr);
+  feature_flags_.android_surface_control =
+      gpu_feature_info
+          .status_values[GPU_FEATURE_TYPE_ANDROID_SURFACE_CONTROL] ==
+      gpu::kGpuFeatureStatusEnabled;
 
 #if BUILDFLAG(IS_CHROMEOS) || BUILDFLAG(IS_FUCHSIA)
   feature_flags_.chromium_image_ycbcr_420v = base::Contains(
