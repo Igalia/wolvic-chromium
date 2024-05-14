@@ -13,8 +13,7 @@ namespace gpu {
 // static
 scoped_refptr<gl::Presenter> ImageTransportSurface::CreatePresenter(
     gl::GLDisplay* display,
-    const GpuDriverBugWorkarounds& workarounds,
-    const GpuFeatureInfo& gpu_feature_info,
+    base::WeakPtr<ImageTransportSurfaceDelegate> delegate,
     SurfaceHandle surface_handle,
     DawnContextProvider* dawn_context_provider) {
   return nullptr;
@@ -23,6 +22,7 @@ scoped_refptr<gl::Presenter> ImageTransportSurface::CreatePresenter(
 // static
 scoped_refptr<gl::GLSurface> ImageTransportSurface::CreateNativeGLSurface(
     gl::GLDisplay* display,
+    base::WeakPtr<ImageTransportSurfaceDelegate> delegate,
     SurfaceHandle surface_handle,
     gl::GLSurfaceFormat format) {
   if (gl::GetGLImplementation() == gl::kGLImplementationMockGL ||

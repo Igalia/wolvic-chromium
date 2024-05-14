@@ -7,7 +7,9 @@
 #include <memory>
 
 #include "base/win/windows_version.h"
-#include "gpu/config/gpu_driver_bug_workarounds.h"
+#include "gpu/command_buffer/service/feature_info.h"
+#include "gpu/config/gpu_preferences.h"
+#include "gpu/ipc/service/image_transport_surface_delegate.h"
 #include "ui/gfx/native_widget_types.h"
 #include "ui/gl/dcomp_presenter.h"
 #include "ui/gl/direct_composition_support.h"
@@ -41,13 +43,17 @@ gl::DCompPresenter::Settings CreatDCompPresenterSettings(
 // static
 scoped_refptr<gl::Presenter> ImageTransportSurface::CreatePresenter(
     gl::GLDisplay* display,
-    const GpuDriverBugWorkarounds& workarounds,
-    const GpuFeatureInfo& gpu_feature_info,
+    base::WeakPtr<ImageTransportSurfaceDelegate> delegate,
     SurfaceHandle surface_handle,
     DawnContextProvider* dawn_context_provider) {
   if (gl::DirectCompositionSupported()) {
-    return base::MakeRefCounted<gl::DCompPresenter>(
-        CreatDCompPresenterSettings(workarounds));
+    auto settings =
+        CreatDCompPresenterSettings(delegate->GetFeatureInfo()->workarounds());
+    auto presenter = base::MakeRefCounted<gl::DCompPresenter>(
+        display->GetAs<gl::GLDisplayEGL>(), settings);
+
+    delegate->AddChildWindowToBrowser(presenter->window());
+    return presenter;
   }
 
   return nullptr;
@@ -56,6 +62,7 @@ scoped_refptr<gl::Presenter> ImageTransportSurface::CreatePresenter(
 // static
 scoped_refptr<gl::GLSurface> ImageTransportSurface::CreateNativeGLSurface(
     gl::GLDisplay* display,
+    base::WeakPtr<ImageTransportSurfaceDelegate> delegate,
     SurfaceHandle surface_handle,
     gl::GLSurfaceFormat format) {
   DCHECK_NE(surface_handle, kNullSurfaceHandle);

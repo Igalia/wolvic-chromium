@@ -192,7 +192,8 @@ gpu::ContextResult GLES2CommandBufferStub::Initialize(
     // offscreen.
     auto surface_format = default_surface->GetFormat();
     surface_ = ImageTransportSurface::CreateNativeGLSurface(
-        display, init_params.surface_handle, surface_format);
+        display, weak_ptr_factory_.GetWeakPtr(), init_params.surface_handle,
+        surface_format);
     // CreateNativeGLSurface should have already initialized the surface, and
     // doubly initializing it can lead to errors.
     if (!surface_) {
@@ -385,6 +386,21 @@ gpu::ContextResult GLES2CommandBufferStub::Initialize(
   manager->delegate()->DidCreateContextSuccessfully();
   initialized_ = true;
   return gpu::ContextResult::kSuccess;
+}
+
+#if BUILDFLAG(IS_WIN)
+void GLES2CommandBufferStub::AddChildWindowToBrowser(
+    gpu::SurfaceHandle child_window) {
+  NOTREACHED();
+}
+#endif
+
+const gles2::FeatureInfo* GLES2CommandBufferStub::GetFeatureInfo() const {
+  return context_group_->feature_info();
+}
+
+const GpuPreferences& GLES2CommandBufferStub::GetGpuPreferences() const {
+  return context_group_->gpu_preferences();
 }
 
 MemoryTracker* GLES2CommandBufferStub::GetContextGroupMemoryTracker() const {
