@@ -123,7 +123,6 @@ class WvrManager : public device::mojom::XRPresentationProvider,
   bool is_frame_submmitted_ = false;
   base::OnceClosure pending_getframedata_;
 
-  gfx::Transform floor_transform_;
   uint32_t stage_parameters_id_ = 0;
 
   // Communicate with the renderer.
