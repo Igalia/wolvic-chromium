@@ -202,22 +202,17 @@ static_library("content_native_lib") {
     "//services/network:network_service",
   ]
   deps = [
-    ":pak",
+   ":pak",
     "//base",
     "//base:base_static",
     "//base/third_party/dynamic_annotations",
     "//build:chromeos_buildflags",
     "//cc/base",
-    "//components/autofill/content/browser",
-    "//components/autofill/content/renderer",
     "//components/cdm/browser",
     "//components/cdm/common",
     "//components/cdm/renderer",
-    "//components/crash/content/browser",
-    "//components/crash/core/app",
     "//components/custom_handlers",
     "//components/embedder_support:browser_util",
-    "//components/embedder_support/android:view",
     "//components/embedder_support/android:web_contents_delegate",
     "//components/keyed_service/content",
     "//components/metrics",
@@ -227,23 +222,24 @@ static_library("content_native_lib") {
     "//components/network_session_configurator/common",
     "//components/origin_trials:browser",
     "//components/origin_trials:common",
-    "//components/password_manager/content/browser",
+    "//components/autofill/content/renderer",
+    "//components/autofill/content/browser",
     "//components/password_manager/content/common",
+    "//components/password_manager/content/browser",
     "//components/performance_manager",
     "//components/permissions",
     "//components/prefs",
-    "//components/strings",
     "//components/url_formatter",
     "//components/variations",
     "//components/variations/service",
     "//components/visitedlink/browser",
     "//components/visitedlink/renderer",
+    "//components/strings",
     "//components/web_cache/renderer",
     "//components/webxr:webxr",
     "//content:content_resources",
     "//content/common:main_frame_counter",
     "//content/public/common",
-    "//content/shell/android:content_shell_jni_headers",
     "//content/test:content_test_mojo_bindings",
     "//device/bluetooth",
     "//media",
@@ -259,7 +255,6 @@ static_library("content_native_lib") {
     "//third_party/blink/public:resources",
     "//third_party/blink/public/strings",
     "//third_party/blink/public/strings:accessibility_strings",
-    "//ui/android",
     "//ui/base",
     "//ui/base/clipboard",
     "//ui/base/ime/init",
@@ -268,6 +263,17 @@ static_library("content_native_lib") {
     "//ui/platform_window",
     "//url",
     "//v8",
+  ]
+
+  deps += [
+    "//components/crash/content/browser",
+    "//components/crash/core/app",
+  ]
+
+  deps += [
+    "//components/embedder_support/android:view",
+    "//content/shell/android:content_shell_jni_headers",
+    "//ui/android",
   ]
 }
 
