@@ -679,7 +679,7 @@
 <translation id="4514889972748124117">मज़बूत पासवर्ड का सुझाव पाएं...</translation>
 <translation id="4520798012560649652">गुप्त मोड के बारे में ज़्यादा जानें</translation>
 <translation id="452503091941773389">{count,plural, =1{{count} बुकमार्क}one{{count} बुकमार्क}other{{count} बुकमार्क}}</translation>
-<translation id="452750746583162491">सिंक किए गए डेटा की समीक्षा करें</translation>
+<translation id="452750746583162491">सिंक किए गए डेटा को कंट्रोल करें</translation>
 <translation id="4527660062930312477">आपका खाता मैनेज किया जा रहा है</translation>
 <translation id="4536418791685807335">फिर से प्रवेश करके देखें.</translation>
 <translation id="4539187448429948815">{count,plural, =1{सेव किया गया अपने-आप पूरा होने वाला {count} सुझाव, आपके कीबोर्ड के ऊपर उपलब्ध है.}one{सेव किया गया अपने-आप पूरा होने वाला {count} सुझाव, आपके कीबोर्ड के ऊपर उपलब्ध है.}other{सेव किए गए अपने-आप पूरे होने वाले {count} सुझाव, आपके कीबोर्ड के ऊपर उपलब्ध हैं.}}</translation>
@@ -1599,7 +1599,7 @@ Handoff को Settings के General अनुभाग में भी स�
 <translation id="894191600409472540">मज़बूत पासवर्ड बनाएं</translation>
 <translation id="8952559610785099500">पासवर्ड जोड़ें</translation>
 <translation id="8953046091948372197">आपको अपने पासवर्ड यहां दिखेंगे</translation>
-<translation id="895541991026785598">किसी समस्या की रिपोर्ट करें</translation>
+<translation id="895541991026785598">समस्या की शिकायत करें</translation>
 <translation id="8961757677053809960">क्या आपको चेतावनी खारिज करनी है?</translation>
 <translation id="8971545611707025079">फिर से जांचें</translation>
 <translation id="8974714402877957201">1. iPad की सेटिंग खोलें</translation>
