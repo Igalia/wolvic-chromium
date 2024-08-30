@@ -275,7 +275,7 @@
 <translation id="1476595624592550506">更改您的密码</translation>
 <translation id="1482879811280872320">骑车</translation>
 <translation id="1483493594462132177">发送</translation>
-<translation id="1484449009683144042">这是一款实验性 AI 写作辅助功能，并非始终准确无误。
+<translation id="1484449009683144042">这是一项实验性 AI 写作辅助功能，有时可能会出错。
     <ph name="BEGIN_LINK" />了解详情<ph name="END_LINK" /></translation>
 <translation id="1492194039220927094">政策推送：</translation>
 <translation id="1495677929897281669">返回到标签页</translation>
@@ -2175,7 +2175,7 @@
 <translation id="5161334686036120870">主题：</translation>
 <translation id="5161506081086828129">堆叠出纸器 9</translation>
 <translation id="5164798890604758545">输入文字</translation>
-<translation id="5164928537947209380">这款实验性 AI 工具并非始终准确无误。为了改进此工具，我们会将您的内容发送给 Google。
+<translation id="5164928537947209380">这款实验性 AI 工具有时可能会出错。为了改进此工具，我们会将您的内容发送给 Google。
     <ph name="BEGIN_LINK" />了解详情<ph name="END_LINK" /></translation>
 <translation id="516920405563544094">请输入 <ph name="CREDIT_CARD" /> 的银行卡验证码 (CVC)。待您确认后，系统便会将您 Google 账号中的信用卡详细信息共享给该网站。</translation>
 <translation id="5169827969064885044">您可能会无法再访问所属组织的账号，或被他人盗用身份信息。Chrome 建议您立即更改密码。</translation>
