@@ -203,6 +203,7 @@ void InstallablePaymentAppCrawler::OnPaymentMethodManifestParsed(
                 url::Origin::Create(web_app_manifest_url))
             .status != blink::mojom::PermissionStatus::GRANTED) {
       // Do not download the web app manifest if it is blocked.
+      VLOG(0) << "InstallablePaymentAppCrawler::OnPaymentMethodManifestParsed -- Payment Handler permission denied !";
       number_of_web_app_manifest_to_download_--;
       continue;
     }
