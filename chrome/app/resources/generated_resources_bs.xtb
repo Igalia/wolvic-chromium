@@ -355,7 +355,7 @@ Domena <ph name="DOMAIN" /> zahtijeva da pametna kartica ostane umetnuta.}}</tra
 <translation id="1240903469550363138">Da nastavite, <ph name="IDENTITY_PROVIDER_ETLD_PLUS_ONE" /> će dijeliti vaše ime i prezime, adresu e-pošte, adresu i sliku profila s ovom web lokacijom. Pogledajte <ph name="BEGIN_LINK1" />pravila privatnosti<ph name="END_LINK1" /> i <ph name="BEGIN_LINK2" />uslove korištenja usluge<ph name="END_LINK2" /> ove web lokacije.</translation>
 <translation id="1241066500170667906">Odaberite stanje eksperimenta za eksperiment <ph name="EXPERIMENT_NAME" /></translation>
 <translation id="124116460088058876">Više jezika</translation>
-<translation id="1241381048229838873">Pokaži sve oznake</translation>
+<translation id="1241381048229838873">Prikaži sve oznake</translation>
 <translation id="1242633766021457174"><ph name="THIRD_PARTY_TOOL_NAME" /> želi poništiti vaše postavke.</translation>
 <translation id="1243002225871118300">Promjena veličine prikaza i teksta</translation>
 <translation id="1243314992276662751">Otpremi</translation>

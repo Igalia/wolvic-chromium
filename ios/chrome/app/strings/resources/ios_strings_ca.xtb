@@ -62,7 +62,7 @@
 <translation id="1305822519689023679">Per assegurar-te que puguis fer servir sempre les contrasenyes del teu Compte de Google, verifica la teva identitat.</translation>
 <translation id="1310362642333088424">Per baixar fitxers, fotos i més, necessites espai d'emmagatzematge addicional.</translation>
 <translation id="1312721752506309252">La protecció millorada està activada</translation>
-<translation id="1321993286294231467">S'ha produït un error en desar la imatge.</translation>
+<translation id="1321993286294231467">Hi ha hagut un error en desar la imatge.</translation>
 <translation id="1322735045095424339">La teva organització requereix el mode d'incògnit</translation>
 <translation id="1323735185997015385">Suprimeix</translation>
 <translation id="132683371494960526">Feu doble toc per canviar la carpeta principal.</translation>
@@ -814,7 +814,7 @@ Consulta les instruccions del teu motor de cerca per suprimir l'historial de cer
 <translation id="4930714375720679147">Activa</translation>
 <translation id="4937410517508563815">Desa les contrasenyes al compte</translation>
 <translation id="4938338714234463591">Això et permetrà fer servir la veu amb determinades funcions als llocs web.</translation>
-<translation id="4941089862236492464">S'ha produït un problema en compartir el vostre element.</translation>
+<translation id="4941089862236492464">Hi ha hagut un problema en compartir el vostre element.</translation>
 <translation id="4942382218961352935">Comprovada ara mateix</translation>
 <translation id="4944543191714094452">Cerca a la pàgina…</translation>
 <translation id="4945756290001680296">Accedeix a la configuració de la contrasenya</translation>
@@ -977,7 +977,7 @@ Handoff també ha d'estar activat a la secció General de Configuració, i els v
 <translation id="5718049162805123412">Hauries de canviar-les ara</translation>
 <translation id="5724941645893276623">Per navegar pel web de manera privada, obre una pestanya nova</translation>
 <translation id="5728072125198221967">Serveis de Google enllaçats</translation>
-<translation id="5728700505257787410">S'ha produït un problema en iniciar la sessió al vostre compte.</translation>
+<translation id="5728700505257787410">Hi ha hagut un problema en iniciar la sessió al vostre compte.</translation>
 <translation id="5737974891429562743">Actualitza les dades d'inici de sessió del compte per iniciar la sincronització.</translation>
 <translation id="5738385766833540397">Gestiona com reps les alertes de baixada de preu dels productes que segueixes</translation>
 <translation id="5738887413654608789">Això et permet detectar pàgines web rellevants del teu entorn.</translation>
@@ -1068,7 +1068,7 @@ Handoff també ha d'estar activat a la secció General de Configuració, i els v
 <translation id="6152406514676263192">Sincronitza per obtenir el contingut més rellevant en funció dels teus interessos.</translation>
 <translation id="6159839020698489198">opcional</translation>
 <translation id="6160780110287872296">Vols baixar el fitxer?</translation>
-<translation id="6170450281939467187">S'ha produït un error en traduir el contingut</translation>
+<translation id="6170450281939467187">Hi ha hagut un error en traduir el contingut</translation>
 <translation id="6173499589275053515">S'ha desat la contrasenya al teu Compte de Google (<ph name="EMAIL" />)</translation>
 <translation id="6184086493125982861">Mostra les pestanyes</translation>
 <translation id="6187302354554850004">Última sincronització: <ph name="LAST_USED_TIME" /></translation>
