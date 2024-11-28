@@ -1197,6 +1197,12 @@ public class WebContentsImpl implements WebContents, RenderFrameHostDelegate, Wi
                 .needToFireBeforeUnloadOrUnloadEvents(mNativeWebContentsAndroid);
     }
 
+    @Override
+    public void notifyOnCreateNewPaymentHandler(WebContents newWebContents) {
+        checkNotDestroyed();
+        if (mObserverProxy != null) mObserverProxy.onCreateNewPaymentHandler(newWebContents);
+    }
+
     public void addTearDownDialogOverlaysHandler(Runnable handler) {
         if (mTearDownDialogOverlaysHandlers == null) {
             mTearDownDialogOverlaysHandlers = new ObserverList<>();
