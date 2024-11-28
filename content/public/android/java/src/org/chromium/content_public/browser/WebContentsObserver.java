@@ -232,6 +232,12 @@ public abstract class WebContentsObserver {
     /** Called when a MediaSession is created for the WebContents. */
     public void mediaSessionCreated(MediaSession mediaSession) {}
 
+    /**
+     * Called when the payment handler's WebContents is created.
+     * @param newWebContents the new WebContents for the payment handler.
+     */
+    public void onCreateNewPaymentHandler(WebContents newWebContents) {}
+
     /** Stop observing the web contents and clean up associated references. */
     public void destroy() {
         if (mWebContents == null) return;
