@@ -523,6 +523,16 @@ class WebContentsObserverProxy extends WebContentsObserver {
     }
 
     @Override
+    public void onCreateNewPaymentHandler(WebContents newWebContents) {
+        handleObserverCall();
+        Iterator<WebContentsObserver> observersIterator = mObservers.iterator();
+        for (; observersIterator.hasNext(); ) {
+            observersIterator.next().onCreateNewPaymentHandler(newWebContents);
+        }
+        finishObserverCall();
+    }
+
+    @Override
     @CalledByNative
     public void mediaSessionCreated(MediaSession mediaSession) {
         handleObserverCall();
