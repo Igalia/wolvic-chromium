@@ -629,4 +629,11 @@ public interface WebContents extends Parcelable {
     void notifyControlsConstraintsChanged(
             BrowserControlsOffsetTagsInfo oldOffsetTagsInfo,
             BrowserControlsOffsetTagsInfo offsetTagsInfo);
+
+    /**
+     * Notify that the new {@link WebContents} for the payment handler is created.
+     *
+     * @param newWebContents The new {@link WebContents} for the payment handler.
+     */
+    void notifyOnCreateNewPaymentHandler(WebContents newWebContents);
 }
