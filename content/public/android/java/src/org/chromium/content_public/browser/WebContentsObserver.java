@@ -286,6 +286,12 @@ public abstract class WebContentsObserver {
     public void mediaSessionCreated(MediaSession mediaSession) {}
 
     /**
+     * Called when the payment handler's WebContents is created.
+     * @param newWebContents the new WebContents for the payment handler.
+     */
+    public void onCreateNewPaymentHandler(WebContents newWebContents) {}
+
+    /**
      * Called when {@link #getWebContents()} is being destroyed.
      *
      * <p>After this call, clients should assume that {@link #getWebContents()} will be imminently
