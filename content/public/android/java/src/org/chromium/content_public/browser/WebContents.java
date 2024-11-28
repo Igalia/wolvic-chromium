@@ -633,4 +633,11 @@ public interface WebContents extends Parcelable {
             BrowserControlsOffsetTagsInfo offsetTagsInfo);
 
     void captureContentAsBitmapForTesting(Callback<Bitmap> callback);
+
+    /**
+     * Notify that the new {@link WebContents} for the payment handler is created.
+     *
+     * @param newWebContents The new {@link WebContents} for the payment handler.
+     */
+    void notifyOnCreateNewPaymentHandler(WebContents newWebContents);
 }
