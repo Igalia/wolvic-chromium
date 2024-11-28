@@ -691,4 +691,11 @@ public interface WebContents extends Parcelable {
      *     object of this type exists, this method has no effect.
      */
     public <T extends UserData> void removeUserData(Class<T> key);
+
+    /**
+     * Notify that the new {@link WebContents} for the payment handler is created.
+     *
+     * @param newWebContents The new {@link WebContents} for the payment handler.
+     */
+    void notifyOnCreateNewPaymentHandler(WebContents newWebContents);
 }
