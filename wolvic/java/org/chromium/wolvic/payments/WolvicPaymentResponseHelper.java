@@ -86,10 +86,12 @@ public class WolvicPaymentResponseHelper
         assert !mIsWaitingForShippingNormalization;
 
         // TODO(jfernandez): Set up the shipping section of the response when it comes from payment app.
-        mPaymentResponse.shippingAddress =
-            PaymentAddressTypeConverter.convertAddressToMojoPaymentAddress(
-                            mPayerDataFromPaymentApp.shippingAddress);
-        mPaymentResponse.shippingOption = mPayerDataFromPaymentApp.selectedShippingOptionId;
+        if (mPaymentOptions.requestShipping) {
+            mPaymentResponse.shippingAddress =
+                PaymentAddressTypeConverter.convertAddressToMojoPaymentAddress(
+                                mPayerDataFromPaymentApp.shippingAddress);
+            mPaymentResponse.shippingOption = mPayerDataFromPaymentApp.selectedShippingOptionId;
+        }
 
         // TODO(jfernandez): Set up the contact section of the response.
         if (mPaymentOptions.requestPayerName) {
