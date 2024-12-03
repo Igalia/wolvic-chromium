@@ -359,6 +359,7 @@ android_library("wolvic_java") {
   srcjar_deps = [ ":jni_headers" ]
   deps = [
     "//base:base_java",
+    "//base/version_info/android:version_constants_java",
     "//build/android:build_java",
     "//components/autofill/android:main_autofill_java",
     "//components/embedder_support/android:content_view_java",
@@ -369,6 +370,7 @@ android_library("wolvic_java") {
     "//content/public/android:content_full_java",
     "//content/public/android:content_main_dex_java",
     "//content/public/android:content_java",
+    "//components/autofill/android:payments_autofill_java",
     "//components/payments/content/android:java",
     "//components/payments/content/android:service_java",
     "//components/payments/mojom:mojom_java",
@@ -381,6 +383,7 @@ android_library("wolvic_java") {
     "//third_party/jni_zero:jni_zero_java",
     "//ui/android:ui_full_java",
     "//ui/android:ui_no_recycler_view_java",
+    "//ui/base/mojom:mojom_java",
     "//url:gurl_java",
   ]
 }
