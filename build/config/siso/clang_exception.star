@@ -14,6 +14,8 @@ def __step_config(ctx, step_config):
         {
             "name": "jsfuzzer_sub.pb",
             "action_outs": [
+                "./obj/chrome/test/fuzzing/htmlfuzzer_proto_gen/htmlfuzzer_sub.pb.o",
+                "./obj/chrome/test/fuzzing/jsfuzzer/jsfuzzer.o",
                 "./obj/chrome/test/fuzzing/jsfuzzer_proto_gen/jsfuzzer_sub.pb.o",
             ],
             "timeout": "5m",
