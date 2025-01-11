@@ -2,7 +2,7 @@
 <!DOCTYPE translationbundle>
 <translationbundle lang="ko">
 <translation id="1005023885865154304">비밀번호 자동 완성 설정 열기</translation>
-<translation id="1005230401424685968">연도</translation>
+<translation id="1005230401424685968">YYYY</translation>
 <translation id="1012067394176927315">콘텐츠를 보려면 메뉴에서 사용을 선택하세요</translation>
 <translation id="1013952917065545813">여기에 다시 돌아와 최근에 닫았던 탭을 다시 열 수 있습니다.</translation>
 <translation id="1016495303386450659">북마크가 업데이트되었습니다.</translation>
@@ -353,7 +353,7 @@
 <translation id="2579713773888829241">공유 드라이브</translation>
 <translation id="2597486707832946298">잘 알고 즐겨 사용하는 데스크톱 브라우저를 iPhone에서 최대한 활용하세요</translation>
 <translation id="260378315836159338">화면 상단에서 +를 탭합니다.</translation>
-<translation id="2612676031748830579">카드번호</translation>
+<translation id="2612676031748830579">카드 번호</translation>
 <translation id="261305050785128654">사용하는 언어를 웹사이트에 알려주세요. 가능한 경우 해당 언어로 콘텐츠가 표시됩니다.</translation>
 <translation id="2613747923081026172">그룹 만들기</translation>
 <translation id="261735223792457154">모두 표시…</translation>
@@ -1488,7 +1488,7 @@ Handoff는 설정의 일반 섹션에서도 사용 설정할 수 있으며, 이�
 <translation id="7911190106180361398">조직에서 모든 항목을 동기화하도록 허용하지 않습니다.</translation>
 <translation id="7920949005883349320">개인 정보 보호 및 보안</translation>
 <translation id="792357691529995513">발견된 문제 없음</translation>
-<translation id="7925108652071887026">자동완성 데이터</translation>
+<translation id="7925108652071887026">자동 완성 데이터</translation>
 <translation id="7926975587469166629">카드 닉네임</translation>
 <translation id="7927711904086083099">선택되지 않음</translation>
 <translation id="7930998711684428189">데이터 유출로 인해 비밀번호가 노출된 경우 알립니다.</translation>
