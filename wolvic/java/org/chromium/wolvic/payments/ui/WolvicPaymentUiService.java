@@ -43,7 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WolvicPaymentUiService {
+public class WolvicPaymentUiService implements PaymentRequestUI.Client {
 
     /** Limit in the number of suggested items in a section. */
     /* package */ static final int SUGGESTIONS_LIMIT = 4;
@@ -57,6 +57,7 @@ public class WolvicPaymentUiService {
     private final PaymentRequestParams mParams;
     private final JourneyLogger mJourneyLogger;
 
+    private PaymentRequestUI mPaymentRequestUI;
     private boolean mHasInitialized;
     private boolean mHasClosed;
     private boolean mHaveRequestedAutofillData = true;
@@ -264,25 +265,15 @@ public class WolvicPaymentUiService {
         return null;
       PaymentHandlerNavigationThrottle.markPaymentHandlerWebContents(paymentHandlerWebContents);
 
-      mPaymentWebContentsObserver = new WebContentsObserver(paymentHandlerWebContents) {
-          @Override
-          public void destroy() {
-            onDismiss();
-            paymentHandlerWebContents.removeObserver(this);
-          }
-      };
+      Context context = mWebContents.getTopLevelNativeWindow().getContext().get();
+      mPaymentRequestUI = new PaymentRequestUI(context, paymentHandlerWebContents, this);
+
+      mPaymentRequestUI.loadUrl(url.getSpec());
 
       mWebContents.notifyOnCreateNewPaymentHandler(paymentHandlerWebContents);
 
-      paymentHandlerWebContents
-               .getNavigationController()
-               .loadUrl(new LoadUrlParams(url.getSpec()));
-
-
       mHider = () -> {
-        if (!paymentHandlerWebContents.isDestroyed()) {
-          paymentHandlerWebContents.destroy();
-        }
+        mPaymentRequestUI.destroy();
       };
       return paymentHandlerWebContents;
     }
@@ -291,6 +282,8 @@ public class WolvicPaymentUiService {
       return WolvicWebContentsFactory.createWebContents(isOffTheRecord);
     }
 
+    // Implements PaymentRequestUI.Delegate:
+    @Override
     public void onDismiss() {
       mDelegate.onUiAborted(AbortReason.ABORTED_BY_USER, ErrorStrings.USER_CANCELLED);
     }

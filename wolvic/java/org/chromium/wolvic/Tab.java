@@ -42,6 +42,7 @@ public class Tab {
     private ContentView mContentView;
     private NavigationController mNavigationController;
     private TabCompositorView mCompositorView;
+    private boolean mIsDestroyed;
     protected WebContents mWebContents;
 
     private void attachWebContents(WebContents mWebContents) {
@@ -58,6 +59,7 @@ public class Tab {
     }
 
     public Tab(@NonNull Context context, boolean is_off_the_record, WebContents webContents) {
+        mIsDestroyed = false;
         mWindowAndroid = new ActivityWindowAndroid(context, false,
                 IntentRequestTracker.createFromActivity(ContextUtils.activityFromContext(context)));
 
@@ -96,6 +98,11 @@ public class Tab {
             releaseWebContents(mWebContents);
         }
         mWebContents = null;
+        mIsDestroyed = true;
+    }
+
+    public boolean isDestroyed() {
+        return mIsDestroyed;
     }
 
     public void goBack() {

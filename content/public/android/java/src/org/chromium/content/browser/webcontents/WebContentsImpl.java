@@ -1068,6 +1068,27 @@ public class WebContentsImpl implements WebContents, RenderFrameHostDelegate, Wi
         return key.cast(data);
     }
 
+    public <T extends UserData> void setUserData(Class<T> key, T userData) {
+        // Be sure to call initializeForTesting() first.
+        assert mInitialized;
+
+        UserDataHost userDataHost = getUserDataHost();
+
+        // Map can be null after WebView gets gc'ed on its way to destruction.
+        if (userDataHost == null) {
+            Log.d(TAG, "UserDataHost can't be found");
+            return;
+        }
+
+        T data = userDataHost.getUserData(key);
+        assert userDataHost.getUserData(key) == null; // Do not allow overwriting
+        assert key.isInstance(userData);
+
+        // Retrieves from the map again to return null in case |setUserData| fails
+        // to store the object.
+        data = userDataHost.setUserData(key, userData);
+    }
+
     /** Convenience method to initialize test state. Only use for testing. */
     public void initializeForTesting() {
         if (mInternalsHolder == null) {

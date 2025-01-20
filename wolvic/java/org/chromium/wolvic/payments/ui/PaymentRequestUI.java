@@ -5,12 +5,15 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 
+import org.chromium.base.UserData;
+
+import org.chromium.content.browser.webcontents.WebContentsImpl;
 import org.chromium.content_public.browser.WebContents;
 
 import org.chromium.wolvic.Tab;
 
 /** The PaymentRequest UI. */
-public class PaymentRequestUI extends Tab {
+public class PaymentRequestUI extends Tab implements UserData {
 
     /** The interface to be implemented by the consumer of the PaymentRequest UI. */
     public interface Client {
@@ -28,11 +31,27 @@ public class PaymentRequestUI extends Tab {
             @Nullable WebContents webContents,
             @Nullable Client client) {
       super(context, false, webContents);
+      assert mWebContents != null;
       mClient = client;
+
+      ((WebContentsImpl) mWebContents).setUserData(PaymentRequestUI.class, this);
+    }
+
+    /**
+     * Get {@link PaymentRequestUI} object used for the given WebContents but does not
+     * create a new one.
+     * @param webContents {@link WebContents} object.
+     * @return {@link PaymentRequestUI} object. {@code null} if not available.
+     */
+    public static @Nullable PaymentRequestUI fromWebContents(@NonNull WebContents webContents) {
+        return ((WebContentsImpl) webContents)
+                .getOrSetUserData(PaymentRequestUI.class, null);
     }
 
     @Override
     public void destroy() {
+      if (isDestroyed())
+        return;
       super.destroy();
       if (mClient != null)
         mClient.onDismiss();
