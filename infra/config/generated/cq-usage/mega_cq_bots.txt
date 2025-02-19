@@ -20,7 +20,6 @@ chromium-m130/try/android_compile_dbg
 chromium-m130/try/android_compile_x64_dbg
 chromium-m130/try/android_compile_x86_dbg
 chromium-m130/try/chromeos-amd64-generic-dbg
-chromium-m130/try/chromeos-amd64-generic-lacros-dbg
 chromium-m130/try/chromeos-amd64-generic-rel
 chromium-m130/try/chromeos-amd64-generic-rel-gtest
 chromium-m130/try/chromeos-amd64-generic-rel-gtest-and-tast
@@ -41,9 +40,6 @@ chromium-m130/try/fuchsia-x64-cast-receiver-rel
 chromium-m130/try/gpu-fyi-cq-android-arm64
 chromium-m130/try/ios-simulator
 chromium-m130/try/ios-simulator-full-configs
-chromium-m130/try/lacros-amd64-generic-rel
-chromium-m130/try/lacros-arm-generic-rel
-chromium-m130/try/lacros-arm64-generic-rel
 chromium-m130/try/linux-cast-arm-rel
 chromium-m130/try/linux-cast-arm64-rel
 chromium-m130/try/linux-cast-x64-dbg
@@ -52,8 +48,6 @@ chromium-m130/try/linux-centipede-asan-rel
 chromium-m130/try/linux-chromeos-compile-dbg
 chromium-m130/try/linux-chromeos-dbg
 chromium-m130/try/linux-chromeos-rel
-chromium-m130/try/linux-lacros-dbg
-chromium-m130/try/linux-lacros-rel
 chromium-m130/try/linux-libfuzzer-asan-rel
 chromium-m130/try/linux-official
 chromium-m130/try/linux-rel

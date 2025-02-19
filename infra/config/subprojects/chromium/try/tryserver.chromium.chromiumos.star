@@ -271,62 +271,6 @@ try_.builder(
 )
 
 try_.builder(
-    name = "chromeos-amd64-generic-lacros-dbg",
-    branch_selector = branches.selector.CROS_BRANCHES,
-    mirrors = [
-        "ci/chromeos-amd64-generic-lacros-dbg",
-    ],
-    gn_args = "ci/chromeos-amd64-generic-lacros-dbg",
-)
-
-try_.builder(
-    name = "lacros-arm-generic-rel",
-    branch_selector = branches.selector.CROS_BRANCHES,
-    mirrors = [
-        "ci/lacros-arm-generic-rel",
-    ],
-    gn_args = gn_args.config(
-        configs = [
-            "ci/lacros-arm-generic-rel",
-            "dcheck_always_on",
-        ],
-    ),
-    builderless = not settings.is_main,
-    experiments = {
-        # crbug/940930
-        "chromium.enable_cleandead": 100,
-        # b/346598710
-        "chromium.luci_analysis_v2": 100,
-    },
-    main_list_view = "try",
-    tryjob = try_.job(),
-)
-
-try_.builder(
-    name = "lacros-amd64-generic-rel",
-    branch_selector = branches.selector.CROS_BRANCHES,
-    mirrors = [
-        "ci/lacros-amd64-generic-rel",
-    ],
-    main_list_view = "try",
-)
-
-try_.builder(
-    name = "lacros-arm64-generic-rel",
-    branch_selector = branches.selector.CROS_BRANCHES,
-    mirrors = [
-        "ci/lacros-arm64-generic-rel",
-    ],
-    gn_args = gn_args.config(
-        configs = [
-            "ci/lacros-arm64-generic-rel",
-            "dcheck_always_on",
-        ],
-    ),
-    main_list_view = "try",
-)
-
-try_.builder(
     name = "linux-chromeos-compile-dbg",
     branch_selector = branches.selector.CROS_BRANCHES,
     mirrors = [
@@ -415,56 +359,6 @@ try_.orchestrator_builder(
 try_.compilator_builder(
     name = "linux-chromeos-rel-compilator",
     branch_selector = branches.selector.CROS_LTS_BRANCHES,
-    cores = 32,
-    main_list_view = "try",
-)
-
-try_.builder(
-    name = "linux-lacros-dbg",
-    branch_selector = branches.selector.CROS_BRANCHES,
-    # TODO(crbug.com/40780788) Adds the CI tester when it's available.
-    mirrors = [
-        "ci/linux-lacros-dbg",
-    ],
-    gn_args = "ci/linux-lacros-dbg",
-)
-
-try_.orchestrator_builder(
-    name = "linux-lacros-rel",
-    branch_selector = branches.selector.CROS_BRANCHES,
-    mirrors = [
-        "ci/linux-lacros-builder-rel",
-    ],
-    gn_args = gn_args.config(
-        configs = [
-            "ci/linux-lacros-builder-rel",
-            "release_try_builder",
-            "clang",
-            "use_clang_coverage",
-            "partial_code_coverage_instrumentation",
-        ],
-    ),
-    compilator = "linux-lacros-rel-compilator",
-    coverage_test_types = ["unit", "overall"],
-    experiments = {
-        # go/nplus1shardsproposal
-        "chromium.add_one_test_shard": 10,
-        # crbug/940930
-        "chromium.enable_cleandead": 50,
-        # b/346598710
-        "chromium.luci_analysis_v2": 100,
-    },
-    main_list_view = "try",
-    # TODO(crbug.com/40241638): Use orchestrator pool once overloaded test pools
-    # are addressed
-    # use_orchestrator_pool = True,
-    tryjob = try_.job(),
-    use_clang_coverage = True,
-)
-
-try_.compilator_builder(
-    name = "linux-lacros-rel-compilator",
-    branch_selector = branches.selector.CROS_BRANCHES,
     cores = 32,
     main_list_view = "try",
 )
