@@ -498,6 +498,14 @@ static void PopulateProfiles(
       input_source->description->profiles = {
           "pico-4", "generic-trigger-squeeze-thumbstick"};
       break;
+    case mozilla::gfx::VRControllerType::YvrTouch:
+      input_source->description->profiles = {
+          "yvr-touch", "generic-trigger-squeeze-thumbstick"};
+      break;
+    case mozilla::gfx::VRControllerType::YvrTouch2:
+      input_source->description->profiles = {
+          "yvr-touch-v2", "generic-trigger-squeeze-thumbstick"};
+      break;
     case mozilla::gfx::VRControllerType::PicoGaze:
     case mozilla::gfx::VRControllerType::_empty:
       input_source->description->profiles = {"generic-button"};
