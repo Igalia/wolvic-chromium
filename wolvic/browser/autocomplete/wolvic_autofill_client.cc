@@ -163,15 +163,6 @@ translate::TranslateDriver* WolvicAutofillClient::GetTranslateDriver() {
 void WolvicAutofillClient::ShowAutofillSettings(
     autofill::FillingProduct main_filling_product) {}
 
-void WolvicAutofillClient::ShowUnmaskPrompt(
-    const autofill::CreditCard& card,
-    const autofill::CardUnmaskPromptOptions& card_unmask_prompt_options,
-        base::WeakPtr<autofill::CardUnmaskDelegate> delegate) {
-}
-
-void WolvicAutofillClient::OnUnmaskVerificationResult(
-    PaymentsRpcResult result) {}
-
 void WolvicAutofillClient::ConfirmAccountNameFixFlow(
     base::OnceCallback<void(const std::u16string&)> callback) {
   // Not implemented
