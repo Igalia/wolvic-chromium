@@ -10,7 +10,6 @@
 #include "base/containers/flat_map.h"
 #include "base/memory/raw_ptr.h"
 #include "content/public/browser/devtools_manager_delegate.h"
-#include "content/shell/browser/protocol/protocol.h"
 
 namespace content {
 class BrowserContext;
