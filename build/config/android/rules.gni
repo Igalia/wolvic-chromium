@@ -7,7 +7,6 @@ import("//build/config/android/copy_ex.gni")
 import("//build/config/clang/clang.gni")
 import("//build/config/sanitizers/sanitizers.gni")
 import("//build_overrides/build.gni")
-import("//third_party/jni_zero/jni_zero.gni")
 
 assert(
     is_android || is_robolectric,
@@ -1655,6 +1654,8 @@ if (!is_robolectric && enable_java_templates) {
     _generate_final_jni =
         defined(invoker.generate_final_jni) && invoker.generate_final_jni
     if (_generate_final_jni) {
+      import("//third_party/jni_zero/jni_zero.gni")
+
       _srcjar_deps = []
       if (defined(invoker.srcjar_deps)) {
         _srcjar_deps = invoker.srcjar_deps
