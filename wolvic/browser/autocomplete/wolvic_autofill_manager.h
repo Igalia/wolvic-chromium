@@ -78,9 +78,6 @@ class WolvicAutofillManager : public autofill::AutofillManager {
                        const autofill::FormStructure& form_structure) override {
   }
 
-  void OnAfterProcessParsedForms(
-      const autofill::DenseSet<autofill::FormType>& form_types) override {}
-
  private:
   base::WeakPtrFactory<WolvicAutofillManager> weak_ptr_factory_{this};
 };
