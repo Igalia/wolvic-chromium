@@ -221,7 +221,6 @@ static_library("content_native_lib") {
     ":pak",
     "//base",
     "//base:base_static",
-    "//base/third_party/dynamic_annotations",
     "//build:chromeos_buildflags",
     "//cc/base",
     "//components/autofill/content/browser",
