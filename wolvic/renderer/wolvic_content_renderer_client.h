@@ -23,7 +23,8 @@ class WolvicContentRendererClient : public content::ContentRendererClient {
   ~WolvicContentRendererClient() override;
 
   // ContentRendererClient implementation.
-  std::unique_ptr<media::KeySystemSupportObserver> GetSupportedKeySystems(
+  std::unique_ptr<media::KeySystemSupportRegistration> GetSupportedKeySystems(
+      content::RenderFrame* render_frame,
       media::GetSupportedKeySystemsCB cb) override;
   void RenderThreadStarted() override;
   void ExposeInterfacesToBrowser(mojo::BinderMap* binders) override;
