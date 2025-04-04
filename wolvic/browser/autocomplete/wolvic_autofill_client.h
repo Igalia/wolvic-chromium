@@ -59,11 +59,6 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   translate::TranslateDriver* GetTranslateDriver() override;
   void ShowAutofillSettings(
       autofill::FillingProduct main_filling_product) override;
-  void ShowUnmaskPrompt(
-      const autofill::CreditCard& card,
-      const autofill::CardUnmaskPromptOptions& card_unmask_prompt_options,
-      base::WeakPtr<autofill::CardUnmaskDelegate> delegate) override;
-  void OnUnmaskVerificationResult(PaymentsRpcResult result) override;
   void ConfirmAccountNameFixFlow(
       base::OnceCallback<void(const std::u16string&)> callback) override;
   void ConfirmExpirationDateFixFlow(
