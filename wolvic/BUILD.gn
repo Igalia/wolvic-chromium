@@ -8,6 +8,7 @@ import("//device/vr/buildflags/buildflags.gni")
 import("//third_party/jni_zero/jni_zero.gni")
 import("//tools/grit/repack.gni")
 
+
 assert(enable_vr)
 assert(is_android)
 
@@ -295,6 +296,8 @@ static_library("content_native_lib") {
 
 generate_build_config_srcjar("build_config_gen") {
   use_final_fields = true
+  min_sdk_version = "21"  # Replace with the appropriate SDK version
+  version_code = "1"  # Replace with the appropriate version code
 }
 
 jinja_template("content_manifest") {
