@@ -285,16 +285,10 @@ class GL_EXPORT GLSurfaceAdapter : public GLSurface {
   GLSurfaceFormat GetFormat() override;
   gfx::VSyncProvider* GetVSyncProvider() override;
   void SetVSyncEnabled(bool enabled) override;
-  bool ScheduleDCLayer(std::unique_ptr<DCLayerOverlayParams> params) override;
-  bool SetEnableDCLayers(bool enable) override;
   bool IsSurfaceless() const override;
   gfx::SurfaceOrigin GetOrigin() const override;
   bool BuffersFlipped() const override;
-  bool SupportsDCLayers() const override;
-  bool SupportsProtectedVideo() const override;
   bool SupportsOverridePlatformSize() const override;
-  bool SetDrawRectangle(const gfx::Rect& rect) override;
-  gfx::Vector2d GetDrawOffset() const override;
   bool SupportsSwapTimestamps() const override;
   void SetEnableSwapTimestamps() override;
   bool SupportsPlaneGpuFences() const override;
@@ -302,13 +296,6 @@ class GL_EXPORT GLSurfaceAdapter : public GLSurface {
   void SetFrameRate(float frame_rate) override;
   void SetCurrent() override;
   bool IsCurrent() override;
-
-  bool SupportsDelegatedInk() override;
-  void SetDelegatedInkTrailStartPoint(
-      std::unique_ptr<gfx::DelegatedInkMetadata> metadata) override;
-  void InitDelegatedInkPointRendererReceiver(
-      mojo::PendingReceiver<gfx::mojom::DelegatedInkPointRenderer>
-          pending_receiver) override;
 
   GLSurface* surface() const { return surface_.get(); }
 
