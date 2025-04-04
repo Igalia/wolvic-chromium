@@ -74,7 +74,7 @@ public class Tab {
 
         mContentView =
                 ContentView.createContentView(context, null /* eventOffsetHandler */, mWebContents);
-        mWebContents.initialize("", ViewAndroidDelegate.createBasicDelegate(mContentView),
+        mWebContents.setDelegates("", ViewAndroidDelegate.createBasicDelegate(mContentView),
                 mContentView, mWindowAndroid, WebContents.createDefaultInternalsHolder());
 
         mNavigationController = mWebContents.getNavigationController();
