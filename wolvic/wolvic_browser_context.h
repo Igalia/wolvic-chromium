@@ -85,6 +85,7 @@ class WolvicBrowserContext : public content::BrowserContext,
 
   // visitedlink::VisitedLinkDelegate implementation.
   void RebuildTable(const scoped_refptr<URLEnumerator>& enumerator) override;
+  void BuildVisitedLinkTable(const scoped_refptr<VisitedLinkEnumerator>& enumerator) override;
 
   autofill::AutocompleteHistoryManager* GetAutocompleteHistoryManager();
   password_manager::PasswordStore* GetPasswordStore();

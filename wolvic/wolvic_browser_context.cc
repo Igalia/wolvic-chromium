@@ -326,6 +326,13 @@ WolvicBrowserContext::RebuildTable(
   enumerator->OnComplete(true);
 }
 
+void WolvicBrowserContext::BuildVisitedLinkTable(
+    const scoped_refptr<VisitedLinkEnumerator>& enumerator) {
+  // Partitioned visited link hashtables are not supported in Android WebView,
+  // so this initialization path is not used.
+  enumerator->OnVisitedLinkComplete(true);
+}
+
 autofill::AutocompleteHistoryManager* WolvicBrowserContext::GetAutocompleteHistoryManager() {
   if (!autocomplete_history_manager_)
     CreateAutocompleteHistoryManager();
