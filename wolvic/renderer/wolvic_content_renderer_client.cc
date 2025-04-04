@@ -22,11 +22,12 @@ WolvicContentRendererClient::WolvicContentRendererClient() = default;
 
 WolvicContentRendererClient::~WolvicContentRendererClient() = default;
 
-std::unique_ptr<media::KeySystemSupportObserver>
+std::unique_ptr<media::KeySystemSupportRegistration>
 WolvicContentRendererClient::GetSupportedKeySystems(
+    content::RenderFrame* render_frame,
     media::GetSupportedKeySystemsCB cb) {
-  return cdm::GetSupportedKeySystemsUpdates(/*can_persist_data=*/true,
-                                            std::move(cb));
+  return cdm::GetSupportedKeySystemsUpdates(
+      render_frame, /*can_persist_data=*/true, std::move(cb));
 }
 
 void WolvicContentRendererClient::RenderThreadStarted() {
