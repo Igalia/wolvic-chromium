@@ -22,8 +22,6 @@ class WolvicAutofillManager : public autofill::AutofillManager {
   base::WeakPtr<AutofillManager> GetWeakPtr() override;
   bool ShouldClearPreviewedForm() override;
 
-  void OnFocusNoLongerOnFormImpl(bool had_interacted_form) override {}
-
   void OnDidFillAutofillFormDataImpl(const autofill::FormData& form,
                                      const base::TimeTicks timestamp) override {
   }
@@ -44,31 +42,30 @@ class WolvicAutofillManager : public autofill::AutofillManager {
 
   void OnTextFieldDidChangeImpl(const autofill::FormData& form,
                                 const autofill::FormFieldData& field,
-                                const gfx::RectF& bounding_box,
                                 const base::TimeTicks timestamp) override {}
 
   void OnTextFieldDidScrollImpl(const autofill::FormData& form,
-                                const autofill::FormFieldData& field,
-                                const gfx::RectF& bounding_box) override {}
+                                const autofill::FormFieldData& field) override {
+  }
 
   void OnAskForValuesToFillImpl(
       const autofill::FormData& form,
       const autofill::FormFieldData& field,
-      const gfx::RectF& bounding_box,
+      const gfx::Rect& caret_bounds,
       autofill::AutofillSuggestionTriggerSource trigger_source) override {}
 
   void OnFocusOnFormFieldImpl(const autofill::FormData& form,
-                              const autofill::FormFieldData& field,
-                              const gfx::RectF& bounding_box) override {}
+                              const autofill::FormFieldData& field) override {}
 
-  void OnSelectControlDidChangeImpl(const autofill::FormData& form,
-                                    const autofill::FormFieldData& field,
-                                    const gfx::RectF& bounding_box) override {}
+  void OnSelectControlDidChangeImpl(
+      const autofill::FormData& form,
+      const autofill::FormFieldData& field) override {}
 
   void OnJavaScriptChangedAutofilledValueImpl(
       const autofill::FormData& form,
       const autofill::FormFieldData& field,
-      const std::u16string& old_value) override {}
+      const std::u16string& old_value,
+      bool formatting_only) override {}
 
   bool ShouldParseForms() override;
 
