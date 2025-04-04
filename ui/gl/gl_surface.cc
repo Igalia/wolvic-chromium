@@ -329,21 +329,12 @@ gfx::VSyncProvider* GLSurfaceAdapter::GetVSyncProvider() {
   return surface_->GetVSyncProvider();
 }
 
-void GLSurfaceAdapter::SetVSyncEnabled(bool enabled) {
-  surface_->SetVSyncEnabled(enabled);
-}
-
-bool GLSurfaceAdapter::ScheduleDCLayer(
-    std::unique_ptr<DCLayerOverlayParams> params) {
-  return surface_->ScheduleDCLayer(std::move(params));
-}
-
-bool GLSurfaceAdapter::SetEnableDCLayers(bool enable) {
-  return surface_->SetEnableDCLayers(enable);
-}
-
 bool GLSurfaceAdapter::IsSurfaceless() const {
   return surface_->IsSurfaceless();
+}
+
+void GLSurfaceAdapter::SetVSyncEnabled(bool enabled) {
+  surface_->SetVSyncEnabled(enabled);
 }
 
 gfx::SurfaceOrigin GLSurfaceAdapter::GetOrigin() const {
@@ -354,24 +345,8 @@ bool GLSurfaceAdapter::BuffersFlipped() const {
   return surface_->BuffersFlipped();
 }
 
-bool GLSurfaceAdapter::SupportsDCLayers() const {
-  return surface_->SupportsDCLayers();
-}
-
-bool GLSurfaceAdapter::SupportsProtectedVideo() const {
-  return surface_->SupportsProtectedVideo();
-}
-
 bool GLSurfaceAdapter::SupportsOverridePlatformSize() const {
   return surface_->SupportsOverridePlatformSize();
-}
-
-bool GLSurfaceAdapter::SetDrawRectangle(const gfx::Rect& rect) {
-  return surface_->SetDrawRectangle(rect);
-}
-
-gfx::Vector2d GLSurfaceAdapter::GetDrawOffset() const {
-  return surface_->GetDrawOffset();
 }
 
 bool GLSurfaceAdapter::SupportsSwapTimestamps() const {
@@ -400,21 +375,6 @@ void GLSurfaceAdapter::SetCurrent() {
 
 bool GLSurfaceAdapter::IsCurrent() {
   return surface_->IsCurrent();
-}
-
-bool GLSurfaceAdapter::SupportsDelegatedInk() {
-  return surface_->SupportsDelegatedInk();
-}
-
-void GLSurfaceAdapter::SetDelegatedInkTrailStartPoint(
-    std::unique_ptr<gfx::DelegatedInkMetadata> metadata) {
-  surface_->SetDelegatedInkTrailStartPoint(std::move(metadata));
-}
-
-void GLSurfaceAdapter::InitDelegatedInkPointRendererReceiver(
-    mojo::PendingReceiver<gfx::mojom::DelegatedInkPointRenderer>
-        pending_receiver) {
-  surface_->InitDelegatedInkPointRendererReceiver(std::move(pending_receiver));
 }
 
 GLSurfaceAdapter::~GLSurfaceAdapter() = default;
