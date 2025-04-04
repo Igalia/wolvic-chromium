@@ -329,7 +329,7 @@ WolvicPasswordStoreBackend::GetSmartBubbleStatsStore() {
   return nullptr;
 }
 
-std::unique_ptr<syncer::ProxyModelTypeControllerDelegate>
+std::unique_ptr<syncer::ModelTypeControllerDelegate>
 WolvicPasswordStoreBackend::CreateSyncControllerDelegate() {
   // Not implemented
   return nullptr;
