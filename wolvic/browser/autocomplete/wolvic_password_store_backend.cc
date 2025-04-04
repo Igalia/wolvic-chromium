@@ -277,12 +277,14 @@ void WolvicPasswordStoreBackend::UpdateLoginAsync(
 }
 
 void WolvicPasswordStoreBackend::RemoveLoginAsync(
+    const base::Location& location,
     const password_manager::PasswordForm& form,
     password_manager::PasswordChangesOrErrorReply callback) {
   RemoveLoginInternal(form, std::move(callback));
 }
 
 void WolvicPasswordStoreBackend::RemoveLoginsByURLAndTimeAsync(
+    const base::Location& location,
     const base::RepeatingCallback<bool(const GURL&)>& url_filter,
     base::Time delete_begin,
     base::Time delete_end,
@@ -295,6 +297,7 @@ void WolvicPasswordStoreBackend::RemoveLoginsByURLAndTimeAsync(
 }
 
 void WolvicPasswordStoreBackend::RemoveLoginsCreatedBetweenAsync(
+    const base::Location& location,
     base::Time delete_begin,
     base::Time delete_end,
     password_manager::PasswordChangesOrErrorReply callback) {
