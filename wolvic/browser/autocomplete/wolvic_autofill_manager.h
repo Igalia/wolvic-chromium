@@ -28,6 +28,9 @@ class WolvicAutofillManager : public autofill::AutofillManager {
 
   void OnDidEndTextFieldEditingImpl() override {}
   void OnHidePopupImpl() override {}
+  void OnCaretMovedInFormField(const autofill::FormData& form,
+                               const autofill::FormFieldData& field,
+                               const gfx::Rect& caret_bounds) override {}
   void OnSelectOrSelectListFieldOptionsDidChangeImpl(
       const autofill::FormData& form) override {}
 
@@ -40,6 +43,9 @@ class WolvicAutofillManager : public autofill::AutofillManager {
                            bool known_success,
                            autofill::mojom::SubmissionSource source) override {}
 
+  void OnCaretMovedInFormFieldImpl(const autofill::FormData& form,
+                                   const autofill::FormFieldData& field,
+                                   const gfx::Rect& caret_bounds) override {}
   void OnTextFieldDidChangeImpl(const autofill::FormData& form,
                                 const autofill::FormFieldData& field,
                                 const base::TimeTicks timestamp) override {}
@@ -56,6 +62,7 @@ class WolvicAutofillManager : public autofill::AutofillManager {
 
   void OnFocusOnFormFieldImpl(const autofill::FormData& form,
                               const autofill::FormFieldData& field) override {}
+  void OnFocusOnNonFormFieldImpl(bool had_interacted_form) override {}
 
   void OnSelectControlDidChangeImpl(
       const autofill::FormData& form,
