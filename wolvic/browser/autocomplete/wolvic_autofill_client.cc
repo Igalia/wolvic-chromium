@@ -22,7 +22,6 @@
 #include "components/autofill/core/browser/filling_product.h"
 #include "components/autofill/core/browser/form_data_importer.h"
 #include "components/autofill/core/browser/form_structure.h"
-#include "components/autofill/core/browser/ui/autofill_popup_delegate.h"
 #include "components/autofill/core/common/form_interactions_flow.h"
 #include "components/autofill/core/common/unique_ids.h"
 #include "components/password_manager/content/browser/content_password_manager_driver.h"
@@ -254,8 +253,9 @@ void WolvicAutofillClient::OnLoginSelected(JNIEnv* env, jint index) {
   }
 
   delegate_->DidAcceptSuggestion(
-      suggestions_[index], autofill::AutofillPopupDelegate::SuggestionPosition{
-                               index, /*sub_popup_level=*/0});
+      suggestions_[index],
+      autofill::AutofillSuggestionDelegate::SuggestionPosition{
+          index, /*sub_popup_level=*/0});
 }
 
 void WolvicAutofillClient::CreatJavaArrayFromSuggestions(JNIEnv* env) {
@@ -268,9 +268,9 @@ void WolvicAutofillClient::CreatJavaArrayFromSuggestions(JNIEnv* env) {
   }
 }
 
-void WolvicAutofillClient::ShowAutofillPopup(
+void WolvicAutofillClient::ShowAutofillSuggestions(
     const autofill::AutofillClient::PopupOpenArgs& open_args,
-    base::WeakPtr<autofill::AutofillPopupDelegate> delegate) {
+    base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate) {
   suggestions_ = std::move(open_args.suggestions);
   trigger_source_ = open_args.trigger_source;
   delegate_ = delegate;
@@ -279,19 +279,14 @@ void WolvicAutofillClient::ShowAutofillPopup(
   CreatJavaArrayFromSuggestions(env);
   Java_AutofillManager_showAutofillPopup(env, java_obj_);
 
-  delegate_->OnPopupShown();
+  delegate_->OnSuggestionsShown();
 }
 
-void WolvicAutofillClient::UpdateAutofillPopupDataListValues(
+void WolvicAutofillClient::UpdateAutofillDataListValues(
     base::span<const autofill::SelectOption> datalist) {
 }
 
-std::vector<autofill::Suggestion>
-WolvicAutofillClient::GetPopupSuggestions() const {
-  return suggestions_;
-}
-
-void WolvicAutofillClient::PinPopupView() {}
+void WolvicAutofillClient::PinAutofillSuggestions() {}
 
 void WolvicAutofillClient::UpdatePopup(
     const std::vector<autofill::Suggestion>& suggestions,
@@ -307,13 +302,13 @@ void WolvicAutofillClient::UpdatePopup(
   Java_AutofillManager_showAutofillPopup(env, java_obj_);
 }
 
-void WolvicAutofillClient::HideAutofillPopup(
-    autofill::PopupHidingReason reason) {
+void WolvicAutofillClient::HideAutofillSuggestions(
+    autofill::SuggestionHidingReason reason) {
   JNIEnv* env = AttachCurrentThread();
   Java_AutofillManager_dismissPrompt(env, java_obj_);
   if (delegate_) {
     delegate_->ClearPreviewedForm();
-    delegate_->OnPopupHidden();
+    delegate_->OnSuggestionsHidden();
   }
   suggestions_.clear();
   delegate_.reset();
