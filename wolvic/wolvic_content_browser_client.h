@@ -45,8 +45,6 @@ class WolvicContentBrowserClient : public content::ContentBrowserClient {
           cert_verifier_creation_params) override;
   std::unique_ptr<content::BrowserMainParts> CreateBrowserMainParts(
       bool is_integration_test) override;
-  std::unique_ptr<content::DevToolsManagerDelegate>
-  CreateDevToolsManagerDelegate() override;
   std::unique_ptr<content::LoginDelegate> CreateLoginDelegate(
       const net::AuthChallengeInfo& auth_info,
       content::WebContents* web_contents,

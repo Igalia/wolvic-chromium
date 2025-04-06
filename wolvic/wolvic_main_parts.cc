@@ -7,7 +7,6 @@
 #include "base/files/file_util.h"
 #include "base/path_service.h"
 #include "content/public/common/result_codes.h"
-#include "content/shell/browser/shell_devtools_manager_delegate.h"
 #include "net/android/network_change_notifier_factory_android.h"
 #include "net/base/network_change_notifier.h"
 #include "wolvic/browser/mojo/wolvic_interface_registrar.h"
@@ -47,8 +46,6 @@ int WolvicMainParts::PreMainMessageLoopRun() {
 
   set_browser_context(new WolvicBrowserContext(GetInitialProfileDir(), false));
   set_off_the_record_browser_context(new WolvicBrowserContext(GetInitialProfileDir(), true));
-  content::ShellDevToolsManagerDelegate::StartHttpHandler(
-      browser_context_.get());
 
   PostBrowserStart();
 
@@ -64,7 +61,6 @@ void WolvicMainParts::EnsureBrowserContextKeyedServiceFactoriesBuilt() {
 }
 
 void WolvicMainParts::PostMainMessageLoopRun() {
-  content::ShellDevToolsManagerDelegate::StopHttpHandler();
 }
 
 void WolvicMainParts::PostBrowserStart() {
