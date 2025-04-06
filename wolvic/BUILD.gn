@@ -21,9 +21,6 @@ shared_library("libcontent_native") {
   sources = [
     "../content/shell/browser/shell.cc",
     "../content/shell/browser/shell.h",
-    "../content/shell/browser/shell_devtools_bindings.cc",
-    "../content/shell/browser/shell_devtools_bindings.h",
-    "../content/shell/browser/shell_devtools_manager_delegate.cc",
     "../content/shell/browser/shell_devtools_manager_delegate.h",
     "../content/shell/browser/shell_javascript_dialog_manager.cc",
     "../content/shell/browser/shell_javascript_dialog_manager.h",

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include "wolvic/wolvic_content_browser_client.h"
+
 #include <memory>
 
 #include "base/path_service.h"
@@ -13,7 +14,6 @@
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/common/content_switches.h"
 #include "content/shell/browser/shell.h"
-#include "content/shell/browser/shell_devtools_manager_delegate.h"
 #include "media/mojo/mojom/media_drm_storage.mojom.h"
 #include "services/network/public/mojom/network_context.mojom.h"
 #include "third_party/blink/public/common/associated_interfaces/associated_interface_registry.h"
@@ -97,12 +97,6 @@ WolvicContentBrowserClient::CreateBrowserMainParts(
   CHECK(!browser_main_parts_);
   browser_main_parts_ = new WolvicMainParts();
   return std::unique_ptr<content::BrowserMainParts>(browser_main_parts_);
-}
-
-std::unique_ptr<content::DevToolsManagerDelegate>
-WolvicContentBrowserClient::CreateDevToolsManagerDelegate() {
-  return std::make_unique<content::ShellDevToolsManagerDelegate>(
-      browser_context());
 }
 
 std::unique_ptr<content::LoginDelegate>
