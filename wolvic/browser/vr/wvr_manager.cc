@@ -26,13 +26,18 @@ void WvrMatToTransform(const std::array<float, 16>& in, gfx::Transform* out) {
 gfx::Transform WvrPoseToTransform(const mozilla::gfx::VRPose* pose) {
   gfx::DecomposedTransform decomp;
 
-  decomp.quaternion =
-      gfx::Quaternion(pose->orientation[0], pose->orientation[1],
-                      pose->orientation[2], pose->orientation[3]);
+  // Wrap the orientation array in a std::span
+  std::span<const float, 4> orientation_span(pose->orientation);
 
-  decomp.translate[0] = pose->position[0];
-  decomp.translate[1] = pose->position[1];
-  decomp.translate[2] = pose->position[2];
+  decomp.quaternion = gfx::Quaternion(orientation_span[0], orientation_span[1],
+                                      orientation_span[2], orientation_span[3]);
+
+  // Wrap the position and translate arrays in a std::span
+  std::span<const float, 3> position_span(pose->position);
+  std::span<double, 3> translate_span(decomp.translate);
+
+  // Use std::copy to copy the position array into the translate array
+  std::copy(position_span.begin(), position_span.end(), translate_span.begin());
 
   return gfx::Transform::Compose(decomp);
 }
