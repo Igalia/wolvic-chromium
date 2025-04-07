@@ -160,13 +160,7 @@ translate::TranslateDriver* WolvicAutofillClient::GetTranslateDriver() {
 }
 
 void WolvicAutofillClient::ShowAutofillSettings(
-    autofill::FillingProduct main_filling_product) {}
-
-void WolvicAutofillClient::ConfirmAccountNameFixFlow(
-    base::OnceCallback<void(const std::u16string&)> callback) {
-  // Not implemented
-  std::move(callback).Run(std::u16string());
-}
+  autofill::SuggestionType suggestion_type) {}
 
 void WolvicAutofillClient::ConfirmExpirationDateFixFlow(
     const autofill::CreditCard& card,
@@ -191,13 +185,6 @@ void WolvicAutofillClient::ConfirmSaveCreditCardToCloud(
     UploadSaveCardPromptCallback callback) {
   // Not implemented
   std::move(callback).Run(SaveCardOfferUserDecision::kIgnored, {});
-}
-
-void WolvicAutofillClient::ConfirmCreditCardFillAssist(
-    const autofill::CreditCard& card,
-    base::OnceClosure callback) {
-  // Not implemented
-  std::move(callback).Run();
 }
 
 void WolvicAutofillClient::ShowEditAddressProfileDialog(
@@ -232,7 +219,8 @@ void WolvicAutofillClient::ScanCreditCard(CreditCardScanCallback callback) {
 
 bool WolvicAutofillClient::ShowTouchToFillCreditCard(
     base::WeakPtr<autofill::TouchToFillDelegate> delegate,
-    base::span<const autofill::CreditCard> cards_to_suggest) {
+    base::span<const autofill::CreditCard> cards_to_suggest,
+    const std::vector<bool>& card_acceptabilies) {
   // Touch To Fill is not supported yet.
   NOTREACHED();
   return false;
