@@ -251,7 +251,6 @@ class GL_EXPORT GLSurfaceAdapter : public GLSurface {
               const gfx::ColorSpace& color_space,
               bool has_alpha) override;
   bool Recreate() override;
-  bool DeferDraws() override;
   bool IsOffscreen() override;
   gfx::SwapResult SwapBuffers(PresentationCallback callback,
                               gfx::FrameData data) override;
@@ -277,8 +276,6 @@ class GL_EXPORT GLSurfaceAdapter : public GLSurface {
   void* GetHandle() override;
   unsigned int GetBackingFramebufferObject() override;
   bool OnMakeCurrent(GLContext* context) override;
-  bool SetBackbufferAllocation(bool allocated) override;
-  void SetFrontbufferAllocation(bool allocated) override;
   void* GetShareHandle() override;
   GLDisplay* GetGLDisplay() override;
   void* GetConfig() override;
@@ -293,7 +290,6 @@ class GL_EXPORT GLSurfaceAdapter : public GLSurface {
   void SetEnableSwapTimestamps() override;
   bool SupportsPlaneGpuFences() const override;
   int GetBufferCount() const override;
-  void SetFrameRate(float frame_rate) override;
   void SetCurrent() override;
   bool IsCurrent() override;
 
