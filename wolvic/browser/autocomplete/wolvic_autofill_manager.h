@@ -29,7 +29,7 @@ class WolvicAutofillManager : public autofill::AutofillManager {
   void OnDidEndTextFieldEditingImpl() override {}
   void OnHidePopupImpl() override {}
   void OnCaretMovedInFormField(const autofill::FormData& form,
-                               const autofill::FormFieldData& field,
+                               const autofill::FieldGlobalId& field_id,
                                const gfx::Rect& caret_bounds) override {}
   void OnSelectOrSelectListFieldOptionsDidChangeImpl(
       const autofill::FormData& form) override {}
@@ -44,33 +44,33 @@ class WolvicAutofillManager : public autofill::AutofillManager {
                            autofill::mojom::SubmissionSource source) override {}
 
   void OnCaretMovedInFormFieldImpl(const autofill::FormData& form,
-                                   const autofill::FormFieldData& field,
+                                   const autofill::FieldGlobalId& field_id,
                                    const gfx::Rect& caret_bounds) override {}
   void OnTextFieldDidChangeImpl(const autofill::FormData& form,
-                                const autofill::FormFieldData& field,
+                                const autofill::FieldGlobalId& field_id,
                                 const base::TimeTicks timestamp) override {}
 
   void OnTextFieldDidScrollImpl(const autofill::FormData& form,
-                                const autofill::FormFieldData& field) override {
+                                const autofill::FieldGlobalId& field_id) override {
   }
 
   void OnAskForValuesToFillImpl(
       const autofill::FormData& form,
-      const autofill::FormFieldData& field,
+      const autofill::FieldGlobalId& field_id,
       const gfx::Rect& caret_bounds,
       autofill::AutofillSuggestionTriggerSource trigger_source) override {}
 
   void OnFocusOnFormFieldImpl(const autofill::FormData& form,
-                              const autofill::FormFieldData& field) override {}
+                              const autofill::FieldGlobalId& field_id) override {}
   void OnFocusOnNonFormFieldImpl(bool had_interacted_form) override {}
 
   void OnSelectControlDidChangeImpl(
       const autofill::FormData& form,
-      const autofill::FormFieldData& field) override {}
+      const autofill::FieldGlobalId& field_id) override {}
 
   void OnJavaScriptChangedAutofilledValueImpl(
       const autofill::FormData& form,
-      const autofill::FormFieldData& field,
+      const autofill::FieldGlobalId& field,
       const std::u16string& old_value,
       bool formatting_only) override {}
 
