@@ -151,7 +151,7 @@ public class Tab {
     }
 
     public int getCurrentZoomLevel() {
-        return ThreadUtils.runOnUiThreadBlockingNoException(() -> {
+        return ThreadUtils.runOnUiThreadBlocking(() -> {
             return TabJni.get().getCurrentZoomLevel(mWebContents);
         });
     }
