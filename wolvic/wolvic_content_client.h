@@ -17,7 +17,7 @@ class WolvicContentClient : public content::ContentClient {
   ~WolvicContentClient() override;
 
   std::u16string GetLocalizedString(int message_id) override;
-  base::StringPiece GetDataResource(
+  std::string_view GetDataResource(
       int resource_id,
       ui::ResourceScaleFactor scale_factor) override;
   base::RefCountedMemory* GetDataResourceBytes(int resource_id) override;
