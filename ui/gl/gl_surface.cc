@@ -233,10 +233,6 @@ bool GLSurfaceAdapter::Recreate() {
   return surface_->Recreate();
 }
 
-bool GLSurfaceAdapter::DeferDraws() {
-  return surface_->DeferDraws();
-}
-
 bool GLSurfaceAdapter::IsOffscreen() {
   return surface_->IsOffscreen();
 }
@@ -301,14 +297,6 @@ bool GLSurfaceAdapter::OnMakeCurrent(GLContext* context) {
   return surface_->OnMakeCurrent(context);
 }
 
-bool GLSurfaceAdapter::SetBackbufferAllocation(bool allocated) {
-  return surface_->SetBackbufferAllocation(allocated);
-}
-
-void GLSurfaceAdapter::SetFrontbufferAllocation(bool allocated) {
-  surface_->SetFrontbufferAllocation(allocated);
-}
-
 void* GLSurfaceAdapter::GetShareHandle() {
   return surface_->GetShareHandle();
 }
@@ -363,10 +351,6 @@ int GLSurfaceAdapter::GetBufferCount() const {
 
 bool GLSurfaceAdapter::SupportsPlaneGpuFences() const {
   return surface_->SupportsPlaneGpuFences();
-}
-
-void GLSurfaceAdapter::SetFrameRate(float frame_rate) {
-  surface_->SetFrameRate(frame_rate);
 }
 
 void GLSurfaceAdapter::SetCurrent() {
