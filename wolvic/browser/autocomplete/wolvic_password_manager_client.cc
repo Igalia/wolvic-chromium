@@ -106,7 +106,10 @@ void WolvicPasswordManagerClient::HandleSavePassword(
   password_manager::PasswordForm& saved_form) {
   // Avoid DCHECK when adding the new ID/PW via PasswordFormManagerForUI::Update
   saved_form.federation_origin = url::Origin::Create(GURL(saved_form.url));
-  form_to_save->Update(saved_form);
+  // TODO(jfernandez): This method has been removed in commit 0613aec16ba315 and
+  // I'm not sure just calling Save is enough; we may need to do something else
+  // with the saved_form received from wolvic.
+  // form_to_save->Update(saved_form);
   form_to_save->Save();
 }
 
