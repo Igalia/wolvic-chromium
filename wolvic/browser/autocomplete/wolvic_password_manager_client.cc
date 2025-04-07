@@ -254,8 +254,7 @@ void WolvicPasswordManagerClient::AutomaticPasswordSave(
 void WolvicPasswordManagerClient::PasswordWasAutofilled(
     base::span<const password_manager::PasswordForm> best_matches,
     const url::Origin& origin,
-    const std::vector<raw_ptr<const password_manager::PasswordForm,
-                              VectorExperimental>>* federated_matches,
+    base::span<const password_manager::PasswordForm> federated_matches,
     bool was_autofilled_on_pageload) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
   if (!best_matches.size() || !best_matches[0].primary_key.has_value())
@@ -272,7 +271,7 @@ void WolvicPasswordManagerClient::AutofillHttpAuth(
   httpauth_manager_.Autofill(preferred_match, form_manager);
   DCHECK(!form_manager->GetBestMatches().empty());
   PasswordWasAutofilled(form_manager->GetBestMatches(),
-                        url::Origin::Create(form_manager->GetURL()), nullptr,
+                        url::Origin::Create(form_manager->GetURL()), {},
                         /*was_autofilled_on_pageload=*/false);
 }
 
