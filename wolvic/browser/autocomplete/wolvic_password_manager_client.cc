@@ -444,7 +444,7 @@ void WolvicPasswordManagerClient::OnFieldTypesDetermined(
     return;
   }
 
-  absl::optional<autofill::RendererFormsWithServerPredictions>
+  std::optional<autofill::RendererFormsWithServerPredictions>
       forms_and_predictions =
           autofill::RendererFormsWithServerPredictions::FromBrowserForm(
               manager, form_id);
