@@ -58,9 +58,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   const translate::LanguageState* GetLanguageState() override;
   translate::TranslateDriver* GetTranslateDriver() override;
   void ShowAutofillSettings(
-      autofill::FillingProduct main_filling_product) override;
-  void ConfirmAccountNameFixFlow(
-      base::OnceCallback<void(const std::u16string&)> callback) override;
+    autofill::SuggestionType suggestion_type) override;
   void ConfirmExpirationDateFixFlow(
       const autofill::CreditCard& card,
       base::OnceCallback<void(const std::u16string&, const std::u16string&)>
@@ -74,8 +72,6 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       const autofill::LegalMessageLines& legal_message_lines,
       SaveCreditCardOptions options,
       UploadSaveCardPromptCallback callback) override;
-  void ConfirmCreditCardFillAssist(const autofill::CreditCard& card,
-                                   base::OnceClosure callback) override;
   void ShowEditAddressProfileDialog(
       const autofill::AutofillProfile& profile,
       AddressProfileSavePromptCallback on_user_decision_callback) override;
@@ -91,7 +87,8 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   void ScanCreditCard(CreditCardScanCallback callback) override;
   bool ShowTouchToFillCreditCard(
       base::WeakPtr<autofill::TouchToFillDelegate> delegate,
-      base::span<const autofill::CreditCard> cards_to_suggest) override;
+      base::span<const autofill::CreditCard> cards_to_suggest,
+      const std::vector<bool>& card_acceptabilies) override;
   void HideTouchToFillCreditCard() override;
   void ShowAutofillSuggestions(
       const PopupOpenArgs& open_args,
