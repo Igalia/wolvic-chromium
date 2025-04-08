@@ -70,7 +70,6 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       const autofill::AutofillProfile* original_profile,
       bool is_migration_to_account,
       AddressProfileSavePromptCallback callback) override;
-  void HideTouchToFillCreditCard() override;
   void ShowAutofillSuggestions(
       const PopupOpenArgs& open_args,
       base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate) override;

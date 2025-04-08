@@ -62,7 +62,7 @@ class WolvicAutofillManager : public autofill::AutofillManager {
 
   void OnFocusOnFormFieldImpl(const autofill::FormData& form,
                               const autofill::FieldGlobalId& field_id) override {}
-  void OnFocusOnNonFormFieldImpl(bool had_interacted_form) override {}
+  void OnFocusOnNonFormFieldImpl() override {}
 
   void OnSelectControlDidChangeImpl(
       const autofill::FormData& form,
