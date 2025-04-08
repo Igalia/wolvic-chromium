@@ -12,8 +12,8 @@
 #include "third_party/jni_zero/logging.h"
 
 #if defined(JNI_ZERO_MULTIPLEXING_ENABLED)
-extern const int64_t kJniZeroHashWhole;
-extern const int64_t kJniZeroHashPriority;
+extern const int64_t kJniZeroHashWhole = -7874644414477415950LL;
+extern const int64_t kJniZeroHashPriority = 4439870226107528323LL;
 #endif
 namespace jni_zero {
 namespace {
