@@ -59,19 +59,6 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   translate::TranslateDriver* GetTranslateDriver() override;
   void ShowAutofillSettings(
     autofill::SuggestionType suggestion_type) override;
-  void ConfirmExpirationDateFixFlow(
-      const autofill::CreditCard& card,
-      base::OnceCallback<void(const std::u16string&, const std::u16string&)>
-          callback) override;
-  void ConfirmSaveCreditCardLocally(
-      const autofill::CreditCard& card,
-      SaveCreditCardOptions options,
-      LocalSaveCardPromptCallback callback) override;
-  void ConfirmSaveCreditCardToCloud(
-      const autofill::CreditCard& card,
-      const autofill::LegalMessageLines& legal_message_lines,
-      SaveCreditCardOptions options,
-      UploadSaveCardPromptCallback callback) override;
   void ShowEditAddressProfileDialog(
       const autofill::AutofillProfile& profile,
       AddressProfileSavePromptCallback on_user_decision_callback) override;
@@ -83,8 +70,6 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       const autofill::AutofillProfile* original_profile,
       SaveAddressProfilePromptOptions options,
       AddressProfileSavePromptCallback callback) override;
-  bool HasCreditCardScanFeature() const override;
-  void ScanCreditCard(CreditCardScanCallback callback) override;
   bool ShowTouchToFillCreditCard(
       base::WeakPtr<autofill::TouchToFillDelegate> delegate,
       base::span<const autofill::CreditCard> cards_to_suggest,
@@ -110,10 +95,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       autofill::mojom::ActionPersistence action_persistence,
       autofill::AutofillTriggerSource trigger_source,
       bool is_refill) override;
-  void DidFillOrPreviewField(const std::u16string& autofilled_value,
-                             const std::u16string& profile_full_name) override;
   bool IsContextSecure() const override;
-  void OpenPromoCodeOfferDetailsURL(const GURL& url) override;
   autofill::FormInteractionsFlowId GetCurrentFormInteractionsFlowId() override;
 
   // autofill::ContentAutofillClient:

@@ -162,31 +162,6 @@ translate::TranslateDriver* WolvicAutofillClient::GetTranslateDriver() {
 void WolvicAutofillClient::ShowAutofillSettings(
   autofill::SuggestionType suggestion_type) {}
 
-void WolvicAutofillClient::ConfirmExpirationDateFixFlow(
-    const autofill::CreditCard& card,
-    base::OnceCallback<void(const std::u16string&, const std::u16string&)>
-        callback) {
-  // Not implemented
-  std::move(callback).Run(std::u16string(), std::u16string());
-}
-
-void WolvicAutofillClient::ConfirmSaveCreditCardLocally(
-    const autofill::CreditCard& card,
-    SaveCreditCardOptions options,
-    LocalSaveCardPromptCallback callback) {
-  // Not implemented
-  std::move(callback).Run(SaveCardOfferUserDecision::kIgnored);
-}
-
-void WolvicAutofillClient::ConfirmSaveCreditCardToCloud(
-    const autofill::CreditCard& card,
-    const autofill::LegalMessageLines& legal_message_lines,
-    SaveCreditCardOptions options,
-    UploadSaveCardPromptCallback callback) {
-  // Not implemented
-  std::move(callback).Run(SaveCardOfferUserDecision::kIgnored, {});
-}
-
 void WolvicAutofillClient::ShowEditAddressProfileDialog(
     const autofill::AutofillProfile& profile,
     AddressProfileSavePromptCallback on_user_decision_callback) {
@@ -206,15 +181,6 @@ void WolvicAutofillClient::ConfirmSaveAddressProfile(
   std::move(callback).Run(
       AddressPromptUserDecision::kIgnored,
       autofill::AutofillProfile(AddressCountryCode("")));
-}
-
-bool WolvicAutofillClient::HasCreditCardScanFeature() const {
-  return false;
-}
-
-void WolvicAutofillClient::ScanCreditCard(CreditCardScanCallback callback) {
-  // Not implemented
-  std::move(callback).Run(autofill::CreditCard());
 }
 
 bool WolvicAutofillClient::ShowTouchToFillCreditCard(
@@ -330,22 +296,8 @@ void WolvicAutofillClient::DidFillOrPreviewForm(
     bool is_refill) {
 }
 
-void WolvicAutofillClient::DidFillOrPreviewField(
-    const std::u16string& autofilled_value,
-    const std::u16string& profile_full_name) {
-}
-
 bool WolvicAutofillClient::IsContextSecure() const {
   return false;
-}
-
-void WolvicAutofillClient::OpenPromoCodeOfferDetailsURL(const GURL& url) {
-  web_contents()->OpenURL(
-      content::OpenURLParams(url, content::Referrer(),
-                             WindowOpenDisposition::NEW_FOREGROUND_TAB,
-                             ui::PageTransition::PAGE_TRANSITION_AUTO_TOPLEVEL,
-                             /*is_renderer_initiated=*/false),
-      /*navigation_handle_callback=*/{});
 }
 
 autofill::FormInteractionsFlowId
