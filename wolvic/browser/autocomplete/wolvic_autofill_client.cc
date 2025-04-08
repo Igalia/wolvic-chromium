@@ -175,26 +175,12 @@ void WolvicAutofillClient::ShowDeleteAddressProfileDialog(
 void WolvicAutofillClient::ConfirmSaveAddressProfile(
     const autofill::AutofillProfile& profile,
     const autofill::AutofillProfile* original_profile,
-    SaveAddressProfilePromptOptions options,
+    bool is_migration_to_account,
     AddressProfileSavePromptCallback callback) {
   // Not implemented
   std::move(callback).Run(
       AddressPromptUserDecision::kIgnored,
       autofill::AutofillProfile(AddressCountryCode("")));
-}
-
-bool WolvicAutofillClient::ShowTouchToFillCreditCard(
-    base::WeakPtr<autofill::TouchToFillDelegate> delegate,
-    base::span<const autofill::CreditCard> cards_to_suggest,
-    const std::vector<bool>& card_acceptabilies) {
-  // Touch To Fill is not supported yet.
-  NOTREACHED();
-  return false;
-}
-
-void WolvicAutofillClient::HideTouchToFillCreditCard() {
-  // Touch To Fill is not supported yet.
-  NOTREACHED();
 }
 
 void WolvicAutofillClient::OnLoginSelected(JNIEnv* env, jint index) {
