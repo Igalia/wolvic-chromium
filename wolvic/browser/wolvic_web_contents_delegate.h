@@ -14,7 +14,7 @@ class WolvicJavascriptDialogManager;
 class WolvicWebContentsDelegate
     : public web_contents_delegate_android::WebContentsDelegateAndroid {
  public:
-  WolvicWebContentsDelegate(JNIEnv* env, jobject obj);
+  WolvicWebContentsDelegate(JNIEnv* env, const jni_zero::JavaRef<jobject>& obj);
   ~WolvicWebContentsDelegate() override;
 
   void OnDidGetManifest(content::WebContents* web_contents,
