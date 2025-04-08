@@ -21,6 +21,7 @@
 #include "components/password_manager/core/browser/password_form.h"
 #include "components/password_manager/core/browser/password_store/get_logins_with_affiliations_request_handler.h"
 #include "components/password_manager/core/browser/password_store/password_store_backend.h"
+#include "components/password_manager/core/browser/password_store/password_store_backend_error.h"
 #include "components/password_manager/core/browser/password_store/password_store_util.h"
 #include "components/password_manager/core/browser/password_store/psl_matching_helper.h"
 #include "wolvic/browser/autocomplete/wolvic_password_form_util.h"
@@ -145,8 +146,7 @@ void WolvicPasswordStoreBackend::OnError(
   }
 
   auto reported_error = password_manager::PasswordStoreBackendError(
-      password_manager::PasswordStoreBackendErrorType::kUncategorized,
-      password_manager::PasswordStoreBackendErrorRecoveryType::kUnrecoverable);
+      password_manager::PasswordStoreBackendErrorType::kUncategorized);
 
 
 
@@ -332,7 +332,7 @@ WolvicPasswordStoreBackend::GetSmartBubbleStatsStore() {
   return nullptr;
 }
 
-std::unique_ptr<syncer::ModelTypeControllerDelegate>
+std::unique_ptr<syncer::DataTypeControllerDelegate>
 WolvicPasswordStoreBackend::CreateSyncControllerDelegate() {
   // Not implemented
   return nullptr;
