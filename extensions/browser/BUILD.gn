@@ -4,7 +4,7 @@
 
 import("//build/config/chromeos/ui_mode.gni")
 import("//build/config/features.gni")
-import("//extensions/buildflags/buildflags.gni")
+import("//extensions/buildflags/internal/buildflags.gni")
 import("//pdf/features.gni")
 import("//testing/libfuzzer/fuzzer_test.gni")
 
@@ -69,6 +69,11 @@ source_set("core_keyed_service_factories") {
     "//extensions/browser/updater",
     "//extensions/buildflags",
   ]
+
+  if (enable_extensions_in_components) {
+    deps -= [ "//extensions/buildflags" ]
+    deps += [ "//extensions/buildflags/internal:buildflags" ]
+  }
 }
 
 # The set of all sources that are related to the core extensions system.
@@ -655,6 +660,28 @@ source_set("browser_sources") {
     "//url",
   ]
 
+  if (enable_extensions_in_components) {
+    if (is_android) {
+      sources -= [
+        "api/hid/hid_api.cc",
+        "api/hid/hid_api.h",
+        "api/hid/hid_connection_resource.cc",
+        "api/hid/hid_connection_resource.h",
+        "api/hid/hid_device_manager.cc",
+        "api/hid/hid_device_manager.h",
+      ]
+      deps -= [
+        "//components/web_modal",
+        "//services/device/public/cpp/hid",
+      ]
+    }
+
+    deps -= [
+      "//extensions/buildflags",
+    ]
+    deps += [ "//extensions/buildflags/internal:buildflags" ]
+  }
+
   public_deps = [
     "//base",
     "//components/url_matcher",
@@ -1013,6 +1040,11 @@ source_set("unit_tests") {
     "//third_party/leveldatabase",
     "//third_party/zlib/google:zip",
   ]
+
+  if (enable_extensions_in_components) {
+    deps -= [ "//extensions/buildflags" ]
+    deps += [ "//extensions/buildflags/internal:buildflags" ]
+  }
 
   if (is_chromeos) {
     deps += [

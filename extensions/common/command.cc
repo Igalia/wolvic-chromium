@@ -66,6 +66,9 @@ ui::Accelerator ParseImpl(const std::string& accelerator,
       platform_key != values::kKeybindingPlatformMac &&
       platform_key != values::kKeybindingPlatformChromeOs &&
       platform_key != values::kKeybindingPlatformLinux &&
+#if BUILDFLAG(IS_ANDROID)
+      platform_key != values::kKeybindingPlatformAndroid &&
+#endif
       platform_key != values::kKeybindingPlatformDefault) {
     *error = ErrorUtils::FormatErrorMessageUTF16(
         errors::kInvalidKeyBindingUnknownPlatform, base::NumberToString(index),
@@ -289,6 +292,8 @@ std::string Command::CommandPlatform() {
   // TODO(crbug.com/1312215): Change this once we decide what string should be
   // used for Fuchsia.
   return values::kKeybindingPlatformLinux;
+#elif BUILDFLAG(IS_ANDROID)
+  return values::kKeybindingPlatformAndroid;
 #else
 #error Unsupported platform
 #endif

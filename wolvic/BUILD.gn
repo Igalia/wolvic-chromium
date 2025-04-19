@@ -4,6 +4,7 @@
 
 import("//build/config/android/config.gni")
 import("//build/config/android/rules.gni")
+import("//build/config/compontents_extensions_build.gni")
 import("//device/vr/buildflags/buildflags.gni")
 import("//third_party/jni_zero/jni_zero.gni")
 import("//tools/grit/repack.gni")
@@ -291,6 +292,13 @@ static_library("content_native_lib") {
     "//content/shell/android:content_shell_jni_headers",
     "//ui/android",
   ]
+
+  if (enable_extensions_in_components) {
+    deps += [
+      "//components/extensions/browser",
+      "//components/extensions/common",
+    ]
+  }
 }
 
 generate_build_config_srcjar("build_config_gen") {

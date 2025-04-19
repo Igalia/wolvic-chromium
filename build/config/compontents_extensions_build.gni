@@ -1,0 +1,5 @@
+declare_args() {
+  enable_extensions_in_components = false
+}
+
+assert(enable_extensions_in_components != (!is_android && !is_ios && !is_castos && !is_fuchsia))

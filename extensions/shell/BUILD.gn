@@ -9,7 +9,7 @@ import("//build/config/ui.gni")
 import("//build/util/lastchange.gni")
 import("//build/util/process_version.gni")
 import("//components/nacl/features.gni")
-import("//extensions/buildflags/buildflags.gni")
+import("//extensions/buildflags/internal/buildflags.gni")
 import("//testing/test.gni")
 import("//tools/grit/grit_rule.gni")
 import("//tools/v8_context_snapshot/v8_context_snapshot.gni")
@@ -85,6 +85,12 @@ source_set("app_shell_lib") {
 
   if (toolkit_views) {
     deps += [ "//ui/views" ]
+  }
+
+  if (enable_extensions_in_components) {
+    deps -= [
+      "//apps",
+    ]
   }
 
   sources = [
@@ -336,6 +342,12 @@ test("app_shell_unittests") {
     "//ui/gl:test_support",
     "//ui/platform_window",
   ]
+
+  if (enable_extensions_in_components) {
+    deps -= [
+      "//apps",
+    ]
+  }
 
   data_deps = [
     # "//gin", # TODO(dpranke): Either gin or v8 data is needed ...

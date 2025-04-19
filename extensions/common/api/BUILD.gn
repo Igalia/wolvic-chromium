@@ -3,7 +3,7 @@
 # found in the LICENSE file.
 
 import("//build/config/features.gni")
-import("//extensions/buildflags/buildflags.gni")
+import("//extensions/buildflags/internal/buildflags.gni")
 import("//extensions/common/api/schema.gni")
 import("//mojo/public/tools/bindings/mojom.gni")
 import("//tools/json_schema_compiler/json_features.gni")
@@ -21,6 +21,11 @@ group("api") {
     ":mojom",
     "//extensions/buildflags",
   ]
+
+  if (enable_extensions_in_components) {
+    public_deps -= [ "//extensions/buildflags" ]
+    public_deps += [ "//extensions/buildflags/internal:buildflags" ]
+  }
 }
 
 group("extensions_features") {
@@ -48,6 +53,10 @@ generated_json_strings("generated_api_json_strings") {
     "//base",
     "//extensions/buildflags",
   ]
+  if (enable_extensions_in_components) {
+    deps -= [ "//extensions/buildflags" ]
+    deps += [ "//extensions/buildflags/internal:buildflags" ]
+  }
   visibility = [ ":api" ]
 }
 
@@ -58,6 +67,10 @@ generated_types("generated_api_types") {
     "//base",
     "//extensions/buildflags",
   ]
+  if (enable_extensions_in_components) {
+    deps -= [ "//extensions/buildflags" ]
+    deps += [ "//extensions/buildflags/internal:buildflags" ]
+  }
   visibility = [ ":api" ]
 }
 

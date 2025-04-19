@@ -30,6 +30,11 @@
 #include "url/origin.h"
 
 #if !BUILDFLAG(ENABLE_EXTENSIONS)
+#undef BUILDFLAG_INTERNAL_ENABLE_EXTENSIONS
+#include "extensions/buildflags/internal/buildflags.h"
+#endif
+
+#if !BUILDFLAG(ENABLE_EXTENSIONS)
 #error "Extensions must be enabled"
 #endif
 

@@ -3,7 +3,7 @@
 # found in the LICENSE file.
 
 import("//build/config/chromeos/ui_mode.gni")
-import("//extensions/buildflags/buildflags.gni")
+import("//extensions/buildflags/internal/buildflags.gni")
 import("//extensions/common/api/schema.gni")
 import("//tools/json_schema_compiler/json_schema_api.gni")
 
@@ -100,6 +100,11 @@ source_set("api_keyed_service_factories") {
     "//extensions/browser/api:api_implementations",
     "//extensions/buildflags:buildflags",
   ]
+
+  if (enable_extensions_in_components) {
+    deps -= [ "//extensions/buildflags:buildflags" ]
+    deps += [ "//extensions/buildflags/internal:buildflags" ]
+  }
 }
 
 # The "glue" layer that adds relevant API registrations to the extensions

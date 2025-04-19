@@ -1,0 +1,16 @@
+import("//build/config/features.gni")
+import("//build/config/compontents_extensions_build.gni")
+
+assert(enable_extensions_in_components)
+
+static_library("browser") {
+  sources = [
+  ]
+  deps = [
+    "//extensions/browser",
+    "//extensions/common",
+    "//extensions:extensions_resources",
+  ]
+  public_deps = [
+  ]
+}
