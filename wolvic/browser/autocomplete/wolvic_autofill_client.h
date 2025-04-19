@@ -28,6 +28,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   // ContentAutofillClient is associated with the `web_contents` yet. Otherwise,
   // it's a no-op.
   static void CreateForWebContents(content::WebContents* web_contents);
+  autofill::AutofillClient::SuggestionUiSessionId GenerateSuggestionUiSessionId();
 
   WolvicAutofillClient(const WolvicAutofillClient&) = delete;
   WolvicAutofillClient& operator=(const WolvicAutofillClient&) = delete;
@@ -70,14 +71,14 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       const autofill::AutofillProfile* original_profile,
       bool is_migration_to_account,
       AddressProfileSavePromptCallback callback) override;
-  void ShowAutofillSuggestions(
+  AutofillClient::SuggestionUiSessionId ShowAutofillSuggestions(
       const PopupOpenArgs& open_args,
       base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate) override;
   void UpdateAutofillDataListValues(
       base::span<const autofill::SelectOption> datalist) override;
   void PinAutofillSuggestions() override;
 
-  void UpdatePopup(
+  void UpdateAutofillSuggestions(
       const std::vector<autofill::Suggestion>& suggestions,
       autofill::FillingProduct main_filling_product,
       autofill::AutofillSuggestionTriggerSource trigger_source) override;
