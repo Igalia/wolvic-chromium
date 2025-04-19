@@ -102,6 +102,11 @@ void WebDatabaseService::LoadDatabase(os_crypt_async::OSCryptAsync* os_crypt) {
           : os_crypt_async::Encryptor::Option::kEncryptSyncCompat;
   // TODO(crbug.com/40267945): Place kEncryptSyncCompat behind base::Feature and
   // then remove it.
+  if (!os_crypt) {
+    // If os_crypt is not available, we cannot load the database.
+    OnDatabaseLoadDone(sql::INIT_FAILURE, "os_crypt not available");
+    return;
+  }
   subscription_ = os_crypt->GetInstance(
       base::BindOnce(&WebDatabaseService::CompleteLoadDatabase, this), option);
 }
