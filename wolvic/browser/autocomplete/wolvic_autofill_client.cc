@@ -194,7 +194,7 @@ void WolvicAutofillClient::OnLoginSelected(JNIEnv* env, jint index) {
 
   delegate_->DidAcceptSuggestion(
       suggestions_[index],
-      autofill::AutofillSuggestionDelegate::SuggestionPosition{
+      autofill::AutofillSuggestionDelegate::SuggestionMetadata{
           index, /*sub_popup_level=*/0});
 }
 
@@ -208,18 +208,29 @@ void WolvicAutofillClient::CreatJavaArrayFromSuggestions(JNIEnv* env) {
   }
 }
 
-void WolvicAutofillClient::ShowAutofillSuggestions(
+// static
+autofill::AutofillClient::SuggestionUiSessionId
+WolvicAutofillClient::GenerateSuggestionUiSessionId() {
+  static AutofillClient::SuggestionUiSessionId::Generator generator;
+  return generator.GenerateNextId();
+}
+
+autofill::AutofillClient::SuggestionUiSessionId WolvicAutofillClient::ShowAutofillSuggestions(
     const autofill::AutofillClient::PopupOpenArgs& open_args,
     base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate) {
   suggestions_ = std::move(open_args.suggestions);
   trigger_source_ = open_args.trigger_source;
   delegate_ = delegate;
 
+  const autofill::AutofillClient::SuggestionUiSessionId session_id = GenerateSuggestionUiSessionId();
+
   JNIEnv* env = AttachCurrentThread();
   CreatJavaArrayFromSuggestions(env);
   Java_AutofillManager_showAutofillPopup(env, java_obj_);
 
-  delegate_->OnSuggestionsShown();
+  delegate_->OnSuggestionsShown(suggestions_);
+
+  return session_id;
 }
 
 void WolvicAutofillClient::UpdateAutofillDataListValues(
@@ -228,7 +239,7 @@ void WolvicAutofillClient::UpdateAutofillDataListValues(
 
 void WolvicAutofillClient::PinAutofillSuggestions() {}
 
-void WolvicAutofillClient::UpdatePopup(
+void WolvicAutofillClient::UpdateAutofillSuggestions(
     const std::vector<autofill::Suggestion>& suggestions,
     autofill::FillingProduct main_filling_product,
     autofill::AutofillSuggestionTriggerSource trigger_source) {
