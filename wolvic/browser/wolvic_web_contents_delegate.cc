@@ -19,7 +19,9 @@
 
 namespace wolvic {
 
-WolvicWebContentsDelegate::WolvicWebContentsDelegate(JNIEnv* env, jobject obj)
+WolvicWebContentsDelegate::WolvicWebContentsDelegate(
+    JNIEnv* env,
+    const jni_zero::JavaRef<jobject>& obj)
     : WebContentsDelegateAndroid(env, obj),
       javascript_dialog_manager_(
           std::make_unique<WolvicJavascriptDialogManager>()) {}
@@ -47,7 +49,7 @@ void WolvicWebContentsDelegate::OnDidGetManifest(
 
 // Called by web_contents_impl.cc whenever a navigation requires the creation
 // of a new window (for example a link with target=_blank and window.open)
-void WolvicWebContentsDelegate::AddNewContents(
+content::WebContents* WolvicWebContentsDelegate::AddNewContents(
     content::WebContents* source,
     std::unique_ptr<content::WebContents> new_contents,
     const GURL& target_url,
@@ -58,7 +60,7 @@ void WolvicWebContentsDelegate::AddNewContents(
   JNIEnv* env = base::android::AttachCurrentThread();
   ScopedJavaLocalRef<jobject> java_delegate = GetJavaDelegate(env);
   if (java_delegate.is_null())
-    return;
+    return nullptr;
 
   Java_WolvicWebContentsDelegate_onCreateNewWindow(
       env, java_delegate, new_contents->GetJavaWebContents());
@@ -66,6 +68,8 @@ void WolvicWebContentsDelegate::AddNewContents(
   // |new_contents| ownership has been passed to java, and will retake it
   // in WolvicWebContents when the new tab is created asynchronously.
   new_contents.release();
+
+  return nullptr;
 }
 
 bool WolvicWebContentsDelegate::ShouldResumeRequestsForCreatedWindow() {

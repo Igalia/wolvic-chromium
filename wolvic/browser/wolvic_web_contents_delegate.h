@@ -14,7 +14,7 @@ class WolvicJavascriptDialogManager;
 class WolvicWebContentsDelegate
     : public web_contents_delegate_android::WebContentsDelegateAndroid {
  public:
-  WolvicWebContentsDelegate(JNIEnv* env, jobject obj);
+  WolvicWebContentsDelegate(JNIEnv* env, const jni_zero::JavaRef<jobject>& obj);
   ~WolvicWebContentsDelegate() override;
 
   void OnDidGetManifest(content::WebContents* web_contents,
@@ -26,13 +26,13 @@ class WolvicWebContentsDelegate
 
   // See //android_webview/docs/how-does-on-create-window-work.md for more
   // details.
-  void AddNewContents(content::WebContents* source,
-                      std::unique_ptr<content::WebContents> new_contents,
-                      const GURL& target_url,
-                      WindowOpenDisposition disposition,
-                      const blink::mojom::WindowFeatures& window_features,
-                      bool user_gesture,
-                      bool* was_blocked) final;
+  content::WebContents* AddNewContents(content::WebContents* source,
+                              std::unique_ptr<content::WebContents> new_contents,
+                              const GURL& target_url,
+                              WindowOpenDisposition disposition,
+                              const blink::mojom::WindowFeatures& window_features,
+                              bool user_gesture,
+                              bool* was_blocked) final;
   bool ShouldResumeRequestsForCreatedWindow() override;
 
   content::JavaScriptDialogManager* GetJavaScriptDialogManager(
