@@ -31,8 +31,6 @@ class WolvicAutofillManager : public autofill::AutofillManager {
   void OnCaretMovedInFormField(const autofill::FormData& form,
                                const autofill::FieldGlobalId& field_id,
                                const gfx::Rect& caret_bounds) override {}
-  void OnSelectOrSelectListFieldOptionsDidChangeImpl(
-      const autofill::FormData& form) override {}
 
   void Reset() override {}
 
@@ -60,6 +58,7 @@ class WolvicAutofillManager : public autofill::AutofillManager {
       const gfx::Rect& caret_bounds,
       autofill::AutofillSuggestionTriggerSource trigger_source) override {}
 
+  void OnSelectFieldOptionsDidChangeImpl(const autofill::FormData& form) override {}
   void OnFocusOnFormFieldImpl(const autofill::FormData& form,
                               const autofill::FieldGlobalId& field_id) override {}
   void OnFocusOnNonFormFieldImpl() override {}
