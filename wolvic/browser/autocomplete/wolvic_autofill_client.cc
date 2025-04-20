@@ -61,6 +61,10 @@ void WolvicAutofillClient::CreateForWebContents(
 
 WolvicAutofillClient::~WolvicAutofillClient() = default;
 
+base::WeakPtr<autofill::AutofillClient> WolvicAutofillClient::GetWeakPtr() {
+  return weak_ptr_factory_.GetWeakPtr();
+}
+
 bool WolvicAutofillClient::IsOffTheRecord() const {
   return web_contents()->GetBrowserContext()->IsOffTheRecord();
 }
@@ -109,6 +113,10 @@ syncer::SyncService* WolvicAutofillClient::GetSyncService() {
 }
 
 signin::IdentityManager* WolvicAutofillClient::GetIdentityManager() {
+  return nullptr;
+}
+
+const signin::IdentityManager* WolvicAutofillClient::GetIdentityManager() const {
   return nullptr;
 }
 

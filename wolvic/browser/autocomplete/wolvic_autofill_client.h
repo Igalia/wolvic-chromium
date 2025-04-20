@@ -35,6 +35,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   ~WolvicAutofillClient() override;
 
   // autofill::AutofillClient:
+  base::WeakPtr<AutofillClient> GetWeakPtr() override;
   bool IsOffTheRecord() const override;
   scoped_refptr<network::SharedURLLoaderFactory>
   GetURLLoaderFactory() override;
@@ -46,6 +47,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   const PrefService* GetPrefs() const override;
   syncer::SyncService* GetSyncService() override;
   signin::IdentityManager* GetIdentityManager() override;
+  const signin::IdentityManager* GetIdentityManager() const override;
   autofill::FormDataImporter* GetFormDataImporter() override;
   autofill::payments::PaymentsAutofillClient* GetPaymentsAutofillClient()
       override;
@@ -120,6 +122,8 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       autofill::AutofillSuggestionTriggerSource::kUnspecified};
   base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate_;
   base::android::ScopedJavaGlobalRef<jobject> java_obj_;
+  base::WeakPtrFactory<WolvicAutofillClient> weak_ptr_factory_{this};
+
 };
 
 }  // namespace wolvic
