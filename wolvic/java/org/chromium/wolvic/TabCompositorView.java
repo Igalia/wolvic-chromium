@@ -48,7 +48,7 @@ public class TabCompositorView extends ContentViewRenderView {
 
         try {
             ContentViewRenderViewJni.get().surfaceChanged(
-                    mNativeContentViewRenderView, this, PixelFormat.OPAQUE, width, height, surface);
+                    mNativeContentViewRenderView, this, PixelFormat.OPAQUE, width, height, surface, null);
             if (mWebContents != null) {
                 ContentViewRenderViewJni.get().onPhysicalBackingSizeChanged(
                         mNativeContentViewRenderView, this, mWebContents, width, height);
