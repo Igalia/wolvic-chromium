@@ -396,7 +396,6 @@ dist_aar("content_aar") {
     "//base:base_java",
     "//components/browser_ui/media/android:java",
     "//components/embedder_support/android:view_java",
-    "//components/externalauth/android:google_delegate_public_impl_java",
     "//components/metrics:metrics_java",
     "//components/signin/public/android:java",
     "//components/viz/service:service_java",
