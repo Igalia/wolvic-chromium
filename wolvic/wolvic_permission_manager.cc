@@ -422,20 +422,6 @@ WolvicPermissionManager::GetPermissionStatusForEmbeddedRequester(
           render_frame_host->GetMainFrame()));
 }
 
-WolvicPermissionManager::SubscriptionId
-WolvicPermissionManager::SubscribeToPermissionStatusChange(
-    blink::PermissionType permission,
-    content::RenderProcessHost* render_process_host,
-    content::RenderFrameHost* render_frame_host,
-    const GURL& requesting_origin,
-    bool should_include_device_status,
-    base::RepeatingCallback<void(blink::mojom::PermissionStatus)> callback) {
-  return SubscriptionId();
-}
-
-void WolvicPermissionManager::UnsubscribeFromPermissionStatusChange(
-    SubscriptionId subscription_id) {}
-
 void WolvicPermissionManager::RequestMediaAccessPermission(
     content::WebContents* web_contents,
     const content::MediaStreamRequest& request,
