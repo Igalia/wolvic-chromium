@@ -375,7 +375,9 @@ void WolvicContentMainDelegate::SetUpFieldTrials() {
           local_state_.get(), std::move(initial_seed),
           /*signature_verification_enabled=*/true,
           std::make_unique<variations::VariationsSafeSeedStoreLocalState>(
-              local_state_.get())),
+              local_state_.get()),
+          variations_service_client.GetChannelForVariations(),
+          variations_service_client.GetVariationsSeedFileDir()),
       variations::UIStringOverrider(),
       /*limited_entropy_synthetic_trial=*/nullptr);
 
