@@ -366,6 +366,11 @@ autofill::LogManager* WolvicPasswordManagerClient::GetLogManager() {
   return log_manager_.get();
 }
 
+password_manager::FirstCctPageLoadPasswordsUkmRecorder*
+WolvicPasswordManagerClient::GetFirstCctPageLoadUkmRecorder() {
+  return nullptr;
+}
+
 safe_browsing::PasswordProtectionService*
 WolvicPasswordManagerClient::GetPasswordProtectionService() const {
   return nullptr;
