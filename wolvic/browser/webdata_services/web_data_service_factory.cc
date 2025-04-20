@@ -28,7 +28,8 @@ std::unique_ptr<KeyedService> BuildWebDataService(
       path, "" /* application locale */ ,
       content::GetUIThreadTaskRunner({}),
       base::BindRepeating(&ContextErrorCallback),
-      nullptr /* os_crypt */);
+      nullptr /* os_crypt */,
+      false /* use_in_memory_autofill_account_database is always false for Android */);
 }
 
 } // namespace
