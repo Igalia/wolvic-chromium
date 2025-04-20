@@ -18,6 +18,7 @@ import org.chromium.components.url_formatter.UrlFormatter;
 import org.chromium.content_public.browser.ImeAdapter;
 import org.chromium.content_public.browser.LoadUrlParams;
 import org.chromium.content_public.browser.NavigationController;
+import org.chromium.content_public.browser.Visibility;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.content_public.browser.navigation_controller.LoadURLType;
 import org.chromium.ui.base.ActivityWindowAndroid;
@@ -26,6 +27,7 @@ import org.chromium.ui.base.PageTransition;
 import org.chromium.ui.base.ViewAndroidDelegate;
 import org.chromium.wolvic.WolvicWebContentsDelegate;
 import org.chromium.wolvic.WolvicWebContentsFactory;
+
 
 @JNINamespace("wolvic")
 public class Tab {
@@ -81,9 +83,7 @@ public class Tab {
 
         mCompositorView.setCurrentWebContents(mWebContents);
 
-        // TODO: Call `onShow()` on the appropriate place and should be pair
-        // with `onHide()`.
-        mWebContents.onShow();
+        mWebContents.updateWebContentsVisibility(Visibility.VISIBLE);
     }
 
     public void destroy() {
