@@ -97,6 +97,7 @@ class WolvicPasswordManagerClient
   void NotifyKeychainError() override;
   password_manager::FirstCctPageLoadPasswordsUkmRecorder*
   GetFirstCctPageLoadUkmRecorder() override;
+  void PotentialSaveFormSubmitted() override {}
 
   void PromptUserToMovePasswordToAccount(
       std::unique_ptr<password_manager::PasswordFormManagerForUI> form_to_move)
