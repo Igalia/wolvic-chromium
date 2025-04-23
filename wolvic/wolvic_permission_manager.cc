@@ -557,11 +557,6 @@ void WolvicPermissionManager::OnMediaPermissionResult(
 
 void WolvicPermissionManager::CompleteRequest(
     InProgressRequest* in_progress_request) {
-  auto it = std::find_if(in_progress_requests_.begin(),
-                         in_progress_requests_.end(), [&](const auto& request) {
-                           return request.get() == in_progress_request;
-                         });
-  CHECK(it != in_progress_requests_.end());
   CHECK(in_progress_request->content_results &&
         in_progress_request->android_results);
 
@@ -570,6 +565,11 @@ void WolvicPermissionManager::CompleteRequest(
   for (auto& callback : in_progress_request->callbacks) {
     std::move(callback).Run(result);
   }
+  auto it = std::find_if(in_progress_requests_.begin(),
+                         in_progress_requests_.end(), [&](const auto& request) {
+                           return request.get() == in_progress_request;
+                         });
+  CHECK(it != in_progress_requests_.end());
   in_progress_requests_.erase(it);
 }
 
