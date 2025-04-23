@@ -407,6 +407,7 @@ dist_aar("content_aar") {
     "//services/data_decoder/public/cpp/android:safe_json_java",
     "//services/device/public/java:nfc_java",
     "//third_party/android_deps:chromium_play_services_availability_java",
+    "//third_party/androidx/local_modifications/window:window_util_java",
     "//third_party/jni_zero:jni_zero_java",
     "//ui/android:ui_full_java",
   ]
@@ -440,6 +441,7 @@ dist_aar("content_aar") {
     "org/chromium/components/webapk/lib/client/*.class",
     "org/chromium/content_public/*.class",
     "org/chromium/content/*.class",
+    "org/chromium/content/browser/device_posture/*.class",
     "org/chromium/device/*",
     "org/chromium/gms/*.class",
     "org/chromium/installedapp/mojom/*.class",
@@ -454,6 +456,7 @@ dist_aar("content_aar") {
     "org/chromium/services/*.class",
     "org/chromium/ui/touch_selection/*.class",
     "org/chromium/url/*.class",
+    "org/chromium/window/*.class",
     "org/chromium/wolvic/*.class",
     "org/jni_zero/*.class",
   ]
