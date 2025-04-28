@@ -14,6 +14,11 @@
 #include "wolvic/browser/webdata_services/web_data_service_factory.h"
 #include "wolvic/wolvic_browser_context.h"
 
+#include "components/extensions/common/buildflags.h"
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+#include "components/extensions/browser/browser_context_keyed_service_factories.h"
+#endif
+
 namespace wolvic {
 
 // TODO(jfernandez): Should define these constants in a separated file ?
@@ -61,6 +66,9 @@ void WolvicMainParts::PreProfileInit() {
 
 void WolvicMainParts::EnsureBrowserContextKeyedServiceFactoriesBuilt() {
   WebDataServiceFactory::GetInstance();
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  components_extensions::EnsureBrowserContextKeyedServiceFactoriesBuilt();
+#endif
 }
 
 void WolvicMainParts::PostMainMessageLoopRun() {

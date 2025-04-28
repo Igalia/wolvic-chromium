@@ -1,14 +1,24 @@
+import("//build/buildflag_header.gni")
 import("//build/config/features.gni")
 import("//build/config/compontents_extensions_build.gni")
 
 assert(enable_extensions_in_components)
 
-static_library("common") {
+component("common") {
   sources = [
+    "extension_constants.cc",
+    "extension_constants.h",
   ]
   deps = [
     "//extensions:extensions_resources",
   ]
   public_deps = [
   ]
+
+  defines = [ "IS_EXETENSIONS_IMPL" ]
+}
+
+buildflag_header("buildflags") {
+  header = "buildflags.h"
+  flags = [ "ENABLE_EXTENSIONS_IN_COMPONENTS=$enable_extensions_in_components" ]
 }

@@ -3,8 +3,23 @@ import("//build/config/compontents_extensions_build.gni")
 
 assert(enable_extensions_in_components)
 
-static_library("browser") {
+component("browser") {
   sources = [
+    "api/api_browser_context_keyed_service_factories.cc",
+    "api/api_browser_context_keyed_service_factories.h",
+    "browser_context_keyed_service_factories.cc",
+    "browser_context_keyed_service_factories.h",
+    "chrome_browser_context_keyed_service_factories.cc",
+    "chrome_browser_context_keyed_service_factories.h",
+    "chrome_content_browser_client_extensions_part.cc",
+    "chrome_content_browser_client_extensions_part.h",
+    "chrome_content_browser_client_extensions_part_bindings.cc",
+    "chrome_extension_frame_host.cc",
+    "chrome_extension_frame_host.h",
+    "chrome_extension_web_contents_observer.cc",
+    "chrome_extension_web_contents_observer.h",
+    "extension_webkit_preferences.cc",
+    "extension_webkit_preferences.h",
   ]
   deps = [
     "//extensions/browser",
@@ -13,4 +28,6 @@ static_library("browser") {
   ]
   public_deps = [
   ]
+
+  defines = [ "IS_EXETENSIONS_IMPL" ]
 }
