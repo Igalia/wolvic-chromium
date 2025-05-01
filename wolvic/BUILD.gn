@@ -104,6 +104,8 @@ shared_library("libcontent_native") {
     "renderer/wolvic_render_frame_observer.h",
     "wolvic_browser_context.cc",
     "wolvic_browser_context.h",
+    "wolvic_browser_process.cc",
+    "wolvic_browser_process.h",
     "wolvic_content_browser_client.cc",
     "wolvic_content_browser_client.h",
     "wolvic_content_client.cc",

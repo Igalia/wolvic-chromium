@@ -323,10 +323,16 @@ inline constexpr char kChromeUIThemeHost[] = "theme";
 inline constexpr char kChromeUIThemeURL[] = "chrome://theme/";
 inline constexpr char kChromeUIWebUITestHost[] = "webui-test";
 inline constexpr char kChromeUIUntrustedWebUITestURL[] = "chrome-untrusted://webui-test/";
+inline constexpr char kChromeSearchScheme[] = "chrome-search";
 }
 
 namespace switches {
 extern const char kInitIsolateAsForeground[];
+extern const char kDisableBackgroundNetworking[];
+extern const char kDisableExtensions[];
+extern const char kDisableExtensionsExcept[];
+extern const char kAppsGalleryUpdateURL[];
+extern const char kAppsGalleryURL[];
 }
 
 #endif  // COMPONENTS_EXTENSIONS_COMMON_EXTENSION_CONSTANTS_H_

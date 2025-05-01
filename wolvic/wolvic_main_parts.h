@@ -10,6 +10,7 @@
 namespace wolvic {
 
 class WolvicBrowserContext;
+class WolvicBrowserProcess;
 
 class WolvicMainParts : public content::BrowserMainParts {
  public:
@@ -22,6 +23,7 @@ class WolvicMainParts : public content::BrowserMainParts {
 
   // BrowserMainParts overrides.
   int PreEarlyInitialization() override;
+  int PreCreateThreads() override;
   int PreMainMessageLoopRun() override;
   void PostMainMessageLoopRun() override;
 
@@ -48,6 +50,7 @@ class WolvicMainParts : public content::BrowserMainParts {
 
   std::unique_ptr<WolvicBrowserContext> browser_context_;
   std::unique_ptr<WolvicBrowserContext> off_the_record_browser_context_;
+  std::unique_ptr<WolvicBrowserProcess> browser_process_;
 };
 
 }  // namespace wolvic

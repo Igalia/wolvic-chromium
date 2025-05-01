@@ -6,10 +6,19 @@ assert(enable_extensions_in_components)
 
 component("common") {
   sources = [
+    "chrome_extensions_client.cc",
+    "chrome_extensions_client.h",
+    "chrome_resource_request_blocked_reason.h",
     "extension_constants.cc",
     "extension_constants.h",
+    "initialize_extensions_client.cc",
+    "initialize_extensions_client.h",
+    "permissions/chrome_permission_message_provider.cc",
+    "permissions/chrome_permission_message_provider.h",
   ]
   deps = [
+    "//base",
+    "//extensions/common:core_api_provider",
     "//extensions:extensions_resources",
   ]
   public_deps = [

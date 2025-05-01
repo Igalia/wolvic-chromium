@@ -13,6 +13,7 @@
 #include "wolvic/browser/mojo/wolvic_interface_registrar.h"
 #include "wolvic/browser/webdata_services/web_data_service_factory.h"
 #include "wolvic/wolvic_browser_context.h"
+#include "wolvic/wolvic_browser_process.h"
 
 #include "components/extensions/common/buildflags.h"
 #if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
@@ -43,6 +44,13 @@ int WolvicMainParts::PreEarlyInitialization() {
   net::NetworkChangeNotifier::SetFactory(
       new net::NetworkChangeNotifierFactoryAndroid());
 
+  browser_process_ = std::make_unique<WolvicBrowserProcess>();
+
+  return content::RESULT_CODE_NORMAL_EXIT;
+}
+
+int WolvicMainParts::PreCreateThreads() {
+  browser_process_->Init(browser_context_.get());
   return content::RESULT_CODE_NORMAL_EXIT;
 }
 
@@ -73,6 +81,7 @@ void WolvicMainParts::EnsureBrowserContextKeyedServiceFactoriesBuilt() {
 
 void WolvicMainParts::PostMainMessageLoopRun() {
   content::ShellDevToolsManagerDelegate::StopHttpHandler();
+  browser_process_->StartTearDown();
 }
 
 void WolvicMainParts::PostBrowserStart() {

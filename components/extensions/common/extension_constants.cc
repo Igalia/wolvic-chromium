@@ -174,4 +174,22 @@ namespace switches {
 // If not specified, the the Isolate will start in background mode for extension
 // processes and foreground mode otherwise.
 const char kInitIsolateAsForeground[] = "init-isolate-as-foreground";
+
+// Disable several subsystems which run network requests in the background.
+// This is for use when doing network performance testing to avoid noise in the
+// measurements.
+const char kDisableBackgroundNetworking[] = "disable-background-networking";
+
+// Disable extensions.
+const char kDisableExtensions[] = "disable-extensions";
+
+// Disable extensions except those specified in a comma-separated list.
+const char kDisableExtensionsExcept[] = "disable-extensions-except";
+
+// The update url used by gallery/webstore extensions.
+const char kAppsGalleryUpdateURL[] = "apps-gallery-update-url";
+
+// The URL to use for the gallery link in the app launcher.
+const char kAppsGalleryURL[] = "apps-gallery-url";
+
 }
