@@ -3,12 +3,22 @@ import("//build/config/compontents_extensions_build.gni")
 
 assert(enable_extensions_in_components)
 
-static_library("renderer") {
+component("renderer") {
   sources = [
+    "api/chrome_extensions_renderer_api_provider.cc",
+    "api/chrome_extensions_renderer_api_provider.h",
+    "chrome_extensions_dispatcher_delegate.cc",
+    "chrome_extensions_dispatcher_delegate.h",
+    "chrome_extensions_renderer_client.cc",
+    "chrome_extensions_renderer_client.h",
   ]
   deps = [
-    "//extensions/renderer",
+    "//base",
     "//extensions:extensions_resources",
+    "//extensions/common:mojom",
+    "//extensions/renderer",
+    "//mojo/public/js:resources",
+    "//services/network/public/cpp",
   ]
   public_deps = [
   ]

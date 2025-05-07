@@ -21,7 +21,10 @@ component("common") {
     "//extensions/common:core_api_provider",
     "//extensions:extensions_resources",
   ]
+
   public_deps = [
+    "//components/extensions/common/api",
+    "//components/extensions/common/api:extensions_features",
   ]
 
   defines = [ "IS_EXETENSIONS_IMPL" ]
