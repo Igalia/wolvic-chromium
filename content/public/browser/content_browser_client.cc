@@ -92,6 +92,13 @@ using AttributionReportType =
 
 namespace content {
 
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+content::BrowserContext* ContentBrowserClient::GetOTRBrowserContext() {
+  return nullptr;
+}
+#endif
+
+
 std::unique_ptr<BrowserMainParts> ContentBrowserClient::CreateBrowserMainParts(
     bool /* is_integration_test */) {
   return nullptr;

@@ -297,6 +297,13 @@ WolvicContentBrowserClient::off_the_record_browser_context() {
   return browser_main_parts_->off_the_record_browser_context();
 }
 
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+content::BrowserContext*
+WolvicContentBrowserClient::GetOTRBrowserContext() {
+  return off_the_record_browser_context();
+}
+#endif
+
 std::unique_ptr<content::BrowserMainParts>
 WolvicContentBrowserClient::CreateBrowserMainParts(
     bool /* is_integration_test */) {

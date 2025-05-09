@@ -43,6 +43,9 @@ class WolvicContentBrowserClient : public content::ContentBrowserClient {
   content::BrowserContext* off_the_record_browser_context();
 
   // ContentBrowserClient overrides.
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  content::BrowserContext* GetOTRBrowserContext() override;
+#endif
   std::string GetUserAgent() override;
   blink::UserAgentMetadata GetUserAgentMetadata() override;
   void ConfigureNetworkContextParams(

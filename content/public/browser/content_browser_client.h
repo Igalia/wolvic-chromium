@@ -91,6 +91,8 @@
 #include "media/capture/mojom/video_effects_manager.mojom.h"
 #endif  // !BUILDFLAG(IS_ANDROID)
 
+#include "components/extensions/common/buildflags.h"
+
 namespace net {
 class SiteForCookies;
 class IsolationInfo;
@@ -306,6 +308,10 @@ class CONTENT_EXPORT ContentBrowserClient {
                               std::optional<std::u16string> replacement_data)>;
 
   virtual ~ContentBrowserClient() = default;
+
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  virtual content::BrowserContext* GetOTRBrowserContext();
+#endif
 
   // Allows the embedder to set any number of custom BrowserMainParts
   // implementations for the browser startup code. See comments in

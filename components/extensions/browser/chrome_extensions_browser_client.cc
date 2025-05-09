@@ -19,9 +19,12 @@
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
 #include "components/extensions/browser/chrome_content_browser_client_extensions_part.h"
+#include "components/extensions/browser/chrome_extensions_browser_api_provider.h"
 #include "components/extensions/browser/chrome_extension_host_delegate.h"
 #include "components/extensions/browser/chrome_extension_web_contents_observer.h"
+#include "components/extensions/browser/chrome_url_request_util.h"
 #include "components/extensions/browser/event_router_forwarder.h"
+#include "components/extensions/browser/extension_util.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/content_settings/core/common/pref_names.h"
 #include "components/embedder_support/user_agent_utils.h"
@@ -174,8 +177,7 @@ bool RegisterTransformers() {
 ChromeExtensionsBrowserClient::ChromeExtensionsBrowserClient(Delegate* delegate)
   : delegate_(delegate) {
   AddAPIProvider(std::make_unique<CoreExtensionsBrowserAPIProvider>());
-  // TODO(mshin): Enable the below code when starting APIs migration
-  // AddAPIProvider(std::make_unique<ChromeExtensionsBrowserAPIProvider>());
+  AddAPIProvider(std::make_unique<ChromeExtensionsBrowserAPIProvider>());
 
   // This ensures transformers are only registered once. This is required
   // because testing will create the singleton ChromeExtensionsBrowserClient
@@ -331,10 +333,8 @@ base::FilePath ChromeExtensionsBrowserClient::GetBundleResourcePath(
     const network::ResourceRequest& request,
     const base::FilePath& extension_resources_path,
     int* resource_id) const {
-  // TODO(mshin): Enable the below code after migrating chrome_url_request_util  
-  // return chrome_url_request_util::GetBundleResourcePath(
-  //     request, extension_resources_path, resource_id);
-  return base::FilePath();
+  return chrome_url_request_util::GetBundleResourcePath(
+      request, extension_resources_path, resource_id);
 }
 
 void ChromeExtensionsBrowserClient::LoadResourceFromResourceBundle(
@@ -344,10 +344,9 @@ void ChromeExtensionsBrowserClient::LoadResourceFromResourceBundle(
     int resource_id,
     scoped_refptr<net::HttpResponseHeaders> headers,
     mojo::PendingRemote<network::mojom::URLLoaderClient> client) {
-  // TODO(mshin): Enable the below code after migrating chrome_url_request_util  
-  // chrome_url_request_util::LoadResourceFromResourceBundle(
-  //     request, std::move(loader), resource_relative_path, resource_id,
-  //     std::move(headers), std::move(client));
+  chrome_url_request_util::LoadResourceFromResourceBundle(
+      request, std::move(loader), resource_relative_path, resource_id,
+      std::move(headers), std::move(client));
 }
 
 bool ChromeExtensionsBrowserClient::AllowCrossRendererResourceLoad(
@@ -359,13 +358,12 @@ bool ChromeExtensionsBrowserClient::AllowCrossRendererResourceLoad(
     const Extension* extension,
     const ExtensionSet& extensions,
     const ProcessMap& process_map) {
-  // TODO(mshin): Enable the below code after migrating chrome_url_request_util  
-  // bool allowed = false;
-  // if (chrome_url_request_util::AllowCrossRendererResourceLoad(
-  //         request, destination, page_transition, child_id, is_incognito,
-  //         extension, extensions, process_map, &allowed)) {
-  //   return allowed;
-  // }
+  bool allowed = false;
+  if (chrome_url_request_util::AllowCrossRendererResourceLoad(
+          request, destination, page_transition, child_id, is_incognito,
+          extension, extensions, process_map, &allowed)) {
+    return allowed;
+  }
 
   // Couldn't determine if resource is allowed. Block the load.
   return false;
@@ -735,9 +733,8 @@ void ChromeExtensionsBrowserClient::SetLastSaveFilePath(
 bool ChromeExtensionsBrowserClient::HasIsolatedStorage(
     const ExtensionId& extension_id,
     content::BrowserContext* context) {
-  // TODO(mshin): Enable the below code after migrating extension_util.cc
-  // return util::HasIsolatedStorage(extension_id, context);
-  return false;
+  return components_extensions::util::HasIsolatedStorage(
+      extension_id, context);
 }
 
 bool ChromeExtensionsBrowserClient::IsScreenshotRestricted(
@@ -871,10 +868,8 @@ std::vector<content::BrowserContext*>
 ChromeExtensionsBrowserClient::GetRelatedContextsForExtension(
     content::BrowserContext* browser_context,
     const Extension& extension) const {
-  // TODO(mshin): Enable the below code after migrating extension_util.cc
-  // return util::GetAllRelatedProfiles(
-  //     Profile::FromBrowserContext(browser_context), extension);
-  return {};
+  return components_extensions::util::GetAllRelatedProfiles(
+      browser_context, extension);
 }
 
 void ChromeExtensionsBrowserClient::AddAdditionalAllowedHosts(

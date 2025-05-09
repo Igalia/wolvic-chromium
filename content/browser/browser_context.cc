@@ -61,6 +61,11 @@
 #include "third_party/perfetto/include/perfetto/tracing/traced_proto.h"
 #include "third_party/perfetto/include/perfetto/tracing/traced_value.h"
 
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+#include "content/public/browser/content_browser_client.h"
+#include "content/public/common/content_client.h"
+#endif
+
 namespace content {
 
 namespace {
@@ -299,6 +304,13 @@ media::VideoDecodePerfHistory* BrowserContext::GetVideoDecodePerfHistory() {
 media::WebrtcVideoPerfHistory* BrowserContext::GetWebrtcVideoPerfHistory() {
   return impl()->GetWebrtcVideoPerfHistory();
 }
+
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+BrowserContext* BrowserContext::GetOTRBrowserContext() {
+  return IsOffTheRecord() ? this :
+      GetContentClient()->browser()->GetOTRBrowserContext();
+}
+#endif
 
 media::learning::LearningSession* BrowserContext::GetLearningSession() {
   return impl()->GetLearningSession();
