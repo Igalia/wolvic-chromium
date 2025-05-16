@@ -302,6 +302,11 @@ static_library("content_native_lib") {
       "//components/extensions/common:buildflags",
       "//components/extensions/renderer",
     ]
+
+    public_deps += [
+      "//components/extensions/browser/api",
+      "//components/extensions/browser/api:api_registration",
+    ]
   }
 }
 

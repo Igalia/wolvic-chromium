@@ -4,8 +4,7 @@
 
 #include "components/extensions/browser/chrome_extensions_browser_api_provider.h"
 
-// TODO(mshin): Enable the below code after migrating APIs
-// #include "components/extensions/browser/api/generated_api_registration.h"
+#include "components/extensions/browser/api/generated_api_registration.h"
 #include "extensions/browser/extension_function_registry.h"
 
 namespace components_extensions {
@@ -24,8 +23,7 @@ void ChromeExtensionsBrowserAPIProvider::RegisterExtensionFunctions(
   // registry->RegisterFunction<ClearPreferenceFunction>();
 
   // Generated APIs from Chrome.
-  // TODO(mshin): Enable the below code after migrating APIs
-  // extensions::api::ChromeGeneratedFunctionRegistry::RegisterAll(registry);
+  extensions::api::ChromeGeneratedFunctionRegistry::RegisterAll(registry);
 }
 
 }  // namespace components_extensions

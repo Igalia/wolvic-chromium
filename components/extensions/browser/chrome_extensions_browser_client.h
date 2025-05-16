@@ -305,4 +305,4 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
 
 }  // namespace components_extensions
 
-#endif  // CHROME_BROWSER_EXTENSIONS_CHROME_EXTENSIONS_BROWSER_CLIENT_H_
+#endif  // COMPONENTS_EXTENSIONS_BROWSER_CHROME_EXTENSIONS_BROWSER_CLIENT_H_

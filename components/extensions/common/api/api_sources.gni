@@ -12,7 +12,6 @@ schema_sources_ = [
   "accessibility_features.json",
   "activity_log_private.json",
   "autofill_private.idl",
-  "autotest_private.idl",
   "bookmark_manager_private.json",
   "bookmarks.json",
   "braille_display_private.idl",

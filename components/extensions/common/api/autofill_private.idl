@@ -24,7 +24,7 @@ namespace autofillPrivate {
   };
 
   // A copy of FieldType from
-  // chrome/common/extensions/api/autofill_private.idl
+  // components/extensions/common/api/autofill_private.idl
   enum FieldType {
     NO_SERVER_DATA,
     UNKNOWN_TYPE,
