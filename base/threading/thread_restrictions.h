@@ -283,6 +283,10 @@ namespace extensions {
 class InstalledLoader;
 class UnpackedInstaller;
 }  // namespace extensions
+namespace components_extensions {
+class InstalledLoader;
+class UnpackedInstaller;
+}  // namespace components_extensions
 namespace font_service::internal {
 class MappedFontFile;
 }
@@ -617,6 +621,8 @@ class BASE_EXPORT [[maybe_unused, nodiscard]] ScopedAllowBlocking {
   friend class drive::FakeDriveService;
   friend class extensions::InstalledLoader;
   friend class extensions::UnpackedInstaller;
+  friend class components_extensions::InstalledLoader;
+  friend class components_extensions::UnpackedInstaller;
   friend class font_service::internal::MappedFontFile;
   friend class ios_web_view::WebViewBrowserState;
   friend class io_thread::IOSIOThread;

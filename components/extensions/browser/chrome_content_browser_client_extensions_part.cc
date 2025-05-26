@@ -19,6 +19,7 @@
 #include "base/metrics/histogram_macros.h"
 #include "base/strings/string_piece.h"
 #include "build/chromeos_buildflags.h"
+#include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/extension_webkit_preferences.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/dom_distiller/core/url_constants.h"
@@ -727,8 +728,8 @@ bool ChromeContentBrowserClientExtensionsPart::IsBuiltinComponent(
   }
 #endif
 
-  // TODO(mshin): Enable the below code when migrating ExtensionService
   // Check if the component is a loaded component extension.
+  // TODO(mshin): Enable the below code after migrating ComponentLoader
   // return ExtensionSystem::Get(browser_context)
   //     ->extension_service()
   //     ->component_loader()

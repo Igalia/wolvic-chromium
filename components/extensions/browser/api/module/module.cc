@@ -8,6 +8,7 @@
 #include <string>
 
 #include "base/values.h"
+#include "components/extensions/browser/extension_management.h"
 #include "extensions/browser/extension_prefs.h"
 #include "extensions/browser/extension_system.h"
 #include "extensions/browser/extension_util.h"
@@ -17,21 +18,19 @@
 namespace extensions {
 
 ExtensionFunction::ResponseAction ExtensionSetUpdateUrlDataFunction::Run() {
-  // TODO(mshin): Enable the below code after migrating ExtensionManagement
-  // EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
-  // EXTENSION_FUNCTION_VALIDATE(args()[0].is_string());
-  // const std::string& data = args()[0].GetString();
+  EXTENSION_FUNCTION_VALIDATE(args().size() >= 1);
+  EXTENSION_FUNCTION_VALIDATE(args()[0].is_string());
+  const std::string& data = args()[0].GetString();
 
-  // ExtensionManagement* extension_management =
-  //     ExtensionManagementFactory::GetForBrowserContext(browser_context());
-  // if (extension_management->UpdatesFromWebstore(*extension())) {
-  //   return RespondNow(Error(kUnknownErrorDoNotUse));
-  // }
+  components_extensions::ExtensionManagement* extension_management =
+      components_extensions::ExtensionManagementFactory::GetForBrowserContext(browser_context());
+  if (extension_management->UpdatesFromWebstore(*extension())) {
+    return RespondNow(Error(kUnknownErrorDoNotUse));
+  }
 
-  // ExtensionPrefs::Get(browser_context())
-  //     ->UpdateExtensionPref(extension_id(), kUpdateURLData, base::Value(data));
-  // return RespondNow(NoArguments());
-  return RespondNow(Error("Not implement"));
+  ExtensionPrefs::Get(browser_context())
+      ->UpdateExtensionPref(extension_id(), kUpdateURLData, base::Value(data));
+  return RespondNow(NoArguments());
 }
 
 ExtensionFunction::ResponseAction

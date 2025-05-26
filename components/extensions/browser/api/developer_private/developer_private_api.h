@@ -13,6 +13,7 @@
 #include "base/memory/raw_ptr.h"
 #include "base/memory/weak_ptr.h"
 #include "base/scoped_observation.h"
+#include "components/extensions/browser/extension_management.h"
 #include "components/extensions/common/api/developer_private.h"
 #include "components/prefs/pref_change_registrar.h"
 #include "extensions/browser/api/file_system/file_system_api.h"
@@ -57,14 +58,15 @@ class EntryPickerClient;
 
 }  // namespace api
 
-class DeveloperPrivateEventRouter : public ExtensionRegistryObserver/*,
+class DeveloperPrivateEventRouter : public ExtensionRegistryObserver,
+                                    public components_extensions::ExtensionManagement::Observer
+                                    /*
                                     public ErrorConsole::Observer,
                                     public ProcessManagerObserver,
                                     public AppWindowRegistry::Observer,
                                     public CommandService::Observer,
                                     public ExtensionPrefsObserver,
                                     public ExtensionAllowlist::Observer,
-                                    public ExtensionManagement::Observer,
                                     public WarningService::Observer,
                                     public PermissionsManager::Observer,
                                     public ToolbarActionsModel::Observer*/ {
@@ -134,8 +136,8 @@ class DeveloperPrivateEventRouter : public ExtensionRegistryObserver/*,
 //   void OnExtensionAllowlistWarningStateChanged(const ExtensionId& extension_id,
 //                                                bool show_warning) override;
 
-//   // ExtensionManagement::Observer:
-//   void OnExtensionManagementSettingsChanged() override;
+  // ExtensionManagement::Observer:
+  void OnExtensionManagementSettingsChanged() override;
 
 //   // WarningService::Observer:
 //   void ExtensionWarningsChanged(
@@ -161,9 +163,9 @@ class DeveloperPrivateEventRouter : public ExtensionRegistryObserver/*,
 //   // Handles a profile preference change.
 //   void OnProfilePrefChanged();
 
-//   // Broadcasts an event to all listeners.
-//   void BroadcastItemStateChanged(api::developer_private::EventType event_type,
-//                                  const ExtensionId& id);
+  // Broadcasts an event to all listeners.
+  void BroadcastItemStateChanged(api::developer_private::EventType event_type,
+                                 const ExtensionId& id);
 //   void BroadcastItemStateChangedHelper(
 //       api::developer_private::EventType event_type,
 //       const ExtensionId& extension_id,
@@ -182,8 +184,9 @@ class DeveloperPrivateEventRouter : public ExtensionRegistryObserver/*,
 //       warning_service_observation_{this};
 //   base::ScopedObservation<ExtensionPrefs, ExtensionPrefsObserver>
 //       extension_prefs_observation_{this};
-//   base::ScopedObservation<ExtensionManagement, ExtensionManagement::Observer>
-//       extension_management_observation_{this};
+  base::ScopedObservation<components_extensions::ExtensionManagement,
+                          components_extensions::ExtensionManagement::Observer>
+      extension_management_observation_{this};
 //   base::ScopedObservation<CommandService, CommandService::Observer>
 //       command_service_observation_{this};
 //   base::ScopedObservation<ExtensionAllowlist, ExtensionAllowlist::Observer>

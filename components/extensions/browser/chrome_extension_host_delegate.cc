@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 
+#include "components/extensions/browser/extension_service.h"
 #include "components/javascript_dialogs/app_modal_dialog_manager.h"
 #include "extensions/browser/extension_host.h"
 #include "extensions/browser/extension_system.h"
@@ -30,11 +31,10 @@ void ChromeExtensionHostDelegate::OnExtensionHostCreated(
 
 void ChromeExtensionHostDelegate::OnMainFrameCreatedForBackgroundPage(
     ExtensionHost* host) {
-  // TODO(mshin): Enable the below code after migrating ExtensionService
-  // ExtensionService* service =
-  //     ExtensionSystem::Get(host->browser_context())->extension_service();
-  // if (service)
-  //   service->DidCreateMainFrameForBackgroundPage(host);
+  ExtensionService* service =
+      ExtensionSystem::Get(host->browser_context())->extension_service();
+  if (service)
+    service->DidCreateMainFrameForBackgroundPage(host);
 }
 
 content::JavaScriptDialogManager*

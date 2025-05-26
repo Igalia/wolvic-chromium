@@ -26,6 +26,13 @@
 #error "Extensions must be enabled"
 #endif
 
+#include "components/extensions/common/buildflags.h"
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+namespace components_extensions {
+class ExtensionService;
+}
+#endif
+
 namespace base {
 class OneShotEvent;
 }
@@ -78,8 +85,11 @@ class ExtensionSystem : public KeyedService {
 
   // The ExtensionService is created at startup. ExtensionService is only
   // defined in Chrome.
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  virtual components_extensions::ExtensionService* extension_service() = 0;
+#else
   virtual ExtensionService* extension_service() = 0;
-
+#endif
   // The class controlling whether users are permitted to perform certain
   // actions on extensions (install, uninstall, disable, etc.).
   // The ManagementPolicy is created at startup.

@@ -27,6 +27,12 @@
 #include "base/strings/utf_string_conversions.h"
 #include "base/task/thread_pool.h"
 #include "base/uuid.h"
+#include "components/extensions/browser/chrome_zipfile_installer.h"
+#include "components/extensions/browser/crx_installer.h"
+#include "components/extensions/browser/extension_install_prompt.h"
+#include "components/extensions/browser/extension_service.h"
+#include "components/extensions/browser/extension_system_factory.h"
+#include "components/extensions/browser/unpacked_installer.h"
 #include "components/policy/core/common/policy_pref_names.h"
 #include "components/supervised_user/core/common/buildflags.h"
 #include "content/public/browser/browser_task_traits.h"
@@ -95,11 +101,17 @@ namespace developer = api::developer_private;
 namespace {
 const char kNoSuchExtensionError[] = "No such extension.";
 const char kUserCancelledError[] = "User cancelled uninstall";
+const char kCouldNotFindWebContentsError[] =
+    "Could not find a valid web contents.";
 
-const char kUnpackedAppsFolder[] = "apps_target";
+    const char kUnpackedAppsFolder[] = "apps_target";
 const char kManifestFile[] = "manifest.json";
 
 base::FilePath* g_drop_path_for_testing = nullptr;
+
+components_extensions::ExtensionService* GetExtensionService(content::BrowserContext* context) {
+  return ExtensionSystem::Get(context)->extension_service();
+}
 
 std::string ReadFileToString(const base::FilePath& path) {
   std::string data;
@@ -222,16 +234,16 @@ std::unique_ptr<developer::ProfileInfo> DeveloperPrivateAPI::CreateProfileInfo(
 template <>
 void BrowserContextKeyedAPIFactory<
     DeveloperPrivateAPI>::DeclareFactoryDependencies() {
-  // DependsOn(ExtensionRegistryFactory::GetInstance());
+  DependsOn(ExtensionRegistryFactory::GetInstance());
   // DependsOn(ErrorConsoleFactory::GetInstance());
   // DependsOn(ProcessManagerFactory::GetInstance());
   // DependsOn(AppWindowRegistry::Factory::GetInstance());
   // DependsOn(WarningServiceFactory::GetInstance());
-  // DependsOn(ExtensionPrefsFactory::GetInstance());
-  // DependsOn(ExtensionManagementFactory::GetInstance());
+  DependsOn(ExtensionPrefsFactory::GetInstance());
+  DependsOn(components_extensions::ExtensionManagementFactory::GetInstance());
   // DependsOn(CommandService::GetFactoryInstance());
   // DependsOn(EventRouterFactory::GetInstance());
-  // DependsOn(ExtensionSystemFactory::GetInstance());
+  DependsOn(components_extensions::ExtensionSystemFactory::GetInstance());
   // DependsOn(PermissionsManager::GetFactory());
   // DependsOn(ToolbarActionsModelFactory::GetInstance());
 }
@@ -255,8 +267,8 @@ DeveloperPrivateEventRouter::DeveloperPrivateEventRouter(content::BrowserContext
   // app_window_registry_observation_.Observe(AppWindowRegistry::Get(browser_context_));
   // warning_service_observation_.Observe(WarningService::Get(browser_context_));
   // extension_prefs_observation_.Observe(ExtensionPrefs::Get(browser_context_));
-  // extension_management_observation_.Observe(
-  //     ExtensionManagementFactory::GetForBrowserContext(browser_context_));
+  extension_management_observation_.Observe(
+      components_extensions::ExtensionManagementFactory::GetForBrowserContext(browser_context_));
   // command_service_observation_.Observe(CommandService::Get(browser_context_));
   // extension_allowlist_observer_.Observe(
   //     ExtensionSystem::Get(browser_context_)->extension_service()->allowlist());
@@ -287,6 +299,48 @@ void DeveloperPrivateEventRouter::RemoveExtensionId(
 void DeveloperPrivateEventRouter::OnExtensionLoaded(
     content::BrowserContext* browser_context,
     const Extension* extension) {
+  DCHECK(browser_context);
+  BroadcastItemStateChanged(developer::EventType::kLoaded, extension->id());
+}
+
+void DeveloperPrivateEventRouter::OnExtensionUnloaded(
+    content::BrowserContext* browser_context,
+    const Extension* extension,
+    UnloadedExtensionReason reason) {
+  DCHECK(browser_context);
+  BroadcastItemStateChanged(developer::EventType::kUnloaded, extension->id());
+}
+
+void DeveloperPrivateEventRouter::OnExtensionInstalled(
+    content::BrowserContext* browser_context,
+    const Extension* extension,
+    bool is_update) {
+  DCHECK(browser_context);
+  BroadcastItemStateChanged(developer::EventType::kInstalled, extension->id());
+}
+
+void DeveloperPrivateEventRouter::OnExtensionUninstalled(
+    content::BrowserContext* browser_context,
+    const Extension* extension,
+    extensions::UninstallReason reason) {
+  DCHECK(browser_context);
+  BroadcastItemStateChanged(developer::EventType::kUninstalled,
+                            extension->id());
+}
+
+void DeveloperPrivateEventRouter::OnExtensionManagementSettingsChanged() {
+  base::Value::List args;
+  args.Append(DeveloperPrivateAPI::CreateProfileInfo(browser_context_)->ToValue());
+
+  auto event = std::make_unique<Event>(
+      events::DEVELOPER_PRIVATE_ON_PROFILE_STATE_CHANGED,
+      developer::OnProfileStateChanged::kEventName, std::move(args));
+  event_router_->BroadcastEvent(std::move(event));
+}
+
+void DeveloperPrivateEventRouter::BroadcastItemStateChanged(
+    developer::EventType event_type,
+    const ExtensionId& extension_id) {
 }
 
 DeveloperPrivateAPI::UnpackedRetryId DeveloperPrivateAPI::AddUnpackedPath(
@@ -619,7 +673,51 @@ DeveloperPrivateInstallDroppedFileFunction::
 
 ExtensionFunction::ResponseAction
 DeveloperPrivateInstallDroppedFileFunction::Run() {
-  return RespondNow(Error("Not Implement"));
+  content::WebContents* web_contents = GetSenderWebContents();
+  if (!web_contents)
+    return RespondNow(Error(kCouldNotFindWebContentsError));
+
+  DeveloperPrivateAPI* api = DeveloperPrivateAPI::Get(browser_context());
+  base::FilePath path = api->GetDraggedPath(web_contents);
+  if (path.empty())
+    return RespondNow(Error("No dragged path"));
+
+  components_extensions::ExtensionService* service = GetExtensionService(browser_context());
+  if (path.MatchesExtension(FILE_PATH_LITERAL(".zip"))) {
+    if (base::FeatureList::IsEnabled(
+            extensions_features::kExtensionsZipFileInstalledInProfileDir)) {
+      ZipFileInstaller::Create(GetExtensionFileTaskRunner(),
+                               components_extensions::MakeRegisterInExtensionServiceCallback(service))
+          ->InstallZipFileToUnpackedExtensionsDir(
+              path, service->unpacked_install_directory());
+    } else {
+      ZipFileInstaller::Create(GetExtensionFileTaskRunner(),
+                               components_extensions::MakeRegisterInExtensionServiceCallback(service))
+          ->InstallZipFileToTempDir(path);
+    }
+
+  } else {
+    auto prompt = std::make_unique<ExtensionInstallPrompt>(web_contents);
+    scoped_refptr<components_extensions::CrxInstaller> crx_installer =
+        components_extensions::CrxInstaller::Create(service, std::move(prompt));
+    crx_installer->set_error_on_unsupported_requirements(true);
+    crx_installer->set_off_store_install_allow_reason(
+        components_extensions::CrxInstaller::OffStoreInstallAllowedFromSettingsPage);
+    crx_installer->set_install_immediately(true);
+
+    if (path.MatchesExtension(FILE_PATH_LITERAL(".user.js"))) {
+      crx_installer->InstallUserScript(path, net::FilePathToFileURL(path));
+    } else if (path.MatchesExtension(FILE_PATH_LITERAL(".crx"))) {
+      crx_installer->InstallCrx(path);
+    } else {
+      EXTENSION_FUNCTION_VALIDATE(false);
+    }
+  }
+
+  // TODO(devlin): We could optionally wait to return until we validate whether
+  // the load succeeded or failed. For now, that's unnecessary, and just adds
+  // complexity.
+  return RespondNow(NoArguments());
 }
 
 DeveloperPrivateNotifyDragInstallInProgressFunction::
@@ -741,9 +839,10 @@ DeveloperPrivateLoadDirectoryFunction::LoadByFileSystemAPI(
 }
 
 void DeveloperPrivateLoadDirectoryFunction::Load() {
-  // TODO(mshin): Enable the below code after migrating UnpackedInstaller
-  // ExtensionService* service = GetExtensionService(browser_context());
-  // UnpackedInstaller::Create(service)->Load(project_base_path_);
+  components_extensions::ExtensionService* service =
+      GetExtensionService(browser_context());
+  components_extensions::UnpackedInstaller::Create(service)
+      ->Load(project_base_path_);
 
   // TODO(grv) : The unpacked installer should fire an event when complete
   // and return the extension_id.

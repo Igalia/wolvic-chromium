@@ -18,12 +18,15 @@
 #include "base/version.h"
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
+#include "components/extensions/browser/api/chrome_extensions_api_client.h"
 #include "components/extensions/browser/chrome_content_browser_client_extensions_part.h"
 #include "components/extensions/browser/chrome_extensions_browser_api_provider.h"
 #include "components/extensions/browser/chrome_extension_host_delegate.h"
 #include "components/extensions/browser/chrome_extension_web_contents_observer.h"
 #include "components/extensions/browser/chrome_url_request_util.h"
 #include "components/extensions/browser/event_router_forwarder.h"
+#include "components/extensions/browser/extension_service.h"
+#include "components/extensions/browser/extension_system_factory.h"
 #include "components/extensions/browser/extension_util.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/content_settings/core/common/pref_names.h"
@@ -187,8 +190,7 @@ ChromeExtensionsBrowserClient::ChromeExtensionsBrowserClient(Delegate* delegate)
 
   // TODO(mshin): Enable the below code after migrating ChromeProcessManagerDelegate
   // process_manager_delegate_ = std::make_unique<ChromeProcessManagerDelegate>();
-  // TODO(mshin): Enable the below code after migrating ChromeExtensionsAPIClient
-  // api_client_ = std::make_unique<ChromeExtensionsAPIClient>();
+  api_client_ = std::make_unique<ChromeExtensionsAPIClient>();
   extensions::SetCurrentChannel(version_info::Channel::STABLE);
   // TODO(mshin): Enable the below code after migrating ChromeComponentExtensionResourceManager
   // resource_manager_ =
@@ -482,9 +484,7 @@ bool ChromeExtensionsBrowserClient::IsLoggedInAsPublicAccount() {
 
 ExtensionSystemProvider*
 ChromeExtensionsBrowserClient::GetExtensionSystemFactory() {
-  // TODO(mshin): Enable the below code after migrating ExtensionSystemFactory
-  // return ExtensionSystemFactory::GetInstance();
-  return nullptr;
+  return ExtensionSystemFactory::GetInstance();
 }
 
 void ChromeExtensionsBrowserClient::RegisterBrowserInterfaceBindersForFrame(
@@ -669,10 +669,8 @@ std::string ChromeExtensionsBrowserClient::GetApplicationLocale() {
 bool ChromeExtensionsBrowserClient::IsExtensionEnabled(
     const ExtensionId& extension_id,
     content::BrowserContext* context) const {
-  // TODO(mshin): Enable the below code after migrating ExtensionService
-  // return ExtensionSystem::Get(context)->extension_service()->IsExtensionEnabled(
-  //     extension_id);
-  return true;
+  return ExtensionSystem::Get(context)->extension_service()->IsExtensionEnabled(
+      extension_id);
 }
 
 bool ChromeExtensionsBrowserClient::IsWebUIAllowedToMakeNetworkRequests(

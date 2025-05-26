@@ -4,6 +4,11 @@
 
 #include "components/extensions/browser/chrome_browser_context_keyed_service_factories.h"
 
+#include "components/extensions/browser/extension_management.h"
+#include "components/extensions/browser/extension_system_factory.h"
+#include "components/extensions/browser/install_tracker_factory.h"
+#include "components/extensions/browser/install_verifier_factory.h"
+
 namespace components_extensions {
 
 void EnsureChromeBrowserContextKeyedServiceFactoriesBuilt() {
@@ -15,13 +20,13 @@ void EnsureChromeBrowserContextKeyedServiceFactoriesBuilt() {
 //   extensions::CWSInfoServiceFactory::GetInstance();
 //   extensions::ExtensionGarbageCollectorFactory::GetInstance();
 //   extensions::ExtensionGCMAppHandler::GetFactoryInstance();
-//   extensions::ExtensionManagementFactory::GetInstance();
+  ExtensionManagementFactory::GetInstance();
 //   extensions::ExtensionNotificationDisplayHelperFactory::GetInstance();
-//   extensions::ExtensionSystemFactory::GetInstance();
+  ExtensionSystemFactory::GetInstance();
 //   extensions::ExtensionWebUIOverrideRegistrar::GetFactoryInstance();
 //   extensions::IncognitoConnectability::EnsureFactoryBuilt();
-//   extensions::InstallTrackerFactory::GetInstance();
-//   extensions::InstallVerifierFactory::GetInstance();
+  InstallTrackerFactory::GetInstance();
+  InstallVerifierFactory::GetInstance();
 //   extensions::MenuManagerFactory::GetInstance();
 //   extensions::PermissionsUpdater::EnsureAssociatedFactoryBuilt();
 // #if BUILDFLAG(ENABLE_PLUGINS)

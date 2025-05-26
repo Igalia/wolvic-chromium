@@ -10,6 +10,9 @@
 #include "base/check_op.h"
 #include "base/command_line.h"
 #include "build/build_config.h"
+#include "components/extensions/browser/extension_management.h"
+#include "components/extensions/browser/extension_service.h"
+#include "components/extensions/browser/shared_module_service.h"
 #include "components/prefs/pref_service.h"
 #include "components/variations/variations_associated_data.h"
 #include "content/public/browser/content_browser_client.h"
@@ -41,6 +44,7 @@ using extensions::ExtensionHost;
 using extensions::ExtensionId;
 using extensions::ExtensionPrefs;
 using extensions::ExtensionRegistry;
+using extensions::ExtensionSet;
 using extensions::ExtensionSystem;
 using extensions::PermissionsParser;
 using extensions::PermissionSet;
@@ -60,11 +64,10 @@ std::string ReloadExtension(const std::string& extension_id,
   // When we reload the extension the ID may be invalidated if we've passed it
   // by const ref everywhere. Make a copy to be safe. http://crbug.com/103762
   std::string id = extension_id;
-  // TODO(mshin): Enable the below code after migrating ExtensionService
-  // ExtensionService* service =
-  //     ExtensionSystem::Get(context)->extension_service();
-  // CHECK(service);
-  // service->ReloadExtension(id);
+  ExtensionService* service =
+      ExtensionSystem::Get(context)->extension_service();
+  CHECK(service);
+  service->ReloadExtension(id);
   return id;
 }
 
@@ -161,18 +164,17 @@ void SetAllowFileAccess(const std::string& extension_id,
 
 bool ShouldSync(const Extension* extension,
                 content::BrowserContext* context) {
-  // TODO(mshin): Enable the below code after migrating ExtensionManagement
-  // ExtensionManagement* extension_management =
-  //     ExtensionManagementFactory::GetForBrowserContext(context);
-  // // Update URL is overridden only for non webstore extensions and offstore
-  // // extensions should not be synced.
-  // if (extension_management->IsUpdateUrlOverridden(extension->id())) {
-  //   const GURL update_url =
-  //       extension_management->GetEffectiveUpdateURL(*extension);
-  //   DCHECK(!extension_urls::IsWebstoreUpdateUrl(update_url))
-  //       << "Update URL cannot be overridden to be the webstore URL!";
-  //   return false;
-  // }
+  ExtensionManagement* extension_management =
+      ExtensionManagementFactory::GetForBrowserContext(context);
+  // Update URL is overridden only for non webstore extensions and offstore
+  // extensions should not be synced.
+  if (extension_management->IsUpdateUrlOverridden(extension->id())) {
+    const GURL update_url =
+        extension_management->GetEffectiveUpdateURL(*extension);
+    DCHECK(!extension_urls::IsWebstoreUpdateUrl(update_url))
+        << "Update URL cannot be overridden to be the webstore URL!";
+    return false;
+  }
 
   // TODO(mshin): Enable the below code after supporting sync
   // return sync_helper::IsSyncable(extension) &&
@@ -185,24 +187,23 @@ bool IsExtensionIdle(const std::string& extension_id,
   std::vector<std::string> ids_to_check;
   ids_to_check.push_back(extension_id);
 
-  // TODO(mshin): Enable the below code after migrating SharedModuleService
-  // const Extension* extension =
-  //     ExtensionRegistry::Get(context)->enabled_extensions().GetByID(
-  //         extension_id);
-  // if (extension && extension->is_shared_module()) {
-  //   // We have to check all the extensions that use this shared module for idle
-  //   // to tell whether it is really 'idle'.
-  //   SharedModuleService* service = ExtensionSystem::Get(context)
-  //                                      ->extension_service()
-  //                                      ->shared_module_service();
-  //   std::unique_ptr<ExtensionSet> dependents =
-  //       service->GetDependentExtensions(extension);
-  //   for (ExtensionSet::const_iterator i = dependents->begin();
-  //        i != dependents->end();
-  //        i++) {
-  //     ids_to_check.push_back((*i)->id());
-  //   }
-  // }
+  const Extension* extension =
+      ExtensionRegistry::Get(context)->enabled_extensions().GetByID(
+          extension_id);
+  if (extension && extension->is_shared_module()) {
+    // We have to check all the extensions that use this shared module for idle
+    // to tell whether it is really 'idle'.
+    SharedModuleService* service = ExtensionSystem::Get(context)
+                                       ->extension_service()
+                                       ->shared_module_service();
+    std::unique_ptr<ExtensionSet> dependents =
+        service->GetDependentExtensions(extension);
+    for (ExtensionSet::const_iterator i = dependents->begin();
+         i != dependents->end();
+         i++) {
+      ids_to_check.push_back((*i)->id());
+    }
+  }
 
   ProcessManager* process_manager = ProcessManager::Get(context);
   for (std::vector<std::string>::const_iterator i = ids_to_check.begin();
@@ -313,8 +314,8 @@ void SetDeveloperModeForProfile(content::BrowserContext* context, bool in_develo
 void Navigate(
     const GURL& url,
     content::BrowserContext* context,
-    WindowOpenDisposition disposition,
-    content::WebContents* target_contents) {
+    content::WebContents* target_contents,
+    WindowOpenDisposition disposition) {
   if (!target_contents) {
     // TODO(mshin): Plumbing the interface to Embbeder to get WebContents
     // target_contents = GetWebContents();

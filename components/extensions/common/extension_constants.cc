@@ -192,4 +192,21 @@ const char kAppsGalleryUpdateURL[] = "apps-gallery-update-url";
 // The URL to use for the gallery link in the app launcher.
 const char kAppsGalleryURL[] = "apps-gallery-url";
 
+// Name of the command line flag to force content verification to be on in one
+// of various modes.
+const char kExtensionContentVerification[] = "extension-content-verification";
+
+// Values for the kExtensionContentVerification flag.
+// See ContentVerifierDelegate::Mode for more explanation.
+const char kExtensionContentVerificationBootstrap[] = "bootstrap";
+const char kExtensionContentVerificationEnforce[] = "enforce";
+const char kExtensionContentVerificationEnforceStrict[] = "enforce_strict";
+
+// Turns on extension install verification if it would not otherwise have been
+// turned on.
+const char kExtensionsInstallVerification[] = "extensions-install-verification";
+
+// Specifies a comma-separated list of extension ids that should be forced to
+// be treated as not from the webstore when doing install verification.
+const char kExtensionsNotWebstore[] = "extensions-not-webstore";
 }

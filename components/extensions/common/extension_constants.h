@@ -333,6 +333,12 @@ extern const char kDisableExtensions[];
 extern const char kDisableExtensionsExcept[];
 extern const char kAppsGalleryUpdateURL[];
 extern const char kAppsGalleryURL[];
+extern const char kExtensionContentVerification[];
+extern const char kExtensionContentVerificationBootstrap[];
+extern const char kExtensionContentVerificationEnforce[];
+extern const char kExtensionContentVerificationEnforceStrict[];
+extern const char kExtensionsInstallVerification[];
+extern const char kExtensionsNotWebstore[];
 }
 
 #endif  // COMPONENTS_EXTENSIONS_COMMON_EXTENSION_CONSTANTS_H_

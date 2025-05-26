@@ -286,9 +286,8 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
   // Support for ProcessManager.
   // std::unique_ptr<ChromeProcessManagerDelegate> process_manager_delegate_;
 
-  // TODO(mshin): Enable the below code after migrating ChromeExtensionsAPIClient
   // Client for API implementations.
-  // std::unique_ptr<ChromeExtensionsAPIClient> api_client_;
+  std::unique_ptr<ChromeExtensionsAPIClient> api_client_;
 
   // TODO(mshin): Enable the below code after migrating ChromeComponentExtensionResourceManager
   // std::unique_ptr<ChromeComponentExtensionResourceManager> resource_manager_;
