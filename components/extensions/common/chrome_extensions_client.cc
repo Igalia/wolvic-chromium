@@ -13,6 +13,7 @@
 #include "base/metrics/histogram_macros.h"
 #include "base/strings/string_util.h"
 #include "base/values.h"
+#include "components/extensions/common/chrome_extensions_api_provider.h"
 #include "components/extensions/common/chrome_resource_request_blocked_reason.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/version_info/version_info.h"
@@ -57,8 +58,7 @@ const char kExtensionBlocklistHttpsUrlPrefix[] =
 }  // namespace
 
 ChromeExtensionsClient::ChromeExtensionsClient() {
-  // TODO(mshin): Enable the below code after migrating ChromeExtensionsAPIProvider
-  // AddAPIProvider(std::make_unique<ChromeExtensionsAPIProvider>());
+  AddAPIProvider(std::make_unique<ChromeExtensionsAPIProvider>());
   AddAPIProvider(std::make_unique<CoreExtensionsAPIProvider>());
 }
 

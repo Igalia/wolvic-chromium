@@ -6,8 +6,17 @@
 
 #include <string_view>
 
+#include "components/extensions/common/api/api_features.h"
+#include "components/extensions/common/api/generated_schemas.h"
+#include "components/extensions/common/api/manifest_features.h"
+#include "components/extensions/common/api/permission_features.h"
+#include "components/extensions/common/chrome_manifest_handlers.h"
 #include "extensions/common/features/json_feature_provider_source.h"
 #include "extensions/common/permissions/permissions_info.h"
+
+using extensions::FeatureProvider;
+using extensions::JSONFeatureProviderSource;
+using extensions::PermissionsInfo;
 
 namespace components_extensions {
 
@@ -15,17 +24,17 @@ ChromeExtensionsAPIProvider::ChromeExtensionsAPIProvider() {}
 ChromeExtensionsAPIProvider::~ChromeExtensionsAPIProvider() = default;
 
 void ChromeExtensionsAPIProvider::AddAPIFeatures(FeatureProvider* provider) {
-  AddChromeAPIFeatures(provider);
+  extensions::AddChromeAPIFeatures(provider);
 }
 
 void ChromeExtensionsAPIProvider::AddManifestFeatures(
     FeatureProvider* provider) {
-  AddChromeManifestFeatures(provider);
+  extensions::AddChromeManifestFeatures(provider);
 }
 
 void ChromeExtensionsAPIProvider::AddPermissionFeatures(
     FeatureProvider* provider) {
-  AddChromePermissionFeatures(provider);
+  extensions::AddChromePermissionFeatures(provider);
 }
 
 void ChromeExtensionsAPIProvider::AddBehaviorFeatures(
@@ -35,24 +44,26 @@ void ChromeExtensionsAPIProvider::AddBehaviorFeatures(
 
 void ChromeExtensionsAPIProvider::AddAPIJSONSources(
     JSONFeatureProviderSource* json_source) {
-  json_source->LoadJSON(IDR_CHROME_EXTENSION_API_FEATURES);
+  // TODO(mshin): Support Resources
+  // json_source->LoadJSON(IDR_CHROME_EXTENSION_API_FEATURES);
 }
 
 bool ChromeExtensionsAPIProvider::IsAPISchemaGenerated(
     const std::string& name) {
-  return api::ChromeGeneratedSchemas::IsGenerated(name);
+  return extensions::api::ChromeGeneratedSchemas::IsGenerated(name);
 }
 
 std::string_view ChromeExtensionsAPIProvider::GetAPISchema(
     const std::string& name) {
-  return api::ChromeGeneratedSchemas::Get(name);
+  return extensions::api::ChromeGeneratedSchemas::Get(name);
 }
 
 void ChromeExtensionsAPIProvider::RegisterPermissions(
     PermissionsInfo* permissions_info) {
-  permissions_info->RegisterPermissions(
-      chrome_api_permissions::GetPermissionInfos(),
-      chrome_api_permissions::GetPermissionAliases());
+  // TODO(mshin): Enable the below code after migrating chrome_api_permissions
+  // permissions_info->RegisterPermissions(
+  //     chrome_api_permissions::GetPermissionInfos(),
+  //     chrome_api_permissions::GetPermissionAliases());
 }
 
 void ChromeExtensionsAPIProvider::RegisterManifestHandlers() {

@@ -6,11 +6,29 @@ assert(enable_extensions_in_components)
 
 component("common") {
   sources = [
+    "api/url_handlers/url_handlers_parser.cc",
+    "api/url_handlers/url_handlers_parser.h",
+    "chrome_extensions_api_provider.cc",
+    "chrome_extensions_api_provider.h",
     "chrome_extensions_client.cc",
     "chrome_extensions_client.h",
+    "chrome_manifest_handlers.cc",
+    "chrome_manifest_handlers.h",
+    "chrome_manifest_url_handlers.cc",
+    "chrome_manifest_url_handlers.h",
     "chrome_resource_request_blocked_reason.h",
     "extension_constants.cc",
     "extension_constants.h",
+    "manifest_handlers/app_launch_info.cc",
+    "manifest_handlers/app_launch_info.h",
+    "manifest_handlers/minimum_chrome_version_checker.cc",
+    "manifest_handlers/minimum_chrome_version_checker.h",
+    "manifest_handlers/natively_connectable_handler.cc",
+    "manifest_handlers/natively_connectable_handler.h",
+    "manifest_handlers/settings_overrides_handler.cc",
+    "manifest_handlers/settings_overrides_handler.h",
+    "manifest_handlers/theme_handler.cc",
+    "manifest_handlers/theme_handler.h",
     "initialize_extensions_client.cc",
     "initialize_extensions_client.h",
     "permissions/chrome_permission_message_provider.cc",
@@ -20,6 +38,7 @@ component("common") {
     "//base",
     "//extensions/common:core_api_provider",
     "//extensions:extensions_resources",
+    "//components/url_formatter",
   ]
 
   public_deps = [
