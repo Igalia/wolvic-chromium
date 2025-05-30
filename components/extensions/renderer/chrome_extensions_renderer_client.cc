@@ -15,6 +15,8 @@
 #include "base/metrics/histogram_functions.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/extensions/renderer/chrome_extensions_dispatcher_delegate.h"
+#include "components/extensions/renderer/renderer_permissions_policy_delegate.h"
+#include "components/extensions/renderer/resource_request_policy.h"
 #include "content/public/common/content_constants.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/isolated_world_ids.h"
@@ -103,14 +105,12 @@ extensions::Dispatcher* ChromeExtensionsRendererClient::GetDispatcher() {
 
 void ChromeExtensionsRendererClient::OnExtensionLoaded(
     const extensions::Extension& extension) {
-  // TODO(mshin): Enable the below code after migrating ResourceRequestPolicy
-  // resource_request_policy_->OnExtensionLoaded(extension);
+  resource_request_policy_->OnExtensionLoaded(extension);
 }
 
 void ChromeExtensionsRendererClient::OnExtensionUnloaded(
     const extensions::ExtensionId& extension_id) {
-  // TODO(mshin): Enable the below code after migrating ResourceRequestPolicy
-  // resource_request_policy_->OnExtensionUnloaded(extension_id);
+  resource_request_policy_->OnExtensionUnloaded(extension_id);
 }
 
 bool ChromeExtensionsRendererClient::ExtensionAPIEnabledForServiceWorkerScript(
@@ -146,14 +146,12 @@ void ChromeExtensionsRendererClient::RenderThreadStarted() {
         std::move(api_providers_));
   }
   extension_dispatcher_->OnRenderThreadStarted(thread);
-  // TODO(mshin): Enable the below code after migrating RendererPermissionsPolicyDelegate
-  // permissions_policy_delegate_ =
-  //     std::make_unique<extensions::RendererPermissionsPolicyDelegate>(
-  //         extension_dispatcher_.get());
-  // TODO(mshin): Enable the below code after migrating ResourceRequestPolicy
-  // resource_request_policy_ =
-  //     std::make_unique<extensions::ResourceRequestPolicy>(
-  //         extension_dispatcher_.get());
+  permissions_policy_delegate_ =
+      std::make_unique<RendererPermissionsPolicyDelegate>(
+          extension_dispatcher_.get());
+  resource_request_policy_ =
+      std::make_unique<ResourceRequestPolicy>(
+          extension_dispatcher_.get());
 
   thread->AddObserver(extension_dispatcher_.get());
 }
@@ -274,10 +272,9 @@ void ChromeExtensionsRendererClient::WillSendRequest(
     return;
   }
 
-  // TODO(mshin): Enable the below condition after migrating ResourceRequestPolicy
-  if (url.ProtocolIs(extensions::kExtensionScheme) /* &&
+  if (url.ProtocolIs(extensions::kExtensionScheme)  &&
       !resource_request_policy_->CanRequestResource(
-          GURL(url), frame, transition_type, initiator_origin) */) {
+          GURL(url), frame, transition_type, initiator_origin) ) {
     *new_url = GURL(kExtensionInvalidRequestURL);
   }
 
@@ -318,10 +315,9 @@ void ChromeExtensionsRendererClient::WillSendRequest(
 void ChromeExtensionsRendererClient::SetExtensionDispatcherForTest(
     std::unique_ptr<extensions::Dispatcher> extension_dispatcher) {
   extension_dispatcher_ = std::move(extension_dispatcher);
-  // TODO(mshin): Enable the below code after migrating RendererPermissionsPolicyDelegate
-  // permissions_policy_delegate_ =
-  //     std::make_unique<extensions::RendererPermissionsPolicyDelegate>(
-  //         extension_dispatcher_.get());
+  permissions_policy_delegate_ =
+      std::make_unique<RendererPermissionsPolicyDelegate>(
+          extension_dispatcher_.get());
 }
 
 extensions::Dispatcher*

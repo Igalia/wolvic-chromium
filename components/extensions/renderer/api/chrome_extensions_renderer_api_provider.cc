@@ -4,6 +4,8 @@
 
 #include "components/extensions/renderer/api/chrome_extensions_renderer_api_provider.h"
 
+#include "components/extensions/renderer/api/extension_hooks_delegate.h"
+#include "components/extensions/renderer/api/identity_hooks_delegate.h"
 #include "components/grit/components_resources.h"
 #include "extensions/renderer/bindings/api_bindings_system.h"
 #include "extensions/renderer/dispatcher.h"
@@ -14,7 +16,9 @@
 #include "extensions/renderer/resource_bundle_source_map.h"
 #include "extensions/renderer/script_context.h"
 
+using extensions::APIBindingsSystem;
 using extensions::Dispatcher;
+using extensions::LazyBackgroundPageNativeHandler;
 using extensions::ModuleSystem;
 using extensions::NativeExtensionBindingsSystem;
 using extensions::ResourceBundleSourceMap;
@@ -36,39 +40,32 @@ void ChromeExtensionsRendererAPIProvider::RegisterNativeHandlers(
   //     "notifications_private",
   //     std::make_unique<NotificationsNativeHandler>(context));
   // module_system->RegisterNativeHandler(
-  //     "mediaGalleries",
-  //     std::make_unique<MediaGalleriesCustomBindings>(context));
-  // module_system->RegisterNativeHandler(
   //     "page_capture", std::make_unique<PageCaptureCustomBindings>(
   //                         context, bindings_system->GetIPCMessageSender()));
 
-  // // The following are native handlers that are defined in //extensions, but
-  // // are only used for APIs defined in Chrome.
-  // // TODO(devlin): We should clean this up. If an API is defined in Chrome,
-  // // there's no reason to have its native handlers residing and being compiled
-  // // in //extensions.
-  // module_system->RegisterNativeHandler(
-  //     "lazy_background_page",
-  //     std::make_unique<LazyBackgroundPageNativeHandler>(context));
+  // The following are native handlers that are defined in //extensions, but
+  // are only used for APIs defined in Chrome.
+  // TODO(devlin): We should clean this up. If an API is defined in Chrome,
+  // there's no reason to have its native handlers residing and being compiled
+  // in //extensions.
+  module_system->RegisterNativeHandler(
+      "lazy_background_page",
+      std::make_unique<LazyBackgroundPageNativeHandler>(context));
 }
 
 void ChromeExtensionsRendererAPIProvider::AddBindingsSystemHooks(
     Dispatcher* dispatcher,
     NativeExtensionBindingsSystem* bindings_system) const {
-  // TODO(mshin): Enable each handler after migrating APIs
-  // APIBindingsSystem* bindings = bindings_system->api_system();
+  APIBindingsSystem* bindings = bindings_system->api_system();
+  bindings->RegisterHooksDelegate(
+      "extension", std::make_unique<ExtensionHooksDelegate>(
+                       bindings_system->messaging_service()));
+  // TODO(mshin): Enable each handler after migrating TabsHooksDelegate
   // bindings->RegisterHooksDelegate(
-  //     "app", std::make_unique<extensions::AppHooksDelegate>(
-  //                dispatcher, bindings->request_handler(),
-  //                bindings_system->GetIPCMessageSender()));
-  // bindings->RegisterHooksDelegate(
-  //     "extension", std::make_unique<extensions::ExtensionHooksDelegate>(
-  //                      bindings_system->messaging_service()));
-  // bindings->RegisterHooksDelegate(
-  //     "tabs", std::make_unique<extensions::TabsHooksDelegate>(
+  //     "tabs", std::make_unique<TabsHooksDelegate>(
   //                 bindings_system->messaging_service()));
-  // bindings->RegisterHooksDelegate(
-  //     "identity", std::make_unique<extensions::IdentityHooksDelegate>());
+  bindings->RegisterHooksDelegate(
+      "identity", std::make_unique<IdentityHooksDelegate>());
 }
 
 void ChromeExtensionsRendererAPIProvider::PopulateSourceMap(

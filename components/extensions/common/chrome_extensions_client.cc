@@ -16,6 +16,7 @@
 #include "components/extensions/common/chrome_extensions_api_provider.h"
 #include "components/extensions/common/chrome_resource_request_blocked_reason.h"
 #include "components/extensions/common/extension_constants.h"
+#include "components/extensions/common/manifest_handlers/theme_handler.h"
 #include "components/version_info/version_info.h"
 #include "content/public/common/url_constants.h"
 #include "extensions/common/api/extension_action/action_info.h"
@@ -191,14 +192,13 @@ std::set<base::FilePath> ChromeExtensionsClient::GetBrowserImagePaths(
       ExtensionsClient::GetBrowserImagePaths(extension);
 
   // Theme images
-  // TODO(mshin): Enable the below code after migrating ThemeInfo
-  // const base::Value::Dict* theme_images = ThemeInfo::GetImages(extension);
-  // if (theme_images) {
-  //   for (const auto [key, value] : *theme_images) {
-  //     if (value.is_string())
-  //       image_paths.insert(base::FilePath::FromUTF8Unsafe(value.GetString()));
-  //   }
-  // }
+  const base::Value::Dict* theme_images = ThemeInfo::GetImages(extension);
+  if (theme_images) {
+    for (const auto [key, value] : *theme_images) {
+      if (value.is_string())
+        image_paths.insert(base::FilePath::FromUTF8Unsafe(value.GetString()));
+    }
+  }
 
   const ActionInfo* action = ActionInfo::GetExtensionActionInfo(extension);
   if (action && !action->default_icon.empty())

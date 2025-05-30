@@ -10,6 +10,7 @@
 #include "base/command_line.h"
 #include "base/metrics/field_trial.h"
 #include "components/extensions/browser/chrome_extension_frame_host.h"
+#include "components/extensions/browser/extension_service.h"
 #include "components/extensions/common/extension_constants.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/child_process_security_policy.h"
@@ -121,9 +122,8 @@ void ChromeExtensionWebContentsObserver::ReloadIfTerminated(
   //            extensions. It seems to be fast enough, but there is a race.
   //            We should delay loading until the extension has reloaded.
   if (registry->terminated_extensions().GetByID(extension_id)) {
-    // TODO(mshin) : Enable the below code after migrating ExtensionsService
-    // extensions::ExtensionSystem::Get(browser_context())->
-    //     extension_service()->ReloadExtension(extension_id);
+    extensions::ExtensionSystem::Get(browser_context())->
+        extension_service()->ReloadExtension(extension_id);
   }
 }
 

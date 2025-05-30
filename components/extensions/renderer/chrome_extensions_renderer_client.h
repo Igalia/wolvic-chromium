@@ -32,8 +32,6 @@ struct WebPluginInfo;
 
 namespace extensions {
 class Dispatcher;
-class RendererPermissionsPolicyDelegate;
-class ResourceRequestPolicy;
 }
 
 namespace net {
@@ -54,6 +52,9 @@ class Object;
 }  // namespace v8
 
 namespace components_extensions {
+
+class RendererPermissionsPolicyDelegate;
+class ResourceRequestPolicy;
 
 class ChromeExtensionsRendererClient
     : public extensions::ExtensionsRendererClient {
@@ -126,11 +127,9 @@ class ChromeExtensionsRendererClient
  private:
   std::unique_ptr<ukm::MojoUkmRecorder> ukm_recorder_;
   std::unique_ptr<extensions::Dispatcher> extension_dispatcher_;
-  // TODO(mshin): Enable the below code after migrating RendererPermissionsPolicyDelegate
-  // std::unique_ptr<RendererPermissionsPolicyDelegate>
-  //     permissions_policy_delegate_;
-  // TODO(mshin): Enable the below code after migrating ResourceRequestPolicy
-  // std::unique_ptr<ResourceRequestPolicy> resource_request_policy_;
+  std::unique_ptr<RendererPermissionsPolicyDelegate>
+      permissions_policy_delegate_;
+  std::unique_ptr<ResourceRequestPolicy> resource_request_policy_;
 };
 
 }  // namespace components_extensions

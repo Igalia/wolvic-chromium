@@ -14,6 +14,7 @@
 #include "base/memory/weak_ptr.h"
 #include "base/scoped_observation.h"
 #include "components/extensions/browser/extension_management.h"
+#include "components/extensions/browser/load_error_reporter.h"
 #include "components/extensions/common/api/developer_private.h"
 #include "components/prefs/pref_change_registrar.h"
 #include "extensions/browser/api/file_system/file_system_api.h"
@@ -457,8 +458,8 @@ class DeveloperPrivateUpdateExtensionConfigurationFunction
 };
 
 class DeveloperPrivateReloadFunction : public DeveloperPrivateAPIFunction,
-                                       public ExtensionRegistryObserver/*,
-                                       public LoadErrorReporter::Observer */{
+                                       public ExtensionRegistryObserver,
+                                       public components_extensions::LoadErrorReporter::Observer {
  public:
   DECLARE_EXTENSION_FUNCTION("developerPrivate.reload", DEVELOPERPRIVATE_RELOAD)
 
@@ -474,11 +475,10 @@ class DeveloperPrivateReloadFunction : public DeveloperPrivateAPIFunction,
                          const Extension* extension) override;
   void OnShutdown(ExtensionRegistry* registry) override;
 
-  // TODO(mshin): Enable the below code after migrating LoadErrorReporter
   // LoadErrorReporter::Observer:
-  // void OnLoadFailure(content::BrowserContext* browser_context,
-  //                   const base::FilePath& file_path,
-  //                   const std::string& error) override;
+  void OnLoadFailure(content::BrowserContext* browser_context,
+                    const base::FilePath& file_path,
+                    const std::string& error) override;
 
  protected:
   ~DeveloperPrivateReloadFunction() override;
@@ -501,9 +501,10 @@ class DeveloperPrivateReloadFunction : public DeveloperPrivateAPIFunction,
 
   base::ScopedObservation<ExtensionRegistry, ExtensionRegistryObserver>
       registry_observation_{this};
-  // TODO(mshin): Enable the below code after migrating LoadErrorReporter
-  // base::ScopedObservation<LoadErrorReporter, LoadErrorReporter::Observer>
-  //     error_reporter_observation_{this};
+  base::ScopedObservation<
+      components_extensions::LoadErrorReporter,
+      components_extensions::LoadErrorReporter::Observer>
+      error_reporter_observation_{this};
 };
 
 class DeveloperPrivateChooseEntryFunction : public ExtensionFunction/*,

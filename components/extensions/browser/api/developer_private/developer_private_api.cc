@@ -568,20 +568,19 @@ void DeveloperPrivateReloadFunction::OnShutdown(ExtensionRegistry* registry) {
   ClearObservers();
 }
 
-// TODO(mshin): Enable the below code after migrating LoadErrorReporter
-// void DeveloperPrivateReloadFunction::OnLoadFailure(
-//     content::BrowserContext* browser_context,
-//     const base::FilePath& file_path,
-//     const std::string& error) {
-//   if (file_path == reloading_extension_path_) {
-//     // Reload failed - create an error to pass back to the extension.
-//     GetManifestError(
-//         error, file_path,
-//         base::BindOnce(&DeveloperPrivateReloadFunction::OnGotManifestError,
-//                        this));  // Creates a reference.
-//     ClearObservers();
-//   }
-// }
+void DeveloperPrivateReloadFunction::OnLoadFailure(
+    content::BrowserContext* browser_context,
+    const base::FilePath& file_path,
+    const std::string& error) {
+  if (file_path == reloading_extension_path_) {
+    // Reload failed - create an error to pass back to the extension.
+    GetManifestError(
+        error, file_path,
+        base::BindOnce(&DeveloperPrivateReloadFunction::OnGotManifestError,
+                       this));  // Creates a reference.
+    ClearObservers();
+  }
+}
 
 void DeveloperPrivateReloadFunction::OnGotManifestError(
     const base::FilePath& file_path,
@@ -605,8 +604,7 @@ void DeveloperPrivateReloadFunction::OnGotManifestError(
 
 void DeveloperPrivateReloadFunction::ClearObservers() {
   registry_observation_.Reset();
-  // TODO(mshin): Enable the below code after migrating LoadErrorReporter
-  // error_reporter_observation_.Reset();
+  error_reporter_observation_.Reset();
 
   Release();  // Balanced in Run().
 }

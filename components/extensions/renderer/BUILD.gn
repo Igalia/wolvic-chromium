@@ -7,10 +7,18 @@ component("renderer") {
   sources = [
     "api/chrome_extensions_renderer_api_provider.cc",
     "api/chrome_extensions_renderer_api_provider.h",
+    "api/extension_hooks_delegate.cc",
+    "api/extension_hooks_delegate.h",
+    "api/identity_hooks_delegate.cc",
+    "api/identity_hooks_delegate.h",
     "chrome_extensions_dispatcher_delegate.cc",
     "chrome_extensions_dispatcher_delegate.h",
     "chrome_extensions_renderer_client.cc",
     "chrome_extensions_renderer_client.h",
+    "renderer_permissions_policy_delegate.cc",
+    "renderer_permissions_policy_delegate.h",
+    "resource_request_policy.cc",
+    "resource_request_policy.h",
   ]
   deps = [
     "//base",

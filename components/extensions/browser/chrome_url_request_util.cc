@@ -17,6 +17,7 @@
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_util.h"
 #include "base/task/thread_pool.h"
+#include "components/extensions/common/chrome_manifest_url_handlers.h"
 #include "extensions/browser/component_extension_resource_manager.h"
 #include "extensions/browser/extension_protocols.h"
 #include "extensions/browser/extensions_browser_client.h"
@@ -246,12 +247,11 @@ bool AllowCrossRendererResourceLoad(
   // If there aren't any explicitly marked web accessible resources, the
   // load should be allowed only if it is by DevTools. A close approximation is
   // checking if the extension contains a DevTools page.
-  // TODO(mshin): Enable the below code after migrating chrome_manifest_urls
-  // if (extension &&
-  //     !chrome_manifest_urls::GetDevToolsPage(extension).is_empty()) {
-  //   *allowed = true;
-  //   return true;
-  // }
+  if (extension &&
+      !chrome_manifest_urls::GetDevToolsPage(extension).is_empty()) {
+    *allowed = true;
+    return true;
+  }
 
   // Couldn't determine if the resource is allowed or not.
   return false;
