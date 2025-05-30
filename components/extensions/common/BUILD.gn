@@ -36,9 +36,10 @@ component("common") {
   ]
   deps = [
     "//base",
+    "//components/resources",
+    "//components/url_formatter",
     "//extensions/common:core_api_provider",
     "//extensions:extensions_resources",
-    "//components/url_formatter",
   ]
 
   public_deps = [

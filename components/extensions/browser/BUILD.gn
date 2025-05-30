@@ -215,6 +215,7 @@ component("browser") {
   deps = [
     "//components/javascript_dialogs",
     "//components/reading_list/core",
+    "//components/resources",
     "//components/spellcheck/browser",
     "//components/sync_sessions",
     "//extensions/browser",

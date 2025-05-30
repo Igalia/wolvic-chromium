@@ -3,6 +3,7 @@
 # found in the LICENSE file.
 
 import("//build/config/android/config.gni")
+import("//build/config/compontents_extensions_build.gni")
 import("//build/config/features.gni")
 import("//components/safe_browsing/buildflags.gni")
 import("//components/supervised_user/buildflags.gni")
@@ -49,6 +50,7 @@ grit("components_resources") {
   ]
 
   defines = [
+    "enable_extensions_in_components=$enable_extensions_in_components",
     "enable_pdf=$enable_pdf",
     "enable_printing=$enable_printing",
     "enable_print_preview=$enable_print_preview",
@@ -97,6 +99,10 @@ grit("dev_ui_components_resources") {
 
 grit("components_scaled_resources") {
   source = "components_scaled_resources.grd"
+
+  defines = [
+    "enable_extensions_in_components=$enable_extensions_in_components",
+  ]
 
   outputs = [
     "grit/components_scaled_resources.h",

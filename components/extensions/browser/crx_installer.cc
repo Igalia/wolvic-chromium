@@ -26,6 +26,7 @@
 #include "components/extensions/browser/install_tracker.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/crx_file/crx_verifier.h"
+#include "components/strings/grit/components_strings.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "content/public/browser/browser_thread.h"
 #include "extensions/browser/content_verifier/content_verifier.h"
@@ -314,25 +315,19 @@ std::optional<CrxInstallError> CrxInstaller::CheckExpectations(
         
     return CrxInstallError(
         CrxInstallErrorType::OTHER, CrxInstallErrorDetail::UNEXPECTED_ID,
-        // TODO(mshin): Replace the below code after migrating Resources
-        u"Expected ID " + base::ASCIIToUTF16(expected_id_) +
-        u" but ID was " + base::ASCIIToUTF16(extension->id()));
-        // l10n_util::GetStringFUTF16(IDS_EXTENSION_INSTALL_UNEXPECTED_ID,
-        //                            base::ASCIIToUTF16(expected_id_),
-        //                            base::ASCIIToUTF16(extension->id())));
+        l10n_util::GetStringFUTF16(IDS_EXTENSION_INSTALL_UNEXPECTED_ID,
+                                   base::ASCIIToUTF16(expected_id_),
+                                   base::ASCIIToUTF16(extension->id())));
   }
 
   if (expected_version_.IsValid() && fail_install_if_unexpected_version_ &&
       expected_version_ != extension->version()) {
     return CrxInstallError(
         CrxInstallErrorType::OTHER, CrxInstallErrorDetail::MISMATCHED_VERSION,
-        // TODO(mshin): Replace the below code after migrating Resources
-       u"Expected version " + base::ASCIIToUTF16(expected_version_.GetString()) +
-       u", but version was " + base::ASCIIToUTF16(extension->version().GetString()));
-        // l10n_util::GetStringFUTF16(
-        //     IDS_EXTENSION_INSTALL_UNEXPECTED_VERSION,
-        //     base::ASCIIToUTF16(expected_version_.GetString()),
-        //     base::ASCIIToUTF16(extension->version().GetString())));
+        l10n_util::GetStringFUTF16(
+            IDS_EXTENSION_INSTALL_UNEXPECTED_VERSION,
+            base::ASCIIToUTF16(expected_version_.GetString()),
+            base::ASCIIToUTF16(extension->version().GetString())));
   }
 
   return std::nullopt;
@@ -346,13 +341,10 @@ std::optional<CrxInstallError> CrxInstaller::AllowInstall(
       extension->version().CompareTo(minimum_version_) < 0) {
     return CrxInstallError(
         CrxInstallErrorType::OTHER, CrxInstallErrorDetail::UNEXPECTED_VERSION,
-        // TODO(mshin): Replace the below code after migrating Resources
-       u"Expected version " + base::ASCIIToUTF16(minimum_version_.GetString()) +
-       u"+" + base::ASCIIToUTF16(extension->version().GetString()));
-        // l10n_util::GetStringFUTF16(
-        //     IDS_EXTENSION_INSTALL_UNEXPECTED_VERSION,
-        //     base::ASCIIToUTF16(minimum_version_.GetString() + "+"),
-        //     base::ASCIIToUTF16(extension->version().GetString())));
+        l10n_util::GetStringFUTF16(
+            IDS_EXTENSION_INSTALL_UNEXPECTED_VERSION,
+            base::ASCIIToUTF16(minimum_version_.GetString() + "+"),
+            base::ASCIIToUTF16(extension->version().GetString())));
   }
 
   // Make sure the manifests match if we want to bypass the prompt.
@@ -386,9 +378,7 @@ std::optional<CrxInstallError> CrxInstaller::AllowInstall(
     if (!valid)
       return CrxInstallError(
           CrxInstallErrorType::OTHER, CrxInstallErrorDetail::MANIFEST_INVALID,
-          // TODO(mshin): Replace the below code after migrating Resources
-          u"Manifest file is invalid");
-          // l10n_util::GetStringUTF16(IDS_EXTENSION_MANIFEST_INVALID));
+          l10n_util::GetStringUTF16(IDS_EXTENSION_MANIFEST_INVALID));
   }
 
   // The checks below are skipped for themes and external installs.
@@ -403,9 +393,7 @@ std::optional<CrxInstallError> CrxInstaller::AllowInstall(
     return CrxInstallError(
         CrxInstallErrorType::DECLINED,
         CrxInstallErrorDetail::INSTALL_NOT_ENABLED,
-        // TODO(mshin): Replace the below code after migrating Resources
-        u"Installation is not enabled");
-        // l10n_util::GetStringUTF16(IDS_EXTENSION_INSTALL_NOT_ENABLED));
+        l10n_util::GetStringUTF16(IDS_EXTENSION_INSTALL_NOT_ENABLED));
   }
 
   if (install_cause_ == extension_misc::INSTALL_CAUSE_USER_DOWNLOAD &&
@@ -419,9 +407,7 @@ std::optional<CrxInstallError> CrxInstaller::AllowInstall(
     return CrxInstallError(
         CrxInstallErrorType::OTHER,
         CrxInstallErrorDetail::OFFSTORE_INSTALL_DISALLOWED,
-        // TODO(mshin): Replace the below code after migrating Resources
-        u"Apps, extensions, and user scripts cannot be added from this website");
-        // l10n_util::GetStringUTF16(IDS_EXTENSION_INSTALL_DISALLOWED_ON_SITE));
+        l10n_util::GetStringUTF16(IDS_EXTENSION_INSTALL_DISALLOWED_ON_SITE));
   }
 
   if (extension_->is_app()) {
@@ -435,11 +421,9 @@ std::optional<CrxInstallError> CrxInstaller::AllowInstall(
       return CrxInstallError(
           CrxInstallErrorType::OTHER,
           CrxInstallErrorDetail::INCORRECT_APP_CONTENT_TYPE,
-          // TODO(mshin): Replace the below code after migrating Resources
-          u"Apps must be served with content-type " + base::ASCIIToUTF16(Extension::kMimeType));
-          // l10n_util::GetStringFUTF16(
-          //     IDS_EXTENSION_INSTALL_INCORRECT_APP_CONTENT_TYPE,
-          //     base::ASCIIToUTF16(Extension::kMimeType)));
+          l10n_util::GetStringFUTF16(
+              IDS_EXTENSION_INSTALL_INCORRECT_APP_CONTENT_TYPE,
+              base::ASCIIToUTF16(Extension::kMimeType)));
     }
 
     // If the client_ is NULL, then the app is either being installed via
@@ -455,11 +439,9 @@ std::optional<CrxInstallError> CrxInstaller::AllowInstall(
         return CrxInstallError(
             CrxInstallErrorType::OTHER,
             CrxInstallErrorDetail::NOT_INSTALLED_FROM_GALLERY,
-            // TODO(mshin): Replace the below code after migrating Resources
-            u"This can only be added from the chrome Web Store");
-            // l10n_util::GetStringFUTF16(
-            //     IDS_EXTENSION_INSTALL_GALLERY_ONLY,
-            //     l10n_util::GetStringUTF16(IDS_EXTENSION_WEB_STORE_TITLE)));
+            l10n_util::GetStringFUTF16(
+                IDS_EXTENSION_INSTALL_GALLERY_ONLY,
+                l10n_util::GetStringUTF16(IDS_EXTENSION_WEB_STORE_TITLE)));
       }
 
       // For self-hosted apps, verify that the entire extent is on the same
@@ -475,10 +457,8 @@ std::optional<CrxInstallError> CrxInstaller::AllowInstall(
           return CrxInstallError(
               CrxInstallErrorType::OTHER,
               CrxInstallErrorDetail::INCORRECT_INSTALL_HOST,
-              // TODO(mshin): Replace the below code after migrating Resources
-              u"Apps must be served from the host they affect");
-              // l10n_util::GetStringUTF16(
-              //     IDS_EXTENSION_INSTALL_INCORRECT_INSTALL_HOST));
+              l10n_util::GetStringUTF16(
+                  IDS_EXTENSION_INSTALL_INCORRECT_INSTALL_HOST));
         }
       }
     }
@@ -648,12 +628,9 @@ void CrxInstaller::CheckInstall() {
         ReportFailureFromUIThread(CrxInstallError(
             CrxInstallErrorType::DECLINED,
             CrxInstallErrorDetail::DEPENDENCY_NOT_SHARED_MODULE,
-            // TODO(mshin): Replace the below code after migrating Resources
-            u"Unable to import extension " + base::UTF8ToUTF16(imported_module->name()) +
-            u" because it is not a shared module"));
-            // l10n_util::GetStringFUTF16(
-            //     IDS_EXTENSION_INSTALL_DEPENDENCY_NOT_SHARED_MODULE,
-            //     base::UTF8ToUTF16(imported_module->name()))));
+            l10n_util::GetStringFUTF16(
+                IDS_EXTENSION_INSTALL_DEPENDENCY_NOT_SHARED_MODULE,
+                base::UTF8ToUTF16(imported_module->name()))));
         return;
       }
       base::Version version_required(import.minimum_version);
@@ -662,16 +639,11 @@ void CrxInstaller::CheckInstall() {
         ReportFailureFromUIThread(CrxInstallError(
             CrxInstallErrorType::DECLINED,
             CrxInstallErrorDetail::DEPENDENCY_OLD_VERSION,
-            // TODO(mshin): Replace the below code after migrating Resources
-            u"Extension requires " + base::UTF8ToUTF16(imported_module->name()) +
-            u" with a minimum version " + base::UTF8ToUTF16(import.minimum_version) +
-            u", but only version " + base::UTF8ToUTF16(imported_module->version().GetString()) +
-            u" is installed"));
-            // l10n_util::GetStringFUTF16(
-            //     IDS_EXTENSION_INSTALL_DEPENDENCY_OLD_VERSION,
-            //     base::UTF8ToUTF16(imported_module->name()),
-            //     base::ASCIIToUTF16(import.minimum_version),
-            //     base::ASCIIToUTF16(imported_module->version().GetString()))));
+            l10n_util::GetStringFUTF16(
+                IDS_EXTENSION_INSTALL_DEPENDENCY_OLD_VERSION,
+                base::UTF8ToUTF16(imported_module->name()),
+                base::ASCIIToUTF16(import.minimum_version),
+                base::ASCIIToUTF16(imported_module->version().GetString()))));
         return;
       }
       if (!SharedModuleInfo::IsExportAllowedByAllowlist(imported_module,
@@ -679,13 +651,10 @@ void CrxInstaller::CheckInstall() {
         ReportFailureFromUIThread(CrxInstallError(
             CrxInstallErrorType::DECLINED,
             CrxInstallErrorDetail::DEPENDENCY_NOT_ALLOWLISTED,
-            // TODO(mshin): Replace the below code after migrating Resources
-            u"Unable to install " + base::UTF8ToUTF16(extension()->name()) +
-            u" because it is not allowed by " + base::UTF8ToUTF16(imported_module->name())));
-            // l10n_util::GetStringFUTF16(
-            //     IDS_EXTENSION_INSTALL_DEPENDENCY_NOT_ALLOWLISTED,
-            //     base::UTF8ToUTF16(extension()->name()),
-            //     base::UTF8ToUTF16(imported_module->name()))));
+            l10n_util::GetStringFUTF16(
+                IDS_EXTENSION_INSTALL_DEPENDENCY_NOT_ALLOWLISTED,
+                base::UTF8ToUTF16(extension()->name()),
+                base::UTF8ToUTF16(imported_module->name()))));
         return;
       }
     }
@@ -746,11 +715,8 @@ void CrxInstaller::OnInstallChecksComplete(const PreloadCheck::Errors& errors) {
       ReportFailureFromUIThread(CrxInstallError(
           CrxInstallErrorType::DECLINED,
           CrxInstallErrorDetail::EXTENSION_IS_BLOCKLISTED,
-          // TODO(mshin): Replace the below code after migrating Resources
-          u"Google has flagged " + base::UTF8ToUTF16(extension()->name()) +
-          u"as malicious and installation has been prevented"));
-          // l10n_util::GetStringFUTF16(IDS_EXTENSION_IS_BLOCKLISTED,
-          //                            base::UTF8ToUTF16(extension()->name()))));
+          l10n_util::GetStringFUTF16(IDS_EXTENSION_IS_BLOCKLISTED,
+                                     base::UTF8ToUTF16(extension()->name()))));
       UMA_HISTOGRAM_ENUMERATION("ExtensionBlacklist.BlockCRX",
                                 extension()->location());
       return;
@@ -797,13 +763,10 @@ void CrxInstaller::ConfirmInstall() {
     ReportFailureFromUIThread(
         CrxInstallError(CrxInstallErrorType::OTHER,
                         CrxInstallErrorDetail::OVERLAPPING_WEB_EXTENT,
-                        // TODO(mshin): Replace the below code after migrating Resources
-                        u"Could not add application " + base::UTF8ToUTF16(extension()->name()) +
-                        u" because it conflicts with " + base::UTF8ToUTF16(overlapping_extension->name())));
-                        // l10n_util::GetStringFUTF16(
-                        //     IDS_EXTENSION_OVERLAPPING_WEB_EXTENT,
-                        //     base::UTF8ToUTF16(extension()->name()),
-                        //     base::UTF8ToUTF16(overlapping_extension->name()))));
+                        l10n_util::GetStringFUTF16(
+                            IDS_EXTENSION_OVERLAPPING_WEB_EXTENT,
+                            base::UTF8ToUTF16(extension()->name()),
+                            base::UTF8ToUTF16(overlapping_extension->name()))));
     return;
   }
 
@@ -934,12 +897,9 @@ void CrxInstaller::CompleteInstall(
     ReportFailureFromSharedFileThread(CrxInstallError(
         CrxInstallErrorType::DECLINED,
         CrxInstallErrorDetail::CANT_DOWNGRADE_VERSION,
-        // TODO(mshin): Replace the below code after migrating Resources
-        extension()->is_app() ? u"Attempted to downgrade app." :
-                                u"Attempted to downgrade extension."));
-        // l10n_util::GetStringUTF16(extension()->is_app()
-        //                               ? IDS_APP_CANT_DOWNGRADE_VERSION
-        //                               : IDS_EXTENSION_CANT_DOWNGRADE_VERSION)));
+        l10n_util::GetStringUTF16(extension()->is_app()
+                                      ? IDS_APP_CANT_DOWNGRADE_VERSION
+                                      : IDS_EXTENSION_CANT_DOWNGRADE_VERSION)));
     return;
   }
 
@@ -960,10 +920,8 @@ void CrxInstaller::ReloadExtensionAfterInstall(
     ReportFailureFromSharedFileThread(
         CrxInstallError(CrxInstallErrorType::OTHER,
                         CrxInstallErrorDetail::MOVE_DIRECTORY_TO_PROFILE_FAILED,
-                        // TODO(mshin): Replace the below code after migrating Resources
-                        u"Could not move extension directory into profile."));
-                        // l10n_util::GetStringUTF16(
-                        //     IDS_EXTENSION_MOVE_DIRECTORY_TO_browser_context_FAILED)));
+                        l10n_util::GetStringUTF16(
+                            IDS_EXTENSION_MOVE_DIRECTORY_TO_PROFILE_FAILED)));
     return;
   }
 

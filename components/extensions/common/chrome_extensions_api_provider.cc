@@ -11,6 +11,7 @@
 #include "components/extensions/common/api/manifest_features.h"
 #include "components/extensions/common/api/permission_features.h"
 #include "components/extensions/common/chrome_manifest_handlers.h"
+#include "components/grit/components_resources.h"
 #include "extensions/common/features/json_feature_provider_source.h"
 #include "extensions/common/permissions/permissions_info.h"
 
@@ -45,7 +46,7 @@ void ChromeExtensionsAPIProvider::AddBehaviorFeatures(
 void ChromeExtensionsAPIProvider::AddAPIJSONSources(
     JSONFeatureProviderSource* json_source) {
   // TODO(mshin): Support Resources
-  // json_source->LoadJSON(IDR_CHROME_EXTENSION_API_FEATURES);
+  json_source->LoadJSON(IDR_CHROME_EXTENSION_API_FEATURES);
 }
 
 bool ChromeExtensionsAPIProvider::IsAPISchemaGenerated(

@@ -4,6 +4,7 @@
 
 #include "components/extensions/renderer/api/chrome_extensions_renderer_api_provider.h"
 
+#include "components/grit/components_resources.h"
 #include "extensions/renderer/bindings/api_bindings_system.h"
 #include "extensions/renderer/dispatcher.h"
 #include "extensions/renderer/lazy_background_page_native_handler.h"
@@ -73,60 +74,44 @@ void ChromeExtensionsRendererAPIProvider::AddBindingsSystemHooks(
 void ChromeExtensionsRendererAPIProvider::PopulateSourceMap(
     ResourceBundleSourceMap* source_map) const {
   // Custom bindings.
-  // TODO(mshin): Enable the below code after migrating Resources
-  // source_map->RegisterSource("action", IDR_ACTION_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("browserAction",
-  //                            IDR_BROWSER_ACTION_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("declarativeContent",
-  //                            IDR_DECLARATIVE_CONTENT_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("desktopCapture",
-  //                            IDR_DESKTOP_CAPTURE_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("developerPrivate",
-  //                            IDR_DEVELOPER_PRIVATE_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("downloads", IDR_DOWNLOADS_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("gcm", IDR_GCM_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("identity", IDR_IDENTITY_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("imageWriterPrivate",
-  //                            IDR_IMAGE_WRITER_PRIVATE_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("input.ime", IDR_INPUT_IME_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("mediaGalleries",
-  //                            IDR_MEDIA_GALLERIES_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("notifications",
-  //                            IDR_NOTIFICATIONS_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("omnibox", IDR_OMNIBOX_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("pageAction", IDR_PAGE_ACTION_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("pageCapture",
-  //                            IDR_PAGE_CAPTURE_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("syncFileSystem",
-  //                            IDR_SYNC_FILE_SYSTEM_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("systemIndicator",
-  //                            IDR_SYSTEM_INDICATOR_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("tabCapture", IDR_TAB_CAPTURE_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("tts", IDR_TTS_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("ttsEngine", IDR_TTS_ENGINE_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource(
-  //     "webrtcDesktopCapturePrivate",
-  //     IDR_WEBRTC_DESKTOP_CAPTURE_PRIVATE_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("webrtcLoggingPrivate",
-  //                            IDR_WEBRTC_LOGGING_PRIVATE_CUSTOM_BINDINGS_JS);
-
-  // // Platform app sources that are not API-specific..
-  // source_map->RegisterSource("chromeWebViewElement",
-  //                            IDR_CHROME_WEB_VIEW_ELEMENT_JS);
-  // source_map->RegisterSource("chromeWebViewInternal",
-  //                            IDR_CHROME_WEB_VIEW_INTERNAL_CUSTOM_BINDINGS_JS);
-  // source_map->RegisterSource("chromeWebView", IDR_CHROME_WEB_VIEW_JS);
+  source_map->RegisterSource("action", IDR_ACTION_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("browserAction",
+                             IDR_BROWSER_ACTION_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("declarativeContent",
+                             IDR_DECLARATIVE_CONTENT_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("desktopCapture",
+                             IDR_DESKTOP_CAPTURE_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("developerPrivate",
+                             IDR_DEVELOPER_PRIVATE_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("downloads", IDR_DOWNLOADS_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("gcm", IDR_GCM_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("identity", IDR_IDENTITY_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("imageWriterPrivate",
+                             IDR_IMAGE_WRITER_PRIVATE_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("notifications",
+                             IDR_NOTIFICATIONS_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("omnibox", IDR_OMNIBOX_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("pageAction", IDR_PAGE_ACTION_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("pageCapture",
+                             IDR_PAGE_CAPTURE_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("syncFileSystem",
+                             IDR_SYNC_FILE_SYSTEM_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("systemIndicator",
+                             IDR_SYSTEM_INDICATOR_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("tabCapture", IDR_TAB_CAPTURE_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("tts", IDR_TTS_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("ttsEngine", IDR_TTS_ENGINE_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource(
+      "webrtcDesktopCapturePrivate",
+      IDR_WEBRTC_DESKTOP_CAPTURE_PRIVATE_CUSTOM_BINDINGS_JS);
+  source_map->RegisterSource("webrtcLoggingPrivate",
+                             IDR_WEBRTC_LOGGING_PRIVATE_CUSTOM_BINDINGS_JS);
 }
 
 void ChromeExtensionsRendererAPIProvider::EnableCustomElementAllowlist() const {
 }
 
 void ChromeExtensionsRendererAPIProvider::RequireWebViewModules(
-    ScriptContext* context) const {
-  DCHECK(context->GetAvailability("webViewInternal").is_available());
-  if (context->GetAvailability("chromeWebViewTag").is_available()) {
-    context->module_system()->Require("chromeWebViewElement");
-  }
-}
+    ScriptContext* context) const { }
 
 }  // namespace components_extensions

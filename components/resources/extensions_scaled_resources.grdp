@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<grit-part>
+  <structure type="chrome_scaled_image" name="IDR_EXTENSIONS_RATING_STAR_HALF_LEFT" file="extensions/extensions_rating_star_half_left.png" />
+  <structure type="chrome_scaled_image" name="IDR_EXTENSIONS_RATING_STAR_OFF" file="extensions/extensions_rating_star_off.png" />
+  <structure type="chrome_scaled_image" name="IDR_EXTENSIONS_RATING_STAR_ON" file="extensions/extensions_rating_star_on.png" />
+</grit-part>

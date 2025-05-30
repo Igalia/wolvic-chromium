@@ -51,8 +51,7 @@ bool MinimumChromeVersionChecker::Parse(Extension* extension,
   if (current_version.CompareTo(minimum_version) < 0) {
     *error = ErrorUtils::FormatErrorMessageUTF16(
         errors::kChromeVersionTooLow,
-        // TODO(mshin): Replace the below code after supporting Resources
-        "Chromium" /*l10n_util::GetStringUTF8(IDS_PRODUCT_NAME)*/, *minimum_version_string);
+        version_info::GetProductName(), *minimum_version_string);
     return false;
   }
   return true;

@@ -1,0 +1,1491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Extensions specific strings (included from components_strings.grd). -->
+<grit-part>
+  <!-- Extension/App disabled notification -->
+  <message name="IDS_EXTENSION_DISABLED_ERROR_LABEL" desc="Text displayed when an extension was disabled due to a new upgrade requiring an explicit permission check from the user.">
+    To re-enable it, accept the new permissions:
+  </message>
+  <message name="IDS_EXTENSION_IS_BLOCKLISTED" desc="Text displayed in an infobar when an extension is blocklisted and prevented from being installed.">
+    Google has flagged "<ph name="EXTENSION_NAME">$1<ex>Google Talk</ex></ph>" as malicious and installation has been prevented
+  </message>
+  <message name="IDS_EXTENSION_DISABLED_REMOTE_INSTALL_ERROR_TITLE" desc="Title of the notification that an extension or app was disabled due to it being installed server side, requiring an explicit permission check from the user.">
+    <ph name="EXTENSION_NAME">$1<ex>Adblock</ex></ph> was added remotely
+  </message>
+  <message name="IDS_EXTENSION_DISABLED_ERROR_TITLE" desc="Title of the notification that an extension or app was disabled due to a new upgrade requiring an explicit permission check from the user.">
+    <ph name="EXTENSION_NAME">$1<ex>Adblock</ex></ph> is disabled
+  </message>
+
+  <!-- Extension blocked action bubble -->
+  <message name="IDS_EXTENSION_SITE_RELOAD_PAGE_BUBBLE_HEADING" desc="Heading of the bubble to tell users that in order to run or not run an extension, they'll need to refresh the page. Deliberately similar to IDS_PAGE_INFO_INFOBAR_TEXT, but used for an different permission setting so they are not combined. If updating the one, please update the other or consult the extensions and privacy teams.">
+    Reload this page to apply your updated settings on this site
+  </message>
+  <message name="IDS_EXTENSION_RELOAD_PAGE_BUBBLE_OK_BUTTON" desc="The text of the button to proceed with the page refresh for running an extension.">
+    Reload
+  </message>
+  <message name="IDS_EXTENSION_RELOAD_PAGE_BUBBLE_ALLOW_SINGLE_EXTENSION_TITLE" desc="Title of the bubble to tell users that in order to run or block an extension, they'll need to refresh the page.">
+    Reload this page to apply your updated settings for "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>" on this site
+  </message>
+  <message name="IDS_EXTENSION_RELOAD_PAGE_BUBBLE_ALLOW_MULTIPLE_EXTENSIONS_TITLE" desc="Title of the bubble to tell users that in order to run or block an extension, they'll need to refresh the page.">
+    Reload this page to apply your updated extension settings to this site
+  </message>
+
+  <!-- Extension/App install prompt -->
+  <message name="IDS_APP_UNINSTALL_PROMPT_TITLE" desc="Titlebar of the non-platform app and ARC(App Runtime for Chrome) app uninstallation prompt window">
+    Uninstall app?
+  </message>
+  <message name="IDS_ARC_APP_UNINSTALL_PROMPT_DATA_REMOVAL_WARNING" desc="Line in the content area of the ARC(App Runtime for Chrome) app uninstallation prompt. Tells the user that local data associated with the app will be removed from this device.">
+    Data associated with this app will be removed from this device.
+  </message>
+  <message name="IDS_EXTENSION_UNINSTALL_PROMPT_TITLE" desc="Titlebar of the extension or app uninstallation prompt window">
+    Confirm Removal
+  </message>
+  <message name="IDS_EXTENSION_CONFIRM_PERMISSIONS" desc="Titlebar of the extension or app permissions prompt window">
+    Confirm Permissions
+  </message>
+  <message name="IDS_EXTENSION_DELEGATED_INSTALL_PROMPT_TITLE" desc="Titlebar of the app delegated installation prompt window">
+    Add "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>" for <ph name="USER_NAME">$2<ex>Wallace</ex></ph>?
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_PROMPT_TITLE" desc="Titlebar of the extension or app installation prompt. Asks the user if they want to install a particular extension or app.">
+    Add "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>"?
+  </message>
+  <message name="IDS_EXTENSION_UNINSTALL_PROMPT_HEADING" desc="First bold line in the content area of the extension or app uninstallation prompt. Asks the user if they want to uninstall a particular extension or app.">
+    Remove "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>"?
+  </message>
+  <message name="IDS_EXTENSION_REQUEST_PROMPT_TITLE" desc="Titlebar of the extension or app request prompt. Asks the user if they want to send installation request for a particular extension or app to their admin.">
+    Send a request to your administrator to install "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>"?
+  </message>
+  <message name="IDS_EXTENSION_PENDING_REQUEST_PROMPT_TITLE" desc="Titlebar of the extension or app request prompt. Tells the user their installation request for a particular extension or app is still pending review.">
+    You already requested "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>"
+  </message>
+  <message name="IDS_EXTENSION_BLOCKED_BY_POLICY_PROMPT_TITLE" desc="Title of the extension or app install blocked prompt. Tells the user they can't install this extension as it's blocked by policy.">
+    Your admin has blocked "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>" - App ID <ph name="EXTENSION_ID">$2<ex>abacabadabacabaeabacabadabacabaf</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROGRAMMATIC_UNINSTALL_PROMPT_HEADING" desc="First bold line in the content area of the extension or app uninstallation prompt when the uninstallation is programmatically triggered by another extension. Asks the user if they want to uninstall a particular extension or app.">
+    "<ph name="TRIGGERING_EXTENSION_NAME">$1<ex>Extension Manager</ex></ph>" would like to remove "<ph name="EXTENSION_NAME">$2<ex>Gmail Checker</ex></ph>".
+  </message>
+  <message name="IDS_EXTENSION_RE_ENABLE_PROMPT_TITLE" desc="Titlebar of the extension or app installation prompt. Asks the user if they want to re-enable a particular extension or app.">
+    The newest version of "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>" has been disabled because it requires more permissions.
+  </message>
+  <message name="IDS_EXTENSION_PERMISSIONS_PROMPT_TITLE" desc="Titlebar of the extension or app permissions prompt. Asks the user if they want to grant the permissions to the particular extension or app.">
+    "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>" has requested additional permissions.
+  </message>
+  <message name="IDS_EXTENSION_REMOTE_INSTALL_PROMPT_TITLE" desc="Titlebar of the extension or app installation prompt. Asks the user if they want to enable a particular extension or app that was installed remotely.">
+    Enable "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>"?
+  </message>
+  <message name="IDS_EXTENSION_REPAIR_PROMPT_TITLE" desc="Titlebar of the extension or app installation prompt. Asks the user if they want to update the extension/app.">
+    Repair "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>"?
+  </message>
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_PROMPT_TITLE_APP" desc="Titlebar of the prompt window for an externally installed app">
+    Another program on your computer added an app that may change the way Chrome works.
+
+
+<ph name="EXTENSION_NAME">$1<ex>Babylon Toolbar</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_PROMPT_TITLE_EXTENSION" desc="Titlebar of the prompt window for an externally installed extension">
+    Another program on your computer added an extension that may change the way Chrome works.
+
+<ph name="EXTENSION_NAME">$1<ex>Babylon Toolbar</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_PROMPT_TITLE_THEME" desc="Titlebar of the prompt window for an externally installed theme">
+    Another program on your computer added a theme that may change the way Chrome works.
+
+<ph name="EXTENSION_NAME">$1<ex>Babylon Toolbar</ex></ph>
+  </message>
+  <if expr="use_titlecase">
+    <message name="IDS_EXTENSION_EXTERNAL_INSTALL_PROMPT_ACCEPT_BUTTON_EXTENSION" desc="In Title Case: Button on the external install prompt to enable an extension installed by a third party.">
+      Enable Extension
+    </message>
+    <message name="IDS_EXTENSION_EXTERNAL_INSTALL_PROMPT_ACCEPT_BUTTON_APP" desc="In Title Case: Button on the external install prompt to enable an extension installed by a third party.">
+      Enable App
+    </message>
+    <message name="IDS_EXTENSION_EXTERNAL_INSTALL_PROMPT_ACCEPT_BUTTON_THEME" desc="In Title Case: Button on the external install prompt to enable an extension installed by a third party.">
+      Enable Theme
+    </message>
+  </if>
+  <if expr="not use_titlecase">
+    <message name="IDS_EXTENSION_EXTERNAL_INSTALL_PROMPT_ACCEPT_BUTTON_EXTENSION" desc="Button on the external install prompt to enable an extension installed by a third party.">
+      Enable extension
+    </message>
+    <message name="IDS_EXTENSION_EXTERNAL_INSTALL_PROMPT_ACCEPT_BUTTON_APP" desc="Button on the external install prompt to enable an extension installed by a third party.">
+      Enable app
+    </message>
+    <message name="IDS_EXTENSION_EXTERNAL_INSTALL_PROMPT_ACCEPT_BUTTON_THEME" desc="Button on the external install prompt to enable an extension installed by a third party.">
+      Enable theme
+    </message>
+  </if>
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_PROMPT_ABORT_BUTTON" desc="Button on the external install prompt to remove an extension installed by a third party.">
+    Remove from Chrome
+  </message>
+
+  <!-- Extension alerts. -->
+  <message name="IDS_EXTENSION_ALERT_TITLE" desc="Titlebar of the extension notification alert for blocklisted extensions">
+    {NUM_EXTENSIONS, plural,
+    =1 {This extension is blocked}
+    other {These extensions are blocked}}
+  </message>
+  <message name="IDS_APP_ALERT_TITLE" desc="Titlebar of the app notification alert for blocklisted apps">
+    {NUM_APPS, plural,
+    =1 {This app is blocked}
+    other {Some apps are blocked}}
+  </message>
+    <message name="IDS_EXTENSION_AND_APP_ALERT_TITLE" desc="Titlebar of the extension and app notification alert for blocklisted items">
+    Some items are blocked
+  </message>
+  <message name="IDS_POLICY_BLOCKED_EXTENSION_ALERT_TITLE" desc="Titlebar of the policy blocked extension notification alert">
+    {NUM_EXTENSIONS, plural,
+    =1 {This extension is not allowed}
+    other {Some extensions are not allowed}}
+  </message>
+  <message name="IDS_POLICY_BLOCKED_EXTENSIONS_ALERT_ITEM_TITLE" desc="A statement that several extensions has been newly blocked by policy.">
+    The following extensions were blocked by your administrator:
+  </message>
+  <message name="IDS_BLOCKLISTED_EXTENSIONS_ALERT_ITEM" desc="Name of the extension that is blocklisted">
+    "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>"
+  </message>
+  <message name="IDS_POLICY_BLOCKED_EXTENSION_ALERT_ITEM_DETAIL" desc="A statement that an extension has been newly blocklisted. https://support.google.com/chrome/answer/1210215 contains the language on which we're basing the phrasing.">
+    The extension "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>" was blocked by your administrator
+  </message>
+  <message name="IDS_EXTENSION_ALERT_ITEM_OK" desc="The title of the default button acknowledging the information presented.">
+    OK
+  </message>
+  <message name="IDS_EXTENSION_ALERT_ITEM_DETAILS" desc="The title of the button asking for more information.">
+    Details
+  </message>
+
+  <!-- Extension/App install dialog strings -->
+  <message name="IDS_EXTENSION_PROMPT_APP_CONNECT_FROM_INCOGNITO" desc="Shown when a website tries to connect to an app from Incognito mode, prompting the user to allow or deny the request.">
+    <ph name="ORIGIN">$1<ex>http://www.google.com</ex></ph> wants to communicate with the app "<ph name="EXTENSION_NAME">$2<ex>Gmail</ex></ph>"
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_EXTENSION_CONNECT_FROM_INCOGNITO" desc="Shown when a website tries to connect to an extension from Incognito mode, prompting the user to allow or deny the request.">
+    <ph name="ORIGIN">$1<ex>http://www.google.com</ex></ph> wants to communicate with the extension "<ph name="EXTENSION_NAME">$2<ex>Gmail Checker</ex></ph>"
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WILL_HAVE_ACCESS_TO" desc="Second line in the content area of the extension or app installation prompt. Note that the exact wording is important. This should mean that the extension or app _can_ access the listed privileges, but not necessarily that it will or needs to.">
+    It can:
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WILL_NOW_HAVE_ACCESS_TO" desc="Second line in the content area of the extension or app re-enable prompt. Note that the exact wording is important. This should mean that the extension _can now_ access the listed privileges, but not necessarily that it will or needs to. This message appeared because the user must approve new permissions of the extension or app.">
+    It can now:
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WANTS_ACCESS_TO" desc="Second line in the content area of the extension or app permissions prompt. Note that the exact wording is important. This should mean that the extension _wants to_ access the listed privileges, but not necessarily that it will or needs to. This message appeared because the user must approve new permissions of the extension or app.">
+    It could:
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_CAN_ACCESS" desc="Second line in the content area of the extension or app permissions view dialog. Note that the exact wording is important. This should mean that the extension _can now_ access the listed privileges, because it has already been installed. This message appeared because the user must approve new permissions of the extension or app.">
+    It can:
+  </message>
+<message name="IDS_EXTENSION_PROMPT_GRANT_PERMISSIONS_CHECKBOX" desc="Label next to the checkbox in the extension or app installation prompt, which indicates if a user wants to grant access to all requested sites.">
+    Grant access to all requested sites.
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_MESSAGE_FROM_ADMIN" desc="Second line in the content area of the extension of app blocked prompt. It gives user the additional message which comes from their administrator.">
+    From your administrator: <ph name="ADMIN_MESSAGE">$1<ex>Please visit www.example.com/extension for more information.</ex></ph>
+  </message>
+
+  <message name="IDS_EXTENSION_PERMISSION_LINE" desc="Template for item in list of privileges that an extension or app has">
+      • <ph name="PERMISSION">$1<ex>Read and change all your data on all websites</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_RATING_COUNT" desc="Number of ratings an app or extensions has (displayed after star icons)">
+    (<ph name="RATING_COUNT">$1<ex>46</ex></ph>)
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_RATING_ACCESSIBLE_TEXT" desc="The text read by a screen reader for the ratings section of an extension prompt, indicating to the user what the average rating for an extension is and how many times it has been rated. [ICU Syntax]">
+    {1, plural,
+      =1 {Rated <ph name="AVERAGE_RATING">{0, number,0.0}<ex>3.2</ex></ph> by one user.}
+      other{Rated <ph name="AVERAGE_RATING">{0, number,0.0}<ex>3.2</ex></ph> by # users.}}
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_NO_RATINGS_ACCESSIBLE_TEXT" desc="The text read by a screen reader for the ratings section of an extension prompt when there haven't been any user ratings for the extension.">
+    Not yet rated by any users.
+  </message>
+  <message name="IDS_EXTENSION_USER_COUNT" desc="Number of users an app or extension has">
+    <ph name="USER_COUNT">$1<ex>10,479</ex></ph> users
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_STORE_LINK" desc="Anchor text for link to Chrome Web Store in app or extension installation dialog">
+    Open in Web Store
+  </message>
+
+  <message name="IDS_EXTENSION_PROMPT_WARNING_FULL_ACCESS" desc="Permission string for full access to the computer and all websites.">
+    Read and change all your data on your computer and all websites
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ALL_HOSTS" desc="Permission string for access to data on all websites.">
+    Read and change all your data on all websites
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ALL_HOSTS_READ_ONLY" desc="Permission string for read-only access to data on all websites.">
+    Read all your data on all websites
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_AUDIO_CAPTURE" desc="Permission string for access to audio capture devices.">
+    Use your microphone
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_VIDEO_CAPTURE" desc="Permission string for access to video capture devices.">
+    Use your camera
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_AUDIO_AND_VIDEO_CAPTURE" desc="Permission string for access to both audio and video capture devices.">
+    Use your microphone and camera
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_BLUETOOTH" desc="Permission string for general access to the Bluetooth API.">
+    Access information about Bluetooth devices paired with your system and discover nearby Bluetooth devices.
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_BLUETOOTH_DEVICES" desc="Permission string for implementing Bluetooth profiles.">
+    Send messages to and receive messages from Bluetooth devices.
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_BLUETOOTH_PRIVATE" desc="Permission string for Bluetooth Private API.">
+    Control Bluetooth adapter state and pairing
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_BLUETOOTH_SERIAL" desc="Permission string for access to Bluetooth and serial connected devices.">
+    Access your Bluetooth and Serial devices
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_BOOKMARKS" desc="Permission string for access to bookmarks.">
+    Read and change your bookmarks
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_READING_LIST" desc="Permission string for the Reading List.">
+    Read and change entries in the reading list
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_CLIPBOARD" desc="Permission string for access to clipboard.">
+    Read data you copy and paste
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_CLIPBOARD_READWRITE" desc="Permission string for access to clipboard for read and write permission.">
+    Read and modify data you copy and paste
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_CLIPBOARD_WRITE" desc="Permission string for acess to clipboard for write permission.">
+    Modify data you copy and paste
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_DEBUGGER" desc="Permission string for access to debugger.">
+    Access the page debugger backend
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_DECLARATIVE_WEB_REQUEST" desc="Permission string for Declarative Web Request API.">
+    Block parts of web pages
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_DECLARATIVE_NET_REQUEST" desc="Permission string for Declarative Net Request API.">
+    Block content on any page
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_DOCUMENT_SCAN" desc="Permission string for access to document scanning.">
+    Access document scanners attached via USB or on the local network
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ENTERPRISE_HARDWARE_PLATFORM" desc="Permission string for access to hardware platform information.">
+    Read the manufacturer and model of this computer
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_FAVICON" desc="Permission string for access to favicons.">
+    Read the icons of the websites you visit
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_GEOLOCATION" desc="Permisson string for access to geolocation.">
+    Detect your physical location
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_HISTORY_READ" desc="Permission string for access to browsing history.">
+    Read your browsing history
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_HISTORY_READ_ON_ALL_DEVICES" desc="Permission string for access to browsing history on all signed-in devices.">
+    Read your browsing history on all your signed-in devices
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_HISTORY_WRITE_ON_ALL_DEVICES" desc="Permission string for access to modify browsing history on all signed-in devices.">
+    Read and change your browsing history on all your signed-in devices
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_HOME_PAGE_SETTING_OVERRIDE" desc="Permission string for home page override.">
+    Change your home page to: <ph name="HOME_PAGE">$1<ex>home.page.com/home.html</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_1_HOST" desc="Permission string for access to data on one website.">
+    Read and change your data on <ph name="WEBSITE_1">$1<ex>www.google.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_1_HOST_READ_ONLY" desc="Permission string for read-only access to data on one website.">
+    Read your data on <ph name="WEBSITE_1">$1<ex>www.google.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_2_HOSTS" desc="Permission string for access to data on two websites.">
+    Read and change your data on <ph name="WEBSITE_1">$1<ex>www.google.com</ex></ph> and <ph name="WEBSITE_2">$2<ex>www.reddit.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_2_HOSTS_READ_ONLY" desc="Permission string for read-only access to data on two websites.">
+    Read your data on <ph name="WEBSITE_1">$1<ex>www.google.com</ex></ph> and <ph name="WEBSITE_2">$2<ex>www.reddit.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_3_HOSTS" desc="Permission string for access to data on three websites.">
+    Read and change your data on <ph name="WEBSITE_1">$1<ex>www.google.com</ex></ph>, <ph name="WEBSITE_2">$2<ex>www.reddit.com</ex></ph>, and <ph name="WEBSITE_3">$3<ex>news.ycombinator.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_3_HOSTS_READ_ONLY" desc="Permission string for read-only access to data on three websites.">
+    Read your data on <ph name="WEBSITE_1">$1<ex>www.google.com</ex></ph>, <ph name="WEBSITE_2">$2<ex>www.reddit.com</ex></ph>, and <ph name="WEBSITE_3">$3<ex>news.ycombinator.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_HOSTS_LIST" desc="Permission string for access to data for an arbitrary list of websites.">
+    Read and change your data on a number of websites
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_HOSTS_LIST_READ_ONLY" desc="Permission string for read-only access to data for an arbitrary list of websites.">
+    Read your data on a number of websites
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_HOST_AND_SUBDOMAIN" desc="Permission string requesting access to data on a website and its sub-domains.">
+    all <ph name="WEBSITE_1">$1<ex>google.com</ex></ph> sites
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_HOST_AND_SUBDOMAIN_LIST" desc="Single entry permission string requesting access to data on a website and its sub-domains.">
+    All <ph name="WEBSITE_1">$1<ex>google.com</ex></ph> sites
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_INPUT" desc="Permission string for access to input.">
+    Read and change anything you type
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_LOGIN" desc="Permission string for access to Login API.">
+    Launch and exit managed guest sessions
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_LOGIN_SCREEN_UI" desc="Permission string for access to login screen UI.">
+    Display UI on the login screen
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_LOGIN_SCREEN_STORAGE" desc="Permission string for access to login screen storage.">
+    Store persistent data on the login screen and inject credentials into the session.
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_MANAGEMENT" desc="Permisson string for access to extension management.">
+    Manage your apps, extensions, and themes
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_MDNS" desc="Permisson string for access to list of mDNS services on a network.">
+    Discover devices on your local network, like printers
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_NETWORK_STATE" desc="Permission string for network list access.">
+    Access list of network connections
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_NETWORKING_PRIVATE" desc="Permission string for Networking Private API.">
+    Manage network connections
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_PRINTING" desc="Permission string for access to printers.">
+    Access your printers
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_PRINTING_METRICS" desc="Permission string for access to printing metrics.">
+    See your printing history
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SEARCH_SETTINGS_OVERRIDE" desc="Permission string for search settings override.">
+    Change your search settings to: <ph name="SEARCH_HOST">$1<ex>url.search.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SERIAL" desc="Permission string for access to serial devices.">
+    Access your serial devices
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SOCKET_ANY_HOST" desc="Permission string for access to any device on the local network or internet.">
+    Exchange data with any device on the local network or internet
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SOCKET_HOSTS_IN_DOMAIN" desc="Permission string for access to any device within a single domains on the local network or internet.">
+    Exchange data with any device in the domain <ph name="DOMAIN">$1<ex>example.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SOCKET_HOSTS_IN_DOMAINS" desc="Permission string for access to any device within multiple domains on the local network or internet.">
+    Exchange data with any device in the domains: <ph name="DOMAINS">$1<ex>example.com example.org</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SOCKET_SPECIFIC_HOST" desc="Permission string for access to a single specific device on the local network or internet.">
+    Exchange data with the device named <ph name="HOSTNAME">$1<ex>foo.example.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SOCKET_SPECIFIC_HOSTS" desc="Permission string for access to multiple specific devices on the local network or internet.">
+    Exchange data with the devices named: <ph name="HOSTNAMES">$1<ex>foo.example.com bar.example.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SPEECH_RECOGNITION" desc="Permission string for speech recognition.">
+    Access your microphone and analyze your speech
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_START_PAGE_SETTING_OVERRIDE" desc="Permission string for start page override.">
+    Change your start page to: <ph name="START_PAGE">$1<ex>start.page.com/start.html</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SYSTEM_STORAGE" desc="The permission string for access to connected system storage devices.">
+    Identify and eject storage devices
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_TAB_GROUPS" desc="Permission string for access to tab groups.">
+    View and manage your tab groups
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_TOPSITES" desc="Permission string for access to the list of most frequently visited websites.">
+    Read a list of your most frequently visited websites
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_TTS_ENGINE" desc="Permission string for access to text-to-speech.">
+    Read all text spoken using synthesized speech
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_U2F_DEVICES" desc="Warning message which indicates that an extension has access to Universal 2nd Factor devices.">
+    Access your Universal 2nd Factor devices
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_NOTIFICATIONS" desc="Permission string which indicates that an extension has access to display notifications.">
+    Display notifications
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_USB_DEVICE" desc="Permission string for access to a specific USB device.">
+    Access any <ph name="DEVICE_NAME_AND_VENDOR">$1<ex>SoundKnob from Griffin Technology</ex></ph> via USB
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_USB_DEVICE_LIST" desc="Permission string for access to a list of USB devices.">
+    Access any of these USB devices
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_USB_DEVICE_LIST_ITEM_UNKNOWN_PRODUCT" desc="Line item for a USB device listed under IDS_EXTENSION_PROMPT_WARNING_USB_DEVICE_LIST that has an unknown product ID.">
+    unknown devices from <ph name="VENDOR_NAME">$1<ex>Griffin Technology</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_USB_DEVICE_LIST_ITEM_UNKNOWN_VENDOR" desc="Line item for a USB device listed under IDS_EXTENSION_PROMPT_WARNING_USB_DEVICE_LIST that has an unknown vendor ID.">
+    devices from an unknown vendor
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_USB_DEVICE_UNKNOWN_PRODUCT" desc="Permission string for access to a specific USB device with an unknown product ID.">
+    Access USB devices from <ph name="VENDOR_NAME">$1<ex>Griffin Technology</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_USB_DEVICE_UNKNOWN_VENDOR" desc="Permission string for acceess to a specific USB device with an unknown vendor ID.">
+    Access USB devices from an unknown vendor
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_VPN" desc="Permission string for access to VPN API.">
+    Access your network traffic
+  </message>
+
+  <message name="IDS_EXTENSION_PROMPT_WARNING_CONTENT_SETTINGS" desc="Permission string for access to content settings.">
+    Change your settings that control websites' access to features such as cookies, JavaScript, plugins, geolocation, microphone, camera, etc.
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_PRIVACY" desc="Permission string for access to privacy settings.">
+    Change your privacy-related settings
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_DOWNLOADS" desc="Permission string for access to downloads.">
+    Manage your downloads
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_DOWNLOADS_OPEN" desc="Permission string for access to downloads.">
+    Open downloaded files
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_IDENTITY_EMAIL" desc="Permission string for access to profile email address.">
+    Know your email address
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_WALLPAPER" desc="Permission string for access to wallpaper.">
+    Change your wallpaper
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_FILE_SYSTEM_DIRECTORY" desc="Permission string for read access to directories and their contents.">
+    Read folders that you open in the application
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_FILE_SYSTEM_WRITE_DIRECTORY" desc="Permission string for write access to directories and their contents.">
+    Write to files and folders that you open in the application
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_MEDIA_GALLERIES_READ" desc="Permission string for access to read all of the user's media galleries.">
+    Access photos, music, and other media from your computer
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_MEDIA_GALLERIES_READ_WRITE" desc="Permission string for access to read and write to all of the user's media galleries.">
+    Read and change photos, music, and other media from your computer
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_MEDIA_GALLERIES_READ_DELETE" desc="Permission string for access to read and delete all of the user's media galleries.">
+    Read and delete photos, music, and other media from your computer
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_MEDIA_GALLERIES_READ_WRITE_DELETE" desc="Permission string for access to read, write and delete to all of the user's media galleries.">
+    Read, change and delete photos, music, and other media from your computer
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SYNCFILESYSTEM" desc="Permission string for synchronizing files to the user's Google Drive">
+    Store data in your Google Drive account
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_NATIVE_MESSAGING" desc="Permission string for Native Messaging API.">
+    Communicate with cooperating native applications
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SCREENLOCK_PRIVATE" desc="Permission string for locking an unlocking the screen.">
+    Lock and unlock the screen
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ACTIVITY_LOG_PRIVATE" desc="Permission string for the observing other extensions' API calls">
+    Monitor the behavior of other extensions, including visited URLs
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_DESKTOP_CAPTURE" desc="Permission string for Desktop Capture API.">
+    Capture content of your screen
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ACCESSIBILITY_FEATURES_MODIFY" desc="Permission string for modifying acccessibility settings via extension API shown when an extension utilizing the API is installed.">
+    Change your accessibility settings
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ACCESSIBILITY_FEATURES_READ" desc="Permission string for modifying acccessibility settings via extension API shown when a extension utilizing the API is installed.">
+    Read your accessibility settings
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ACCESSIBILITY_FEATURES_READ_MODIFY" desc="Permission string for reading and modifying acccessibility settings via extension API shown when an extension utilizing the API is installed.">
+    Read and change your accessibility settings
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_PLATFORMKEYS" desc="Permission string for access to client certificates.">
+    Use your client certificates
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_CERTIFICATEPROVIDER" desc="Permission string for providing certificates that can be used for authentication.">
+    Provide certificates for authentication
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_SETTINGS_PRIVATE" desc="Permission string for access to settings.">
+    Read and change user and device settings
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_AUTOFILL_PRIVATE" desc="Permission string for access to autofill settings.">
+    Read and change autofill settings
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_PASSWORDS_PRIVATE" desc="Permission string for access to passwords settings.">
+    Read and change saved password settings
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_USERS_PRIVATE" desc="Permission string for access to user accounts.">
+    Read and change allowlisted users
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_NEW_TAB_PAGE_OVERRIDE" desc="Permission string for extensions that override the new tab page.">
+    Replace the page you see when opening a new tab
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_TRANSIENT_BACKGROUND" desc="Permission string for transient background permission.">
+    Run in the background when requested by a cooperating native application
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ENTERPRISE_DEVICE_ATTRIBUTES" desc="Permission string for enterprise device attributes permission.">
+    See device information, such as its serial number or asset ID
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ENTERPRISE_KIOSK_INPUT" desc="Permission string for enterprise kiosk input permission.">
+    Change the system keyboard layout
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ENTERPRISE_NETWORKING_ATTRIBUTES" desc="Permission string for enterprise networking attributes permission.">
+    See network information, such as your IP or MAC address
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ENTERPRISE_PLATFORMKEYS" desc="Permission string for enterprise platform keys permission.">
+    Perform security-related tasks for your organization, such as managing certificates and keys stored on the device
+  </message>
+  <if expr="is_win">
+    <message name="IDS_EXTENSION_PROMPT_WARNING_ENTERPRISE_REPORTING_PRIVATE_ENABLED_WIN" desc="Permission string for enterprise private reporting permission on Windows.">
+      Read information about your browser, OS, device, installed software, registry values and files
+    </message>
+  </if>
+  <if expr="is_macosx or is_linux">
+    <message name="IDS_EXTENSION_PROMPT_WARNING_ENTERPRISE_REPORTING_PRIVATE_ENABLED_LINUX_AND_MACOS" desc="Permission string for enterprise private reporting permission on Linux and MacOS.">
+      Read information about your browser, OS, device, installed software and files
+    </message>
+  </if>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ENTERPRISE_REPORTING_PRIVATE" desc="Permission string for enterprise private reporting permission.">
+    Read information about your browser, OS, and device
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_WARNING_ENTERPRISE_REMOTE_APPS" desc="Permission string for access to the Remote Apps Enterprise API.">
+    Add remote apps to the ChromeOS launcher
+  </message>
+  <if expr="reven">
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_ATTACHED_DEVICE_INFO" desc="Permission string for accessing information of attached devices.">
+      Read attached devices information and data
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_BLUETOOTH_PERIPHERALS_INFO" desc="Permission string for accessing information of Bluetooth peripherals.">
+      Read Bluetooth peripherals information and data
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_DIAGNOSTICS" desc="Permission string for chrome.os.diagnostcs API.">
+      Run ChromeOS Flex diagnostic tests
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_EVENTS" desc="Permission string for chrome.os.events API.">
+      Subscribe to ChromeOS Flex system events
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_MANAGEMENT_AUDIO" desc="Permission string for chrome.os.management.audio API.">
+      Manage ChromeOS Flex audio settings
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_TELEMETRY" desc="Permission string for chrome.os.telemetry API.">
+      Read ChromeOS Flex device information and data
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_TELEMETRY_SERIAL_NUMBER" desc="Permission string for serial number permission.">
+      Read ChromeOS Flex device and component serial numbers
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_TELEMETRY_NETWORK_INFORMATION" desc="Permission string for accessing network information.">
+      Read ChromeOS Flex network information
+    </message>
+  </if>
+  <if expr="not reven">
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_ATTACHED_DEVICE_INFO" desc="Permission string for accessing information of attached devices.">
+      Read attached devices information and data
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_BLUETOOTH_PERIPHERALS_INFO" desc="Permission string for accessing information of Bluetooth peripherals.">
+      Read Bluetooth peripherals information and data
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_DIAGNOSTICS" desc="Permission string for chrome.os.diagnostcs API.">
+      Run ChromeOS diagnostic tests
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_EVENTS" desc="Permission string for chrome.os.events API.">
+      Subscribe to ChromeOS system events
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_MANAGEMENT_AUDIO" desc="Permission string for chrome.os.management.audio API.">
+      Manage ChromeOS audio settings
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_TELEMETRY" desc="Permission string for chrome.os.telemetry API.">
+      Read ChromeOS device information and data
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_TELEMETRY_SERIAL_NUMBER" desc="Permission string for serial number permission.">
+      Read ChromeOS device and component serial numbers
+    </message>
+    <message name="IDS_EXTENSION_PROMPT_WARNING_CHROMEOS_TELEMETRY_NETWORK_INFORMATION" desc="Permission string for accessing network information.">
+      Read ChromeOS network information
+    </message>
+  </if>
+
+
+
+  <!-- Extension/App error messages -->
+  <message name="IDS_EXTENSION_CANT_DOWNGRADE_VERSION" desc="Error message when a user tries to install an extension with a lower version than a version that it already installed.">
+    Attempted to downgrade extension.
+  </message>
+  <message name="IDS_APP_CANT_DOWNGRADE_VERSION" desc="Error message when a user tries to install an app with a lower version than a version that it already installed.">
+    Attempted to downgrade app.
+  </message>
+  <message name="IDS_EXTENSION_MOVE_DIRECTORY_TO_PROFILE_FAILED" desc="">
+    Could not move extension directory into profile.
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_NOT_ENABLED" desc="Error displayed during installation of apps or extensions when installation is not enabled.">
+    Installation is not enabled
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_INCORRECT_APP_CONTENT_TYPE" desc="Error displayed during installation of apps when the app is not served with the correct content-type.">
+    Apps must be served with content-type "<ph name="CONTENT_TYPE">$1<ex>application/x-chrome-extension</ex></ph>"
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_INCORRECT_INSTALL_HOST" desc="Error displayed during installation of apps when the app is served from a different host than it affects.">
+    Apps must be served from the host they affect
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_UNEXPECTED_ID" desc="Error displayed during installation of a side-loaded app, extension, or theme when the ID of the referenced extension does not match the ID the developer declared during registration.">
+    Expected ID "<ph name="EXPECTED_ID">$1<ex>bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</ex></ph>", but ID was "<ph name="NEW_ID">$2<ex>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</ex></ph>"
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_DISALLOWED_ON_SITE" desc="Error displayed during installation of an extension when installation is not allowed from the current site.">
+    Apps, extensions, and user scripts cannot be added from this website
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_UNEXPECTED_VERSION" desc="Error displayed during installation of a side-loaded app, extension, or theme when the version of the referenced extension does not match the version the developer declared during registration.">
+    Expected version "<ph name="EXPECTED_VERSION">$1<ex>2.0</ex></ph>", but version was "<ph name="NEW_ID">$2<ex>1.0</ex></ph>"
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_DEPENDENCY_OLD_VERSION" desc="Error displayed during installation of an extension when an import dependency is older than the minimum version required.">
+    Extension requires "<ph name="IMPORT_NAME">$1<ex>Google Cast API</ex></ph>" with a minimum version "<ph name="IMPORT_VERSION">$2<ex>1.0</ex></ph>", but only version "<ph name="INSTALLED_VERSION">$3<ex>0.9</ex></ph>" is installed
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_DEPENDENCY_NOT_SHARED_MODULE" desc="Error displayed during installation of an extension which tries to imports resources from an extension which is not a shared module.">
+    Unable to import extension "<ph name="IMPORT_NAME">$1<ex>Gmail</ex></ph>" because it is not a shared module
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_DEPENDENCY_NOT_ALLOWLISTED" desc="Error displayed during installation of an extension which tries to imports resources from an extension, but it is not allowlisted to do so.">
+    Unable to install "<ph name="APP_NAME">$1<ex>Google Play Movies &amp; TV</ex></ph>" because it is not allowed by "<ph name="IMPORT_NAME">$2<ex>Google Cast API</ex></ph>"
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_GALLERY_ONLY" desc="Error displayed when an app or extension that has an update URL used by the gallery is installed when not directly downloaded from the gallery.">
+    This can only be added from the <ph name="CHROME_WEB_STORE">$1<ex>Web Store</ex></ph>
+  </message>
+  <if expr="reven">
+    <message name="IDS_EXTENSION_INSTALL_KIOSK_MODE_ONLY" desc="Error displayed during installation of an app with 'kiosk_only' attribute but user is not in ChromeOS Flex kiosk mode.">
+      App with 'kiosk_only' manifest attribute must be installed in ChromeOS Flex kiosk mode
+    </message>
+  </if>
+  <if expr="not reven">
+    <message name="IDS_EXTENSION_INSTALL_KIOSK_MODE_ONLY" desc="Error displayed during installation of an app with 'kiosk_only' attribute but user is not in ChromeOS kiosk mode.">
+      App with 'kiosk_only' manifest attribute must be installed in ChromeOS kiosk mode
+    </message>
+  </if>
+  <message name="IDS_EXTENSION_OVERLAPPING_WEB_EXTENT" desc="Error message when a user tries to install an app with a web extent that overlaps another installed app.">
+    Could not add application "<ph name="TO_INSTALL_APP_NAME">$1<ex>Google Mail</ex></ph>" because it conflicts with "<ph name="INSTALLED_APP_NAME">$2<ex>Google Calendar</ex></ph>".
+  </message>
+  <message name="IDS_EXTENSION_INVALID_IMAGE_PATH" desc="">
+    Could not load '<ph name="IMAGE_PATH">$1<ex>/path/to/file</ex></ph>' for theme.
+  </message>
+
+  <!-- Extension installed bubble -->
+  <message name="IDS_EXTENSION_INSTALLED_PAGE_ACTION_INFO" desc="Text displayed in the InfoBubble which explains that the UI of this extension is a Page Action icon which may appear for some pages.">
+    This icon will be visible when the extension can act on the current page.
+  </message>
+  <message name="IDS_EXTENSION_INSTALLED_PAGE_ACTION_INFO_WITH_SHORTCUT" desc="Text displayed in the InfoBubble which explains that the UI of this extension is a Page Action icon which may appear for some pages. Also has a sentence describing how to activate it.">
+    This icon will be visible when the extension can act on the current page. Use this extension by clicking on the icon or by pressing <ph name="EXTENSION_SHORTCUT">$1<ex>Ctrl+E</ex></ph>.
+  </message>
+  <message name="IDS_EXTENSION_INSTALLED_BROWSER_ACTION_INFO" desc="Text displayed in the InfoBubble which explains that the UI of this extension is a Browser Action icon.">
+    Use this extension by clicking on this icon.
+  </message>
+  <message name="IDS_EXTENSION_INSTALLED_BROWSER_ACTION_INFO_WITH_SHORTCUT" desc="Text displayed in the InfoBubble which explains that the UI of this extension is a Browser Action icon. Also has a sentence describing how to activate it.">
+    Use this extension by clicking on this icon or by pressing <ph name="EXTENSION_SHORTCUT">$1<ex>Ctrl+E</ex></ph>.
+  </message>
+  <message name="IDS_EXTENSION_INSTALLED_OMNIBOX_KEYWORD_INFO" desc="Text displayed in the InfoBubble which explains that this extension has an keyword that can be used with the omnibox.">
+    To use this extension, type "<ph name="EXTENSION_KEYWORD">$1<ex>search</ex></ph>", then TAB, then your command or search.
+  </message>
+  <message name="IDS_EXTENSION_INSTALLED_MANAGE_SHORTCUTS" desc="Text for the link in the InfoBubble that opens the chrome://extensions page with the Configure Commands UI visible.">
+    Manage shortcuts
+  </message>
+  <message name="IDS_EXTENSION_LAUNCH_WEB_AUTH_FLOW_TAB_INFO_BAR_TEXT" desc="Text displayed in an info bar of an auth page generated by chrome.identity.launchWebAuthFlow() API. The extension asks the user to approve an auth request and give the extension permission to access the user account. The goal of this text is to make that the user is aware that the page was opened by an extension and an auth token will be shared with the extension after approving.">
+    The "<ph name="EXTENSION_NAME">$1<ex>Google Docs Offline</ex></ph>" extension wants to access your account
+  </message>
+  <!-- Directory access confirmation dialog -->
+  <message name="IDS_EXTENSIONS_DIRECTORY_CONFIRMATION_DIALOG_TITLE" desc="Text of the title of the directory access confirmation dialog.">
+    Confirm Access
+  </message>
+  <message name="IDS_EXTENSIONS_DIRECTORY_CONFIRMATION_DIALOG_MESSAGE_READ_ONLY" desc="Text of the message of the directory access confirmation dialog if the app does not have write access.">
+    The folder you selected contains sensitive files. Are you sure you want to grant "<ph name="APP_NAME">$1<ex>Text</ex></ph>" permanent read access to this folder?
+  </message>
+  <message name="IDS_EXTENSIONS_DIRECTORY_CONFIRMATION_DIALOG_MESSAGE_WRITABLE" desc="Text of the message of the directory access confirmation dialog if the app has write access.">
+    The folder you selected contains sensitive files. Are you sure you want to grant "<ph name="APP_NAME">$1<ex>Text</ex></ph>" permanent write access to this folder?
+  </message>
+
+  <!-- Begin of Sync Promo strings for Desktop Identity Consistency. -->
+  <message name="IDS_EXTENSION_INSTALLED_DICE_PROMO_SYNC_MESSAGE" desc="Text of the sync promo displayed at the bottom of the extension installed bubble asking the user to enable sync.">
+    To get your extensions on all your computers, turn on sync
+  </message>
+  <!-- End of Sync Promo strings for Desktop Identity Consistency. -->
+
+  <!-- Extensions strings, which are not used by chrome://extensions. -->
+  <message name="IDS_EXTENSIONS_LOAD_ERROR_ALERT_HEADING" desc="The title of the section that describes an extension load error.">
+    Error Loading Extension
+  </message>
+  <message name="IDS_EXTENSIONS_LOAD_ERROR_MESSAGE" desc="The message which tells the user that an extension failed to load.">
+    Failed to load extension from:
+  </message>
+  <message name="IDS_EXTENSIONS_WANTS_ACCESS_TO_SITE" desc="The message shown on mouseover when an extension wants to run on a specific site.">
+    Wants access to this site
+  </message>
+  <message name="IDS_EXTENSIONS_HAS_ACCESS_TO_SITE" desc="The message shown on mouseover when an extension currently can run on a specific site.">
+    Has access to this site
+  </message>
+  <message name="IDS_EXTENSIONS_REQUEST_ACCESS_BUTTON" desc="The text of the request acces button that appears on the toolbar when an extension requests access to the site">
+    Allow <ph name="EXTENSIONS_REQUESTING_ACCESS_COUNT">$1<ex>3</ex></ph>?
+  </message>
+  <message name="IDS_EXTENSIONS_REQUEST_ACCESS_BUTTON_DISMISSED_TEXT" desc="The text of the button that appears on the toolbar after the user grants access to an extension that requested access to the current site.">
+    Allowed
+  </message>
+  <message name="IDS_EXTENSIONS_REQUEST_ACCESS_BUTTON_TOOLTIP_SINGLE_EXTENSION" desc="The tooltip text of the request access button that appears on the toolbar when an extension requests access to the site">
+    Click to allow "<ph name="EXTENSIONS_REQUESTING_ACCESS">$1<ex>Extension A</ex></ph>" on <ph name="ORIGIN">$2<ex>google.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSIONS_REQUEST_ACCESS_BUTTON_TOOLTIP_MULTIPLE_EXTENSIONS" desc="The tooltip text of the request access button that appears on the toolbar when an extension requests access to the site">
+    Click to allow on <ph name="ORIGIN">$1<ex>google.com</ex></ph>:
+  </message>
+  <message name="IDS_EXTENSIONS_TOOLBAR_ACTION_HOVER_CARD_TITLE_HAS_ACCESS" desc="The title in the card that shows up on mouse hover of a toolbar action when extension has access to the current site.">
+    Allowed to read &amp; change
+  </message>
+  <message name="IDS_EXTENSIONS_TOOLBAR_ACTION_HOVER_CARD_TITLE_BLOCKED_ACCESS" desc="The title in the card that shows up on mouse hover of a toolbar action when the extension cannot access the current site.">
+    Not allowed to read &amp; change
+  </message>
+  <message name="IDS_EXTENSIONS_TOOLBAR_ACTION_HOVER_CARD_TITLE_REQUESTS_ACCESS" desc="The title in the card that shows up on mouse hover of a toolbar action when the extension requests access to the current site.">
+    Requesting to read &amp; change
+  </message>
+  <message name="IDS_EXTENSIONS_TOOLBAR_ACTION_HOVER_CARD_DESCRIPTION_ALL_EXTENSIONS_ALLOWED_ACCESS" desc="The description in the card that shows up on mouse hover of a toolbar action when all extensions have access to the current site.">
+    All extensions can read &amp; change <ph name="HOST">$1<ex>google.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSIONS_TOOLBAR_ACTION_HOVER_CARD_DESCRIPTION_ALL_EXTENSIONS_BLOCKED_ACCESS" desc="The description in the card that shows up on mouse hover of a toolbar action when all extensions cannot access the current site.">
+    You blocked all extensions from <ph name="HOST">$1<ex>google.com</ex></ph>
+  </message>
+    <message name="IDS_EXTENSIONS_TOOLBAR_ACTION_HOVER_CARD_DESCRIPTION_EXTENSION_HAS_ACCESS" desc="The description in the card that shows up on mouse hover of a toolbar action when the extension has access to the current site.">
+    This extension can read and change <ph name="HOST">$1<ex>google.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSIONS_TOOLBAR_ACTION_HOVER_CARD_DESCRIPTION_EXTENSION_REQUESTS_ACCESS" desc="The description in the card that shows up on mouse hover of a toolbar action when the extension requests access to the current site.">
+    Click this extension's icon to read and change <ph name="HOST">$1<ex>google.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSIONS_TOOLBAR_ACTION_HOVER_CARD_POLICY_LABEL_PINNED_TEXT" desc="The text in the card that shows up on mouse hover of a toolbar action when extension was pinned by the administrator.">
+    Pinned by your administrator
+  </message>
+  <message name="IDS_EXTENSIONS_TOOLBAR_ACTION_HOVER_CARD_POLICY_LABEL_INSTALLED_TEXT" desc="The text in the card that shows up on mouse hover of a toolbar action when extension was installed by the administrator.">
+    Installed by your administrator
+  </message>
+
+  <if expr="not use_titlecase">
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_SITE_PERMISSIONS" desc="The label in an extension's context menu for the submenu specifying the extension site permissions (sentence case).">
+      Site permissions
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_CANT_ACCESS_PAGE" desc="The label in an extension's context menu indicating the extension cannot access the current page. (sentence case)">
+      Can't read or change site's data
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS" desc="The label in an extension's context menu for the submenu specifying whether or not the extension can run on the current page (sentence case).">
+      This can read and change site data
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_ALL_EXTENSIONS_GRANTED" desc="The label in an extension's page access submenu when the user allowed all extensions on the current page (sentence case).">
+      You previously chose to allow all extensions on <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_ALL_EXTENSIONS_BLOCKED" desc="The label in an extension's page access submenu when the user blocked any extensions on the current page (sentence case).">
+      You previously chose to not allow any extensions on <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_CLICK_V2" desc="The label in an extension's context menu to allow the extension access to the page only when the user clicks on the extension action (sentence case).">
+      Ask on every visit
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_SITE_V2" desc="The label in an extension's context menu to always allow the extension access to the current origin (sentence case).">
+      Always on <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_ALL_SITES_V2" desc="The label in an extension's context menu to always allow the extension access on all sites (sentence case).">
+      Always on all sites
+    </message>
+      <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_PERMISSIONS_PAGE" desc="The label in an extension's context menu that the user can click to open site permissions page in chrome://extensions (sentence case).">
+      Manage site permissions
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_CLICK" desc="The label in an extension's context menu to allow the extension access to the page only when the user clicks on the extension action (sentence case).">
+      When you click the extension
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_SITE" desc="The label in an extension's context menu to always allow the extension access to the current origin (sentence case).">
+      On <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_ALL_SITES" desc="The label in an extension's context menu to always allow the extension access on all sites (sentence case).">
+      On all sites
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_LEARN_MORE" desc="The label in an extension's context menu that the user can click to learn more about site access (sentence case).">
+      Learn more about site access
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PIN_TO_TOOLBAR" desc="The label in an extension's context menu that the user can click to pin the extension to the toolbar (sentence case).">
+      Pin to toolbar
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_UNPIN_FROM_TOOLBAR" desc="The label in an extension's context menu that the user can click to unpin the extension from the toolbar (sentence case).">
+      Unpin from toolbar
+    </message>
+    <message name="IDS_EXTENSIONS_OPTIONS_MENU_ITEM" desc="The text for the options menu item in context menus (sentence case).">
+      Options
+    </message>
+    <message name="IDS_EXTENSIONS_INSTALLED_BY_ADMIN" desc="The text indicating that an extension has been installed by the controlling administrator (sentence case).">
+      Installed by your administrator
+    </message>
+    <message name="IDS_EXTENSIONS_DISABLE" desc="The link for disabling an extension (sentence case).">
+      Disable
+    </message>
+    <message name="IDS_EXTENSIONS_PIN_TO_TOOLBAR" desc="The text for the menu item to pin an extension to the toolbar (sentence case).">
+      Pin
+    </message>
+    <message name="IDS_EXTENSIONS_UNPIN_FROM_TOOLBAR" desc="The text for the menu item to unpin an extension from the toolbar (sentence case).">
+      Unpin
+    </message>
+    <message name="IDS_EXTENSIONS_PINNED_BY_ADMIN" desc="The text indicating that an extension has been 'pinned' to the toolbar by the controlling administrator (sentence case).">
+      Pinned by your administrator
+    </message>
+    <message name="IDS_EXTENSIONS_PIN_TO_TOOLBAR_ACCESSIBLE_NAME" desc="The accessible name for the menu item to pin an extension to the toolbar (sentence case).">
+      Pin <ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_UNPIN_FROM_TOOLBAR_ACCESSIBLE_NAME" desc="The accessible name for the menu item to unpin an extension from the toolbar (sentence case).">
+      Unpin <ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_PINNED_BY_ADMIN_ACCESSIBLE_NAME" desc="The accessible name indicating that an extension has been 'pinned' to the toolbar by the controlling administrator (sentence case).">
+      <ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph> is pinned by your administrator
+    </message>
+    <message name="IDS_EXTENSIONS_SUBMENU_OPEN_SIDE_PANEL_ITEM" desc="The text for the link in the extensions menu to open the side panel corresponding to the extension (sentence case).">
+      Open side panel
+    </message>
+    <message name="IDS_EXTENSIONS_SUBMENU_CLOSE_SIDE_PANEL_ITEM" desc="The text for the link in the extensions menu to close the side panel corresponding to the extension (sentence case).">
+      Close side panel
+    </message>
+    <message name="IDS_MANAGE_EXTENSION" desc="The text for the button in the extension's context menu used to open the chrome://extensions/?id=xxx page and manage a specific extension (sentence case).">
+      Manage extension
+    </message>
+    <message name="IDS_MANAGE_EXTENSIONS" desc="The text of the button in the extensions toolbar menu used to open the chrome://extensions page and manage all extensions (sentence case).">
+      Manage extensions
+    </message>
+    <message name="IDS_VIEW_WEB_PERMISSIONS" desc="The text for the button in the extension context menu used to open the chrome://settings/content/siteDetails?site=xxx page and view the site details for a specific extension (sentence case).">
+      View web permissions
+    </message>
+    <message name="IDS_EXTENSION_ACTION_INSPECT_POPUP" desc="The text for the right-click menu of page and browser actions which shows the popup and opens the developer tools (sentence case).">
+      Inspect popup
+    </message>
+  </if>
+  <if expr="use_titlecase">
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_SITE_PERMISSIONS" desc="The label in an extension's context menu for the submenu specifying the extension site permissions (title case).">
+      Site Permissions
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_CANT_ACCESS_PAGE" desc="The label in an extension's context menu indicating the extension cannot access the current page. (title case)">
+      Can't Read or Change Site's Data
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS" desc="The label in an extension's context menu for the submenu specifying whether or not the extension can run on the current page (title case).">
+      This Can Read and Change Site Data
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_ALL_EXTENSIONS_GRANTED" desc="The label in an extension's page access submenu when the user allowed all extensions on the current page (title case).">
+      You Previously Chose To Allow All Extensions On <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_ALL_EXTENSIONS_BLOCKED" desc="The label in an extension's page access submenu when the user blocked any extensions on the current page (title case).">
+      You Previously Chose To Not Allow Any Extensions On <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_CLICK_V2" desc="The label in an extension's context menu to allow the extension access to the page only when the user clicks on the extension action (title case).">
+      Ask on Every Visit
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_SITE_V2" desc="The label in an extension's context menu to always allow the extension access to the current origin (title case).">
+      Always on <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_ALL_SITES_V2" desc="The label in an extension's context menu to always allow the extension access on all sites (title case).">
+      Always on All Sites
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_PERMISSIONS_PAGE" desc="The label in an extension's context menu that the user can click to open site permissions page in chrome://extensions (title case).">
+      Manage Site Permissions
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_CLICK" desc="The label in an extension's context menu to allow the extension access to the page only when the user clicks on the extension action (title case).">
+      When You Click the Extension
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_SITE" desc="The label in an extension's context menu to always allow the extension access to the current origin (title case).">
+      On <ph name="ORIGIN">$1<ex>google.com</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_RUN_ON_ALL_SITES" desc="The label in an extension's context menu to always allow the extension access on all sites (title case).">
+      On All Sites
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PAGE_ACCESS_LEARN_MORE" desc="The label in an extension's context menu that the user can click to learn more about site access (title case).">
+      Learn More About Site Access
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_PIN_TO_TOOLBAR" desc="The label in an extension's context menu that the user can click to pin the extension to the toolbar (title case).">
+      Pin to Toolbar
+    </message>
+    <message name="IDS_EXTENSIONS_CONTEXT_MENU_UNPIN_FROM_TOOLBAR" desc="The label in an extension's context menu that the user can click to unpin the extension from the toolbar (sentence case).">
+      Unpin from Toolbar
+    </message>
+    <message name="IDS_EXTENSIONS_OPTIONS_MENU_ITEM" desc="The text for the options menu item in context menus (title case).">
+      Options
+    </message>
+    <message name="IDS_EXTENSIONS_INSTALLED_BY_ADMIN" desc="The text indicating that an extension has been installed by the controlling administrator (title case).">
+      Installed by Your Administrator
+    </message>
+    <message name="IDS_EXTENSIONS_DISABLE" desc="The link for disabling an extension (title case).">
+      Disable
+    </message>
+    <message name="IDS_EXTENSIONS_HIDE_BUTTON" desc="The text for the Hide context menu item (title case).">
+      Hide Button
+    </message>
+    <message name="IDS_EXTENSIONS_KEEP_BUTTON_IN_TOOLBAR" desc="The text for the menu item to keep a button pinned in the toolbar (title case).">
+      Keep in Toolbar
+    </message>
+    <message name="IDS_EXTENSIONS_SHOW_BUTTON_IN_TOOLBAR" desc="The text for the menu item to move a button to the toolbar (title case).">
+      Show in Toolbar
+    </message>
+    <message name="IDS_EXTENSIONS_PIN_TO_TOOLBAR" desc="The text for the menu item to pin an extension to the toolbar (title case).">
+      Pin
+    </message>
+    <message name="IDS_EXTENSIONS_UNPIN_FROM_TOOLBAR" desc="The text for the menu item to unpin an extension from the toolbar (title case).">
+      Unpin
+    </message>
+    <message name="IDS_EXTENSIONS_PINNED_BY_ADMIN" desc="The text indicating that an extension has been 'pinned' to the toolbar by the controlling administrator (title case).">
+      Pinned by your Administrator
+    </message>
+    <message name="IDS_EXTENSIONS_PIN_TO_TOOLBAR_ACCESSIBLE_NAME" desc="The accessible name for the menu item to pin an extension to the toolbar (sentence case).">
+      Pin <ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_UNPIN_FROM_TOOLBAR_ACCESSIBLE_NAME" desc="The accessible name for the menu item to unpin an extension from the toolbar (sentence case).">
+      Unpin <ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>
+    </message>
+    <message name="IDS_EXTENSIONS_PINNED_BY_ADMIN_ACCESSIBLE_NAME" desc="The accessible name indicating that an extension has been 'pinned' to the toolbar by the controlling administrator (sentence case).">
+      <ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph> is pinned by your Administrator
+    </message>
+    <message name="IDS_EXTENSIONS_SUBMENU_OPEN_SIDE_PANEL_ITEM" desc="The text for the link in the extensions menu to open the side panel corresponding to the extension (title case).">
+      Open Side Panel
+    </message>
+    <message name="IDS_EXTENSIONS_SUBMENU_CLOSE_SIDE_PANEL_ITEM" desc="The text for the link in the extensions menu to close the side panel corresponding to the extension (title case).">
+      Close Side Panel
+    </message>
+    <message name="IDS_MANAGE_EXTENSION" desc="The text for the button in the extension's context menu used to open the chrome://extensions/?id=xxx page and manage a specific extension (title case).">
+      Manage Extension
+    </message>
+    <message name="IDS_MANAGE_EXTENSIONS" desc="The text for the button in the extensions toolbar menu used to open the chrome://extensions page and manage all extensions (title case).">
+      Manage Extensions
+    </message>
+    <message name="IDS_VIEW_WEB_PERMISSIONS" desc="The text for the button in the extension context menu used to open the chrome://settings/content/siteDetails?site=xxx page and view the site details for a specific extension (title case).">
+      View Web Permissions
+    </message>
+    <message name="IDS_EXTENSION_ACTION_INSPECT_POPUP" desc="The text for the right-click menu of page and browser actions which shows the popup and opens the developer tools (title case).">
+      Inspect Popup
+    </message>
+  </if>
+  <message name="IDS_EXTENSION_LOAD_FROM_DIRECTORY" desc="Title of directory browse dialog when user wants to load an extension from a directory.">
+    Select the extension directory.
+  </message>
+  <message name="IDS_EXTENSION_COMMANDS_GENERIC_ACTIVATE" desc="The generic 'activate extension' text used as description for some commands.">
+    Activate the extension
+  </message>
+
+  <message name="IDS_EXTENSIONS_SUPERVISED_USER_PARENTAL_PERMISSION_FAILURE" desc="The error information displayed in extra details if the parent permission request flow fails unexpectedly when a supervised user attempts to install or enable an extension. Note that this does not include the case where a parent fails to enter their password.">
+    Parent permission request failed.
+  </message>
+
+  <message name="IDS_EXTENSION_PACK_DIALOG_HEADING" desc="The heading of the pack extension dialog.">
+    Select the root directory of the extension to pack. To update an extension, also select the private key file to reuse.
+  </message>
+  <message name="IDS_EXTENSION_PACK_DIALOG_SELECT_KEY" desc="Heading in file browse dialog instructing user to select a private key.">
+    Select private key file.
+  </message>
+  <message name="IDS_EXTENSION_PACK_DIALOG_KEY_FILE_TYPE_DESCRIPTION" desc="Displayed in the file browse dialog. Associates the file extension 'pem' is for Private Keys.">
+    Private key
+  </message>
+  <message name="IDS_EXTENSION_PACK_DIALOG_ERROR_ROOT_REQUIRED" desc="Error message in pack extension dialog when the user does not specify a root directory.">
+    Extension root directory is required.
+  </message>
+  <message name="IDS_EXTENSION_PACK_DIALOG_ERROR_ROOT_INVALID" desc="Error message in pack extension dialog when the user speciifes an invalid root directory.">
+    Extension root directory is invalid.
+  </message>
+  <message name="IDS_EXTENSION_PACK_DIALOG_ERROR_KEY_INVALID" desc="Error message in pack extension dialog when the user speciifes an invalid key file.">
+    Private key file is invalid.
+  </message>
+  <message name="IDS_EXTENSION_PACK_DIALOG_SUCCESS_BODY_NEW" desc="Message shown on successful packing of a new extension.">
+    Created the following files:
+
+Extension: <ph name="EXTENSION_FILE">$1<ex>c:\users\aa\myextension.crx</ex></ph>
+Key File: <ph name="KEY_FILE">$2<ex>c:\users\aa\myextension.pem</ex></ph>
+
+Keep your key file in a safe place. You will need it to create new versions of your extension.
+  </message>
+  <message name="IDS_EXTENSION_PACK_DIALOG_SUCCESS_BODY_UPDATE" desc="Message shown on successful packing of an updated extension.">
+    Created the extension:
+
+<ph name="EXTENSION_FILE">$1<ex>c:\users\aa\myextension.crx</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_INSTALL_FRICTION_CONTINUE_BUTTON" desc="Text for the continue button on the extension install friction dialog">
+    Continue to install
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_INSTALL_FRICTION_TITLE" desc="The title of the install friction dialog">
+    Proceed with caution
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_INSTALL_FRICTION_WARNING_TEXT" desc="The warning text displayed in the install friction dialog">
+    This extension is not trusted by Enhanced Safe Browsing.
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_INSTALL_BUTTON" desc="Text for the install button on the extension install prompt">
+    Add
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_PROMPT_ACCEPT_BUTTON_EXTENSION" desc="Text for the install button on the extension install prompt, for an extension (i.e. not app or theme).">
+    Add extension
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_PROMPT_ACCEPT_BUTTON_APP" desc="Text for the install button on the extension install prompt, for an app.">
+    Add app
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_PROMPT_ACCEPT_BUTTON_THEME" desc="Text for the install button on the extension install prompt, for a theme.">
+    Add theme
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_PROMPT_ASK_A_PARENT_BUTTON" desc="Text for the ask-a-parent button on the extension install prompt.">
+    Ask a parent
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_BLOCKED_BY_PARENT_PROMPT_TITLE" desc="Text for the title of the dialog indicating that a parent has blocked installing extensions and apps.">
+    Can't add <ph name="EXTENSION_TYPE_PARAMETER">$1<ex>extension</ex></ph>
+  </message>
+  <message name="IDS_EXTENSION_ENABLE_BLOCKED_BY_PARENT_PROMPT_TITLE" desc="Text for the title of the dialog indicating that a parent has blocked enabling extensions and apps.">
+    Can't enable <ph name="EXTENSION_TYPE_PARAMETER">$1<ex>extension</ex></ph>
+  </message>
+  <message name="IDS_PARENT_PERMISSION_PROMPT_GO_GET_A_PARENT_FOR_EXTENSION_LABEL" desc="Text for the title section of the parent permission dialog asking child to get a parent to approve.">
+    Go get a parent to approve "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>"
+  </message>
+  <message name="IDS_PARENT_PERMISSION_PROMPT_EXTENSION_TYPE_EXTENSION" desc="The 'extension' extension type">
+    extension
+  </message>
+  <message name="IDS_PARENT_PERMISSION_PROMPT_EXTENSION_TYPE_APP" desc="The 'app' extension type">
+    app
+  </message>
+  <message name="IDS_PARENT_PERMISSION_PROMPT_CHILD_WANTS_TO_INSTALL_LABEL" desc="Text for the header section of the parent permission dialog explaining that the child is installing a extension that is requesting permissions.">
+    <ph name="CHILD_NAME">$1<ex>Junior</ex></ph> wants to install an <ph name="EXTENSION_TYPE">$2<ex>extension</ex></ph> that can:
+  </message>
+  <message name="IDS_PARENT_PERMISSION_PROMPT_APPROVE_BUTTON" desc="Text for the approve button on the parent permission prompt.">
+    Approve
+  </message>
+  <message name="IDS_PARENT_PERMISSION_PROMPT_CANCEL_BUTTON" desc="Text for the cancel button on the parent permission prompt.">
+    Cancel
+  </message>
+  <message name="IDS_PARENT_PERMISSION_PROMPT_SELECT_PARENT_LABEL" desc="Text for the label shown above the parent selector.">
+    Choose parent account for approval
+  </message>
+  <message name="IDS_PARENT_PERMISSION_PROMPT_PARENT_ACCOUNT_LABEL" desc="Text for the label shown above a single parent account email.">
+    Parent account
+  </message>
+  <message name="IDS_PARENT_PERMISSION_PROMPT_ENTER_PASSWORD_LABEL" desc="Text for the label shown above the parent password entry field.">
+    Enter password
+  </message>
+  <message name="IDS_PARENT_PERMISSION_PROMPT_PASSWORD_INCORRECT_LABEL" desc="Text for the label shown when the previously entered password was incorrect.">
+    Password incorrect
+  </message>
+  <message name="IDS_EXTENSION_INSTALL_PROMPT_REQUEST_BUTTON" desc="Text for the request button on the extension request prompt.">
+    Send
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_UNINSTALL_BUTTON" desc="Text for the uninstall button on the extension uninstall prompt">
+    Remove
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_UNINSTALL_REPORT_ABUSE" desc="Label for a checkbox the user can tick to report abuse for the extension being uninstalled.">
+    Report abuse
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_UNINSTALL_REPORT_ABUSE_FROM_EXTENSION" desc="Label for a checkbox the user can tick to report abuse for the extension being uninstalled.">
+    Report abuse from "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>"
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_UNINSTALL_TITLE" desc="Title text for removing an extension.">
+    Remove "<ph name="EXTENSION_NAME">$1<ex>Gmail Checker</ex></ph>"?
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_UNINSTALL_APP_BUTTON" desc="Text for the uninstall button on the non-platform app and ARC(App Runtime for Chrome) app uninstall prompt">
+    Uninstall
+  </message>
+  <!-- Remove multiple extension dialog extension name bullet poinit -->
+  <message name="IDS_EXTENSION_PROMPT_MULTIPLE_UNINSTALL_NAME_BULLET_POINT" desc="A bullet point to place in front of extension name.">
+    ''' • '''
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_MULTIPLE_UNINSTALL_TITLE" desc="Title text for removing multiple extensions.">
+    {NUM_EXTENSIONS, plural,
+      =1 {Remove extension?}
+      other {Remove # extensions?}}
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_UNINSTALL_TRIGGERED_BY_EXTENSION" desc="Text in uninstall-extension dialog that indicates the uninstall was triggered by another extension (the name of the extension being uninstalled is already present in the dialog title).">
+    "<ph name="TRIGGERING_EXTENSION_NAME">$1<ex>Extension Manager</ex></ph>" would like to remove this extension.
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_RE_ENABLE_BUTTON" desc="Text for the enable button on the extension re-enable prompt">
+    Re-enable
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_PERMISSIONS_BUTTON" desc="Text for the allow button on the extension permissions prompt">
+    Allow
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_PERMISSIONS_ACCEPT_BUTTON" desc="Text for the accept permissions button on the extension permissions prompt">
+    Accept permissions
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_PERMISSIONS_ABORT_BUTTON" desc="Text for the deny button on the extension permissions prompt">
+    Deny
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_REMOTE_INSTALL_BUTTON_EXTENSION" desc="Text for the install button on the extension install prompt for a remotely installed extension">
+    Enable extension
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_REMOTE_INSTALL_BUTTON_APP" desc="Text for the install button on the extension install prompt for a remotely installed app">
+    Enable app
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_REPAIR_BUTTON_EXTENSION" desc="Text for the install button on the extension reinstall prompt.">
+    Repair extension
+  </message>
+  <message name="IDS_EXTENSION_PROMPT_REPAIR_BUTTON_APP" desc="Text for the install button on the app reinstall prompt.">
+    Repair app
+  </message>
+  <message name="IDS_EXTENSION_WEB_STORE_TITLE" desc="Text for the Chrome Web Store">
+    Chrome Web Store
+  </message>
+  <message name="IDS_EXTENSION_WEB_STORE_TITLE_SHORT" desc="Shortened version of text for the Chrome Web Store">
+    Web Store
+  </message>
+  <message name="IDS_EXTENSIONS_SHOW_DETAILS" desc="Tooltip for the button next to an extension that shows more details">
+    Show Details
+  </message>
+  <message name="IDS_EXTENSIONS_HIDE_DETAILS" desc="Tooltip for the button next to an extension that hides details">
+    Hide Details
+  </message>
+
+  <!-- Error messages for Chrome Web Store UI -->
+  <message name="IDS_WEBSTORE_DOWNLOAD_ACCESS_DENIED" desc="Text displayed in the error prompt when a CRX cannot be downloaded due to an authentication error.">
+    Access denied.
+  </message>
+
+  <!-- Global error messages for extensions -->
+  <message name="IDS_EXTENSION_WARNINGS_WRENCH_MENU_ITEM" desc="The wrench menu item indicating that extensions caused problems.">
+    Extension error
+  </message>
+
+  <!-- External extension install alerts -->
+  <!-- TODO(mpcomplete): We may need to change Chrome to
+        PRODUCT_NAME. Leaving it as-is until we finalize
+        these strings. -->
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_ALERT_EXTENSION" desc="The wrench menu item indicating that a new external extension was installed.">
+    New extension added (<ph name="EXTENSION_NAME">$1<ex>Babylon Toolbar</ex></ph>)
+  </message>
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_ALERT_APP" desc="The wrench menu item indicating that a new external extension was installed.">
+    New app added (<ph name="EXTENSION_NAME">$1<ex>Babylon Toolbar</ex></ph>)
+  </message>
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_ALERT_THEME" desc="The wrench menu item indicating that a new external extension was installed.">
+    New theme added (<ph name="EXTENSION_NAME">$1<ex>Babylon Toolbar</ex></ph>)
+  </message>
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_ALERT_BUBBLE_TITLE" desc="The title for the bubble that alerts the user that a new external extension was installed.">
+    "<ph name="EXTENSION_NAME">$1<ex>Babylon Toolbar</ex></ph>" added
+  </message>
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_ALERT_BUBBLE_HEADING_APP" desc="The heading text (below the title) for the bubble that alerts the user that a new external app was installed.">
+    Another program on your computer added an app that may change the way Chrome works.
+  </message>
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_ALERT_BUBBLE_HEADING_EXTENSION" desc="The heading text (below the title) for the bubble that alerts the user that a new external extension was installed.">
+    Another program on your computer added an extension that may change the way Chrome works.
+  </message>
+  <message name="IDS_EXTENSION_EXTERNAL_INSTALL_ALERT_BUBBLE_HEADING_THEME" desc="The heading text (below the title) for the bubble that alerts the user that a new external theme was installed.">
+    Another program on your computer added a theme that may change the way Chrome works.
+  </message>
+
+  <message name="IDS_EXTENSIONS_UNSUPPORTED_DISABLED_TITLE" desc="Title of the dialog shown when unsupported extensions have been disabled">
+    Unsupported extensions disabled
+  </message>
+  <message name="IDS_EXTENSIONS_DISABLED_AND_N_MORE" desc="Used for a count of additional items in the IDS_EXTENSIONS_UNSUPPORTED_DISABLED_BODY dialog shown when unsupported extensions have been disabled, if we could not fit them all in the dialog">
+    and <ph name="NUMBER_ADDITIONAL_DISABLED">$1<ex>5</ex></ph> more
+  </message>
+  <message name="IDS_EXTENSIONS_UNSUPPORTED_DISABLED_BUTTON" desc="Text of the button on the dialog shown when unsupported extensions have been disabled">
+  OK, got it
+  </message>
+  <message name="IDS_EXTENSIONS_ADDED_WITHOUT_KNOWLEDGE" desc="Text shown in the extensions settings for items that might have been forcefully added to Chrome without the user's knowledge">
+    This extension is not listed in the <ph name="IDS_EXTENSION_WEB_STORE_TITLE">$1<ex>Chrome Web Store</ex></ph> and may have been added without your knowledge.
+  </message>
+  <message name="IDS_EXTENSIONS_ADDED_WITHOUT_KNOWLEDGE_LEARN_MORE" desc="Text read by screen readers for a link labeled 'Learn more' that links to a Help article about disabled extensions.">
+    Learn more about disabled extensions.
+  </message>
+  <message name="IDS_EXTENSIONS_DISABLE_DEVELOPER_MODE_TITLE" desc="Title of a dialog warning users they have development mode extensions running">
+    Disable developer mode extensions
+  </message>
+  <message name="IDS_EXTENSIONS_DISABLE_DEVELOPER_MODE_BODY" desc="Body of a dialog warning users they have development mode extensions running">
+    Extensions running in developer mode can harm your computer. If you're not a developer, you should disable these extensions running in developer mode to stay safe.
+  </message>
+
+  <!-- Begin Extension Settings Overridden Dialog strings. -->
+  <message name="IDS_EXTENSION_SETTINGS_OVERRIDDEN_DIALOG_CHANGE_IT_BACK" desc="The text of the button to revert to old settings; displayed in the dialog describing settings overridden by an extension.">
+    Change it back
+  </message>
+  <message name="IDS_EXTENSION_SETTINGS_OVERRIDDEN_DIALOG_KEEP_IT" desc="The text of the button to ignore the settings changes, allowing the extension changes to remain in effect. Displayed in the dialog describing settings overridden by an extension.">
+    Keep it
+  </message>
+  <message name="IDS_EXTENSION_NTP_OVERRIDDEN_DIALOG_TITLE_GENERIC" desc="The title of the dialog informing the user that the new tab page has been overridden by an extension.">
+    Did you mean to change this page?
+  </message>
+  <message name="IDS_EXTENSION_NTP_OVERRIDDEN_DIALOG_TITLE_BACK_TO_GOOGLE" desc="The title of the dialog informing the user that the new tab page has been overridden by an extension, and asking if they want to change back to Google.">
+    Change back to Google?
+  </message>
+  <message name="IDS_EXTENSION_NTP_OVERRIDDEN_DIALOG_BODY_GENERIC" desc="The body of the dialog informing the user that the new tab page has been overridden by an extension, indicating which extension now controls it.">
+    This page was changed by the "<ph name="EXTENSION_NAME">$1<ex>Google Arts and Culture</ex></ph>" extension
+  </message>
+  <message name="IDS_EXTENSION_SEARCH_OVERRIDDEN_DIALOG_TITLE_GENERIC" desc="The title of the dialog informing the user that the default search engine has been overridden by an extension.">
+    Did you mean to change your search provider?
+  </message>
+  <message name="IDS_EXTENSION_SEARCH_OVERRIDDEN_DIALOG_TITLE_BACK_TO_GOOGLE" desc="The title of the dialog informing the user that the default search engine has been overridden by an extension, and asking if they want to change back to Google.">
+    Change back to Google Search?
+  </message>
+  <message name="IDS_EXTENSION_SEARCH_OVERRIDDEN_DIALOG_TITLE_BACK_TO_OTHER" desc="The title of the dialog informing the user that the default search engine has been overridden by an extension, and asking if they want to change back to their old provider.">
+    Change back to <ph name="OLD_SEARCH_PROVIDER">$1<ex>DuckDuckGo</ex></ph>?
+  </message>
+  <message name="IDS_EXTENSION_SEARCH_OVERRIDDEN_DIALOG_BODY_GENERIC" desc="The body of the dialog informing the user that the default search engine has been overridden by an extension, indicating which extension now controls it.">
+    The "<ph name="EXTENSION_NAME">$2<ex>Some New Search</ex></ph>" extension changed search to use <ph name="SEARCH_PROVIDER_DOMAIN">$1<ex>google.com</ex></ph>
+  </message>
+    <!-- End Extension Settings Overridden Dialog strings. -->
+
+  <!-- Force Installed Preinstalled Deprecated Apps Deletion Dialog strings. -->
+  <message name="IDS_FORCE_INSTALLED_PREINSTALLED_DEPRECATED_APPS_TITLE" desc="Title of the force installed deprecated app dialog, prompting the user to contact their organization's administrator.">
+    Ask your admin to update this app
+  </message>
+  <message name="IDS_FORCE_INSTALLED_PREINSTALLED_DEPRECATED_APPS_CONTENT" desc="Content of the force installed preinstalled deprecated app dialog">
+    Chrome Apps are migrating to Progressive Web Apps. This Chrome App was installed on your browser by your organization. To open the Progressive Web App from the Apps list, first contact your administrator and ask them to uninstall the Chrome App. In the meantime, you can visit <ph name="EXTENSION_LAUNCH_URL">$1<ex>sheets.google.com</ex></ph> to open <ph name="EXTENSION_NAME">$2<ex>Google Sheets</ex></ph> on the web.
+  </message>
+  <if expr="use_titlecase">
+    <message name="IDS_FORCE_INSTALLED_PREINSTALLED_DEPRECATED_APPS_GO_TO_SITE_BUTTON" desc="Label for the button that opens the website for the app">
+      Go To Site
+    </message>
+  </if>
+    <if expr="not use_titlecase">
+    <message name="IDS_FORCE_INSTALLED_PREINSTALLED_DEPRECATED_APPS_GO_TO_SITE_BUTTON" desc="Label for the button that opens the website for the app">
+      Go to site
+    </message>
+  </if>
+  <!-- End Force Installed Preinstalled Deprecated Apps Deletion Dialog strings. -->
+
+  <!-- Extensions Menu bubble -->
+  <message name="IDS_EXTENSIONS_MENU_TITLE" desc="Title of the Extensions Menu">
+    Extensions
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_CONTEXT_MENU_TOOLTIP" desc="Title of the context menu for individual extensions in the Extensions Menu">
+      More options
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_CONTEXT_MENU_TOOLTIP_ACCESSIBLE_NAME" desc="Title of the context menu for individual extensions in the Extensions Menu">
+      <ph name="EXTENSION_NAME">More options for $1<ex>MyExtension</ex></ph>
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_PIN_BUTTON_TOOLTIP" desc="The tooltip for the pinning button for individual extensions in the Extensions Menu">
+    Pin extension
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_UNPIN_BUTTON_TOOLTIP" desc="The tooltip for the pinning button for individual extensions in the Extensions Menu">
+    Unpin extension
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_ACCESSING_SITE_DATA_SHORT" desc="Header for section of extensions that are able to access the current site's data">
+    Full access
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_ACCESSING_SITE_DATA" desc="Longer explanation for section of extensions that are able to access the current site's data">
+    These extensions can see and change information on this site.
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_WANTS_TO_ACCESS_SITE_DATA_SHORT" desc="Header for section of extensions that want to access the current site's data">
+    Access requested
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_WANTS_TO_ACCESS_SITE_DATA" desc="Longer explanation for section of extensions that want to access the current site's data">
+    To give an extension access to this site, click it.
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_CANT_ACCESS_SITE_DATA_SHORT" desc="Header for section of extensions that can't access the current site's data">
+    No access needed
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_CANT_ACCESS_SITE_DATA" desc="Longer explanation for section of extensions that can't access the current site's data">
+    These extensions don't need to see and change information on this site.
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_SETTINGS_TOGGLE_ON_TOOLTIP" desc="Tooltip text for the site setting toggle button when is on.">
+    Extensions allowed on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_SETTINGS_TOGGLE_OFF_TOOLTIP" desc="Tooltip text for the site setting toggle button when is off.'">
+    Extensions are not allowed on this site
+  </message>
+    <message name="IDS_EXTENSIONS_MENU_SITE_SETTINGS_TOGGLE_ACCESSIBLE_NAME" desc="Accessibility string for the site setting toggle button.">
+    Allow extensions on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_SETTINGS_TOGGLE_ON_ACCESSIBLE_NAME" desc="Accessibility string for the site setting toggle button when is on.">
+    Select to block all extensions on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_SETTINGS_TOGGLE_OFF_ACCESSIBLE_NAME" desc="Accessibility string for the site setting toggle button when is off.'">
+    Select to allow extensions on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MESSAGE_SECTION_RESTRICTED_ACCESS_TEXT" desc="Text of the message section when this site is restricted to all extensions.">
+    No extensions need access to this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MESSAGE_SECTION_POLICY_BLOCKED_ACCESS_TEXT" desc="Text of the message section when the site is restricted to all non-enterprise extensions.">
+    Extensions are not allowed on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MESSAGE_SECTION_USER_BLOCKED_ACCESS_TEXT" desc="Text of the message section when the user blocked access to this site to all extensions.">
+    Extensions are not allowed on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MESSAGE_SECTION_ENTERPRISE_TOOLTIP_ICON_TEXT" desc="Text of the info tooltip icon in the message section when the user blocked access to this site to all extensions but extensions installed by admin still have access.">
+    Extensions installed by your administrator can still read and change this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MESSAGE_SECTION_USER_CUSTOMIZED_ACCESS_TEXT" desc="Text of the message section when the user can customize access to this site by extensions.">
+    Extensions can request access to this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MESSAGE_SECTION_RELOAD_CONTAINER_DESCRIPTION_TEXT" desc="Text of the message section when the user has to reload the page to apply the updated user site settings.">
+    Reload this page to apply your updated settings on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MESSAGE_SECTION_RELOAD_CONTAINER_BUTTON_TEXT" desc="Text of the button in the message section to reload the page when the user has to reload the page to apply the updated user site settings.">
+    Reload
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MESSAGE_SECTION_RELOAD_CONTAINER_BUTTON_TOOLTIP" desc="Tooltip text of the button in the message section to reload the page when the user has to reload the page to apply the updated user site settings.">
+    Reload page
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_REQUESTS_ACCESS_SECTION_TITLE" desc="Title of the requests access section that lists the extensions requesting site access">
+    Requests access
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_REQUESTS_ACCESS_SECTION_ALLOW_BUTTON_TEXT" desc="Title on the allow button for each extension in the requests access section that grants site access to such extension.">
+    Allow
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_REQUESTS_ACCESS_SECTION_ALLOW_BUTTON_TOOLTIP" desc="Tooltip text on the allow button for each extension in the requests access section that grants site access to such extension.">
+    Allow extension to read and change this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_REQUESTS_ACCESS_SECTION_DISMISS_BUTTON_TEXT" desc="Title on the dismiss button for each extension in the requests access section that dismiss the extensions's access requests on this tab's current origin.">
+    Dismiss
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_REQUESTS_ACCESS_SECTION_DISMISS_BUTTON_TOOLTIP" desc="Tooltip text on the dismiss button for each extension in the requests access section that dismiss the extensions's access requests on this tab's current origin.">
+    Dismiss request
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_EXTENSION_SITE_ACCESS_TOGGLE_ON_TOOLTIP" desc="Tooltip text for the site access toggle of an extensions menu item when is on.">
+    Allowed on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_EXTENSION_SITE_ACCESS_TOGGLE_OFF_TOOLTIP" desc="Tooltip text for the site access toggle of an extensions menu item when is off.">
+    Not allowed on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_EXTENSION_SITE_ACCESS_TOGGLE_ACCESSIBLE_NAME" desc="Accessibility string for the site access toggle of an extensions menu item.">
+    Allow <ph name="EXTENSION_NAME">$1<ex>AdBlock</ex></ph> on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_EXTENSION_CONTEXT_MENU_BUTTON_TOOLTIP" desc="Tooltip text for the the context menu button of an extensions menu item.">
+    More options
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_EXTENSION_CONTEXT_MENU_BUTTON_ACCESSIBLE_NAME" desc="Accessible string for the the context menu button of an extensions menu item.">
+    Select to see more options
+  </message>
+    <message name="IDS_EXTENSIONS_MENU_EXTENSION_CONTEXT_MENU_BUTTON_PINNED_ACCESSIBLE_NAME" desc="Accessible string for the the context menu button of an extensions menu item when the extension is pinned.">
+    Extension is pinned. Select to see more options
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MAIN_PAGE_EXTENSION_SITE_ACCESS_NONE" desc="Text of the site permissions button when extension doesn't have site access to the site">
+    No access needed
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MAIN_PAGE_OPEN_CHROME_WEBSTORE_TOOLTIP" desc="Tooltip text for the button that opens the chrome webstore.">
+    Chrome Web Store
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MAIN_PAGE_EXTENSION_SITE_ACCESS_TOOLTIP" desc="Tooltip text of an extension's site permissions button.">
+    Change site permissions
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MAIN_PAGE_EXTENSION_BUTTON_HAS_ACCESS_TOOLTIP" desc="Tooltip text of an extension's menu button when the extension has access to the current site.">
+    Allowed to read &amp; change this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MAIN_PAGE_EXTENSION_BUTTON_BLOCKED_ACCESS_TOOLTIP" desc="Tooltip text of an extension's menu button when the extension does not have access to the current site.">
+    Not allowed to read &amp; change this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MAIN_PAGE_EXTENSION_BUTTON_REQUESTS_TOOLTIP" desc="Tooltip text of an extension's menu button when the extension is requesting access to the current site.">
+    Requesting to read &amp; change this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MAIN_PAGE_EXTENSION_SITE_ACCESS_ACCESSIBLE_NAME" desc="Accessibility string of an extension's site permissions button.">
+    <ph name="SITE_ACCESS">$1<ex>Always on this site</ex></ph>. Select to change site permissions
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MAIN_PAGE_EXTENSION_SITE_ACCESS_ON_CLICK" desc="Text of the site permissions button when extension has site access only when clicked.">
+    Ask on every visit
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MAIN_PAGE_EXTENSION_SITE_ACCESS_ON_SITE" desc="Text of the site permissions button when extension always has site access to this site.">
+    Always on this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_MAIN_PAGE_EXTENSION_SITE_ACCESS_ON_ALL_SITES" desc="Text of the site permissions button when extension always has site access to all sites.">
+    Always on all sites
+  </message>
+    <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SETTINGS_BUTTON" desc="Text of the extension settings button in the site permissions page">
+    Manage this extension
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SETTINGS_BUTTON_TOOLTIP" desc="Tooltip text of the extension settings button in the site permissions page">
+    Manage extension settings
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SHOW_REQUESTS_LABEL" desc="Text of the label next to the show requests toggle button in the site permissions page that controls whether the extension can show site access requests in the toolbar.">
+    Allowed to show requests in the toolbar
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SHOW_REQUESTS_TOGGLE_ON" desc="Accessible text for the the show requests toggle button in the site permissions page that controls when the extension can show site access requests in the toolbar.">
+    Allowed to show requests
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SHOW_REQUESTS_TOGGLE_OFF" desc="Accessible text for the the show requests toggle button in the site permissions page that controls when the extension cannot show site access requests in the toolbar.">
+    Not allowed to show requests
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SITE_ACCESS_LABEL" desc="Label for the site access section that lets the user select the extension site access.">
+    Site Permissions
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SITE_ACCESS_ON_CLICK_TEXT" desc="Text of the option in the site access section to allow the extension access to the page only when the user clicks on the extension action.">
+    Ask on every visit
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SITE_ACCESS_ON_SITE_TEXT" desc="Text of the option in the site access section to always allow the extension access to $1.">
+    Always on <ph name="SITE_NAME">$1<ex>google.com</ex></ph>
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SITE_ACCESS_ON_ALL_SITES_TEXT" desc="Text of the option in the site access section to always allow the extension access to all sites.">
+    Always on all sites
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SITE_ACCESS_ON_CLICK_DESCRIPTION" desc="Description of the option in the site access section to allow the extension access to the page only when the user clicks on the extension action.">
+    Runs only after you click the extension
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SITE_ACCESS_ON_SITE_DESCRIPTION" desc="Description of the option in the site access section to always allow the extension access to $1.">
+    Runs automatically every time you visit this site
+  </message>
+  <message name="IDS_EXTENSIONS_MENU_SITE_PERMISSIONS_PAGE_SITE_ACCESS_ON_ALL_SITES_DESCRIPTION" desc="Description of the option in the site access section to always allow the extension access to all sites.">
+    Runs automatically on all sites you visit
+  </message>
+
+  <!-- Settings API bubble -->
+  <message name="IDS_EXTENSIONS_SETTINGS_API_TITLE_HOME_PAGE_BUBBLE" desc="Title of a bubble warning users that an extension has overridden their home page setting">
+    Is this the home page you were expecting?
+  </message>
+
+  <message name="IDS_EXTENSIONS_SETTINGS_API_FIRST_LINE_HOME_PAGE_SPECIFIC" desc="Text displayed in the Settings API bubble as first line when an extension has changed the home page, and we are pointing to its icon.">
+    This extension has changed what page is shown when you click the Home button.
+  </message>
+  <message name="IDS_EXTENSIONS_SETTINGS_API_FIRST_LINE_HOME_PAGE" desc="Text displayed in the Settings API bubble as first line when an extension has changed the home page, and we are not pointing to its icon.">
+    The extension "<ph name="EXTENSION_NAME">$1<ex>AdBlock</ex></ph>" has changed what page is shown when you click the Home button.
+  </message>
+
+  <message name="IDS_EXTENSIONS_SETTINGS_API_SECOND_LINE_SEARCH_ENGINE" desc="Second line in the Settings API bubble. Only shown if the secondary change by the extension was just the search engine. The triple single quotes are needed to preserve the space before and after the sentence which is needed when the language (Chrome is being translated to) uses space as word separator. Please preserve them, unless the language being translated to does not use space as word separator.">
+    ''' It also controls what page is shown when you search from the Omnibox.'''
+  </message>
+
+  <!-- Strings for the print job confirmation dialog triggered by chrome.printing -->
+  <message name="IDS_EXTENSIONS_PRINTING_API_PRINT_REQUEST_BUBBLE_TITLE" desc="Title of a bubble with print job confirmation dialog triggered by chrome.printing API">
+    Print request
+  </message>
+  <message name="IDS_EXTENSIONS_PRINTING_API_PRINT_REQUEST_BUBBLE_HEADING" desc="Heading of a bubble with print job confirmation dialog triggered by chrome.printing API">
+    "<ph name="EXTENSION_NAME">$1<ex>Managed Printing</ex></ph>" wants to print <ph name="FILE_NAME">$2<ex>sample.pdf</ex></ph> with <ph name="PRINTER_NAME">$3<ex>Lexmark CS417dn</ex></ph>.
+  </message>
+  <message name="IDS_EXTENSIONS_PRINTING_API_PRINT_REQUEST_ALLOW" desc="Text for the allow button on the print job confirmation dialog">
+    Allow
+  </message>
+  <message name="IDS_EXTENSIONS_PRINTING_API_PRINT_REQUEST_DENY" desc="Text for the deny button on the print job confirmation dialog">
+    Deny
+  </message>
+
+  <!-- Strings for the documentscanner confirmation dialogs triggered by chrome.documentScan -->
+  <message name="IDS_EXTENSIONS_DOCUMENT_SCAN_API_DISCOVERY_REQUEST_BUBBLE_TITLE" desc="Title of a bubble with scanner discovery confirmation dialog triggered by chrome.documentScan API">
+    Find document scanners
+  </message>
+  <message name="IDS_EXTENSIONS_DOCUMENT_SCAN_API_DISCOVERY_REQUEST_BUBBLE_HEADING" desc="Heading of a bubble with scanner discovery confirmation dialog triggered by chrome.documentScan API">
+    "<ph name="EXTENSION_NAME">$1<ex>Scanner Forwarder</ex></ph>" wants to find and access document scanners.
+  </message>
+  <message name="IDS_EXTENSIONS_DOCUMENT_SCAN_API_DISCOVERY_REQUEST_ALLOW" desc="Text for the allow button on the document scanner discovery confirmation dialog">
+    Allow
+  </message>
+  <message name="IDS_EXTENSIONS_DOCUMENT_SCAN_API_DISCOVERY_REQUEST_DENY" desc="Text for the deny button on the document scanner discovery confirmation dialog">
+    Deny
+  </message>
+  <message name="IDS_EXTENSIONS_DOCUMENT_SCAN_API_START_SCAN_REQUEST_BUBBLE_TITLE" desc="Title of a bubble with start scan confirmation dialog triggered by chrome.documentScan API">
+    Start scan
+  </message>
+  <message name="IDS_EXTENSIONS_DOCUMENT_SCAN_API_START_SCAN_REQUEST_BUBBLE_HEADING" desc="Heading of a bubble with start scan confirmation dialog triggered by chrome.documentScan API">
+    "<ph name="EXTENSION_NAME">$1<ex>Scanner Forwarder</ex></ph>" wants to scan from "<ph name="SCANNER_NAME">$2<ex>Fancy Scanner</ex></ph>".
+  </message>
+  <message name="IDS_EXTENSIONS_DOCUMENT_SCAN_API_START_SCAN_REQUEST_ALLOW" desc="Text for the allow button on the document scanner start scan confirmation dialog">
+    Allow
+  </message>
+  <message name="IDS_EXTENSIONS_DOCUMENT_SCAN_API_START_SCAN_REQUEST_DENY" desc="Text for the deny button on the document scanner start scan confirmation dialog">
+    Deny
+  </message>
+
+  <message name="IDS_EXTENSIONS_NTP_CONTROLLED_FIRST_LINE" desc="Text displayed as the first line in the NTP bubble when an extension has changed the new tab page.">
+    An extension has changed what page is shown when you open a new tab.
+  </message>
+
+  <message name="IDS_EXTENSIONS_PROXY_CONTROLLED_FIRST_LINE" desc="Text displayed as the first line in the proxy bubble when an extension has changed the proxy but we are not pointing at it's icon (because it doesn't have one).">
+    The extension "<ph name="EXTENSION_NAME">$1<ex>AdBlock</ex></ph>" has taken control of your proxy settings, which means it can change, break, or eavesdrop on anything you do online. If you aren't sure why this change happened, you probably don't want it.
+  </message>
+  <message name="IDS_EXTENSIONS_PROXY_CONTROLLED_FIRST_LINE_EXTENSION_SPECIFIC" desc="Text displayed as the first line in the proxy bubble when an extension has changed the proxy and we are pointing at that extension's icon.">
+    This extension has taken control of your proxy settings, which means it can change, break, or eavesdrop on anything you do online. If you aren't sure why this change happened, you probably don't want it.
+  </message>
+
+  <message name="IDS_EXTENSIONS_SETTINGS_API_THIRD_LINE_CONFIRMATION" desc="Third line in the Settings API bubble, always appended after the first (and optional second) line to make one paragraph. See IDS_EXTENSIONS_SETTINGS_API_SECOND_LINE_SEARCH_ENGINE for reason for triple quotes.">
+    ''' If you didn't want these changes, you can restore your previous settings.'''
+  </message>
+
+  <if expr="use_titlecase">
+    <message name="IDS_EXTENSION_CONTROLLED_RESTORE_SETTINGS" desc="The button in the extension controlled bubbles that reverts the settings changes made by the extension and restores what the user had before. (title case)">
+      Restore Settings
+    </message>
+    <message name="IDS_EXTENSION_CONTROLLED_KEEP_CHANGES" desc="The button in the extension controlled bubbles that cancels the bubble without action. (title case)">
+      Keep Changes
+    </message>
+  </if>
+  <if expr="not use_titlecase">
+    <message name="IDS_EXTENSION_CONTROLLED_RESTORE_SETTINGS" desc="The button in the extension controlled bubbles that reverts the settings changes made by the extension and restores what the user had before. (sentence case)">
+      Restore settings
+    </message>
+    <message name="IDS_EXTENSION_CONTROLLED_KEEP_CHANGES" desc="The button in the extension controlled bubbles that cancels the bubble without action. (sentence case)">
+      Keep changes
+    </message>
+  </if>
+
+  <!-- Extension install location strings -->
+  <message name="IDS_EXTENSIONS_INSTALL_LOCATION_UNKNOWN" desc="The text explaining the the installation location is unknown.">
+    Not from Chrome Web Store.
+  </message>
+  <message name="IDS_EXTENSIONS_INSTALL_LOCATION_3RD_PARTY" desc="The text explaining the the installation came from a 3rd party app.">
+    Installed by a third party.
+  </message>
+  <message name="IDS_EXTENSIONS_INSTALL_LOCATION_ENTERPRISE" desc="The text explaining that the installation of the extension came from an enterprise policy.">
+    Installed by enterprise policy.
+  </message>
+  <message name="IDS_EXTENSIONS_INSTALL_LOCATION_SHARED_MODULE" desc="The text explaining the the installation of the extension was because of extensions that depend on this shared module">
+    Installed because of dependent extension(s).
+  </message>
+
+  <!-- Extension blocklist state -->
+  <message name="IDS_EXTENSIONS_BLOCKLISTED_MALWARE" desc="The text explaining the reason for disabling extension or app. The extension in question contains malware.">
+    This extension contains malware.
+  </message>
+  <message name="IDS_EXTENSIONS_BLOCKLISTED_SECURITY_VULNERABILITY" desc="The text explaining the reason for disabling extension or app. The extension in question has a security vulnerability.">
+    This extension contains a serious security vulnerability.
+  </message>
+  <message name="IDS_EXTENSIONS_BLOCKLISTED_CWS_POLICY_VIOLATION" desc="The text explaining the reason for disabling extension or app. The extension in question violates Chrome Web Store policy.">
+    This extension violates the Chrome Web Store policy.
+  </message>
+  <message name="IDS_EXTENSIONS_BLOCKLISTED_POTENTIALLY_UNWANTED" desc="The text explaining the reason for disabling extension or app. The extension in question might have been installed without user consent.">
+    Disabled by Chrome. This extension may be unsafe.
+  </message>
+
+  <!-- Enhanced Safe Browsing CRX allowlist warning -->
+  <message name="IDS_EXTENSIONS_SAFE_BROWSING_CRX_ALLOWLIST_WARNING" desc="A warning shown in 'chrome://extensions' when the extension is not included in the Enhanced Safe Browsing CRX allowlist.">
+      This extension is not trusted by Enhanced Safe Browsing.
+  </message>
+  <message name="IDS_EXTENSIONS_SAFE_BROWSING_CRX_ALLOWLIST_WARNING_LEARN_MORE" desc="Text read by screen readers for a link labeled 'Learn more' that links to a Help article about Enhanced Safe Browsing.">
+    Learn more about Enhanced Safe Browsing.
+  </message>
+  <message name="IDS_EXTENSIONS_ACCESS_REQUESTS_LEARN_MORE" desc="Text read by screen readers for a link labeled 'Learn more' that links to a Help article about Extensions' access requests.">
+    Learn more about access requests.
+  </message>
+</grit-part>

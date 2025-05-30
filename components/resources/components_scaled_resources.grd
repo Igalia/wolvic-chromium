@@ -28,6 +28,10 @@
       </if>
       <structure type="chrome_scaled_image" name="IDR_SAD_WEBVIEW" file="webview-crash.png" />
       <structure type="chrome_scaled_image" name="IDR_SAD_PLUGIN" file="sadplugin.png" />
+
+      <if expr="enable_extensions_in_components">
+        <part file="extensions_scaled_resources.grdp" />
+      </if>
     </structures>
   </release>
 </grit>

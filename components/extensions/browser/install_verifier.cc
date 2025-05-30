@@ -27,6 +27,7 @@
 #include "components/extensions/browser/install_verifier_factory.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/prefs/pref_service.h"
+#include "components/strings/grit/components_strings.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_switches.h"
@@ -313,12 +314,9 @@ bool InstallVerifier::MustRemainDisabled(const Extension* extension,
     if (reason)
       *reason = extensions::disable_reason::DISABLE_NOT_VERIFIED;
     if (error) {
-      // TODO(mshin): Enable the below code after migrating Resources
-      // *error = l10n_util::GetStringFUTF16(
-      //     IDS_EXTENSIONS_ADDED_WITHOUT_KNOWLEDGE,
-      //     l10n_util::GetStringUTF16(IDS_EXTENSION_WEB_STORE_TITLE));
-      *error = u"This extension is not listed in the Chrome Web Store and may "
-               "have been added without your knowledge.";
+      *error = l10n_util::GetStringFUTF16(
+          IDS_EXTENSIONS_ADDED_WITHOUT_KNOWLEDGE,
+          l10n_util::GetStringUTF16(IDS_EXTENSION_WEB_STORE_TITLE));
     }
   }
   return !verified;

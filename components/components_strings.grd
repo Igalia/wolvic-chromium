@@ -351,6 +351,9 @@
       <if expr="enable_vr">
         <part file="webxr_strings.grdp" />
       </if>
+      <if expr="enable_extensions_in_components">
+        <part file="extensions_strings.grdp" />
+      </if>
 
       <!-- Generic terms -->
       <message name="IDS_CANCEL" desc="Used for Cancel on buttons">

@@ -14,6 +14,8 @@
 #include "base/observer_list.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
+#include "components/strings/grit/components_strings.h"
+#include "ui/base/l10n/l10n_util.h"
 
 namespace components_extensions {
 
@@ -48,9 +50,7 @@ void LoadErrorReporter::ReportLoadError(
   std::string path_str = base::UTF16ToUTF8(extension_path.LossyDisplayName());
   std::u16string message = base::UTF8ToUTF16(base::StringPrintf(
       "%s %s. %s",
-      // TODO(mshin): Replace the below code after migrating Resources
-      "Failed to load extension from:",
-      // l10n_util::GetStringUTF8(IDS_EXTENSIONS_LOAD_ERROR_MESSAGE).c_str(),
+      l10n_util::GetStringUTF8(IDS_EXTENSIONS_LOAD_ERROR_MESSAGE).c_str(),
       path_str.c_str(), error.c_str()));
   ReportError(message, be_noisy);
   for (auto& observer : observers_)
