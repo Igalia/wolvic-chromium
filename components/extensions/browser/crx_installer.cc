@@ -20,6 +20,7 @@
 #include "base/threading/thread_restrictions.h"
 #include "base/time/time.h"
 #include "base/version.h"
+#include "components/extensions/browser/convert_user_script.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/load_error_reporter.h"
 #include "components/extensions/browser/install_tracker_factory.h"
@@ -245,20 +246,19 @@ void CrxInstaller::InstallUserScript(const base::FilePath& source_file,
 }
 
 void CrxInstaller::ConvertUserScriptOnSharedFileThread() {
-  // TODO(mshin): Enable the below code after migrating UserScript
-  // std::u16string error;
-  // scoped_refptr<Extension> extension = ConvertUserScriptToExtension(
-  //     source_file_, download_url_, install_directory_, &error);
-  // if (!extension.get()) {
-  //   ReportFailureFromSharedFileThread(CrxInstallError(
-  //       CrxInstallErrorType::OTHER,
-  //       CrxInstallErrorDetail::CONVERT_USER_SCRIPT_TO_EXTENSION_FAILED, error));
-  //   return;
-  // }
+  std::u16string error;
+  scoped_refptr<Extension> extension = ConvertUserScriptToExtension(
+      source_file_, download_url_, install_directory_, &error);
+  if (!extension.get()) {
+    ReportFailureFromSharedFileThread(CrxInstallError(
+        CrxInstallErrorType::OTHER,
+        CrxInstallErrorDetail::CONVERT_USER_SCRIPT_TO_EXTENSION_FAILED, error));
+    return;
+  }
 
-  // OnUnpackSuccessOnSharedFileThread(extension->path(), extension->path(),
-  //                                   nullptr, extension, SkBitmap(),
-  //                                   {} /* ruleset_install_prefs */);
+  OnUnpackSuccessOnSharedFileThread(extension->path(), extension->path(),
+                                    nullptr, extension, SkBitmap(),
+                                    {} /* ruleset_install_prefs */);
 }
 
 void CrxInstaller::UpdateExtensionFromUnpackedCrx(

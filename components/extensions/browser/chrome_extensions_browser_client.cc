@@ -29,6 +29,7 @@
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/extension_system_factory.h"
 #include "components/extensions/browser/extension_util.h"
+#include "components/extensions/browser/user_script_listener.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/content_settings/core/common/pref_names.h"
 #include "components/embedder_support/user_agent_utils.h"
@@ -85,7 +86,6 @@ using extensions::ProcessManagerDelegate;
 using extensions::ProcessMap;
 using extensions::RuntimeAPIDelegate;
 using extensions::ScopedExtensionUpdaterKeepAlive;
-using extensions::UserScriptListener;
 using extensions::URLPatternSet;
 
 namespace components_extensions {
@@ -203,12 +203,16 @@ ChromeExtensionsBrowserClient::~ChromeExtensionsBrowserClient() {
 }
 
 void ChromeExtensionsBrowserClient::StartTearDown() {
-  // TODO(mshin): Enable the below code after migrating UserScriptListener
-  // user_script_listener_.StartTearDown();
+  user_script_listener_.StartTearDown();
 }
 
 bool ChromeExtensionsBrowserClient::IsShuttingDown() {
   return delegate_->IsShuttingDown();
+}
+
+std::vector<content::BrowserContext*>
+ChromeExtensionsBrowserClient::GetAllBrowserContexts() {
+  return delegate_->GetAllBrowserContexts();
 }
 
 bool ChromeExtensionsBrowserClient::AreExtensionsDisabled(
@@ -688,15 +692,12 @@ ChromeExtensionsBrowserClient::GetSystemNetworkContext() {
 }
 
 UserScriptListener* ChromeExtensionsBrowserClient::GetUserScriptListener() {
-  // Enable the below code after migrating UserScriptListener
-  // return &user_script_listener_;
-  return nullptr;
+  return &user_script_listener_;
 }
 
 void ChromeExtensionsBrowserClient::SignalContentScriptsLoaded(
     content::BrowserContext* context) {
-  // Enable the below code after migrating UserScriptListener
-  // user_script_listener_.OnScriptsLoaded(context);
+  user_script_listener_.OnScriptsLoaded(context);
 }
 
 std::string ChromeExtensionsBrowserClient::GetUserAgent() const {

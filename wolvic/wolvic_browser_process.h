@@ -49,6 +49,7 @@ class WolvicBrowserProcess
   network::mojom::NetworkContext* GetNetworkContext() override;
   bool IsShuttingDown() override;
   std::string GetApplicationLocale() override;
+  std::vector<content::BrowserContext*> GetAllBrowserContexts() override;
 #else
   ~WolvicBrowserProcess();
 #endif

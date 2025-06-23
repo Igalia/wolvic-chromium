@@ -72,6 +72,13 @@ bool WolvicBrowserProcess::IsShuttingDown() {
 std::string WolvicBrowserProcess::GetApplicationLocale() {
   return base::android::GetDefaultLocaleString();
 }
+
+std::vector<content::BrowserContext*> WolvicBrowserProcess::GetAllBrowserContexts() {
+  std::vector<content::BrowserContext*> result;
+  result.push_back(context_.get());
+  return result;
+}
+
 #endif
 
 } // namespace wolvic

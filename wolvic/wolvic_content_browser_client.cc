@@ -8,6 +8,7 @@
 #include "base/path_service.h"
 #include "components/cdm/browser/media_drm_storage_impl.h"
 #include "components/embedder_support/user_agent_utils.h"
+#include "components/extensions/browser/user_script_listener.h"
 #include "components/password_manager/content/browser/content_password_manager_driver_factory.h"
 #include "components/prefs/pref_service.h"
 #include "components/site_isolation/preloaded_isolated_origins.h"
@@ -118,13 +119,12 @@ void CreateMediaDrmStorage(
 }
 
 #if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
-// void MaybeAddThrottle(
-//     std::unique_ptr<content::NavigationThrottle> maybe_throttle,
-//     std::vector<std::unique_ptr<content::NavigationThrottle>>* throttles) {
-//   if (maybe_throttle)
-//     throttles->push_back(std::move(maybe_throttle));
-// }
-
+void MaybeAddThrottle(
+    std::unique_ptr<content::NavigationThrottle> maybe_throttle,
+    std::vector<std::unique_ptr<content::NavigationThrottle>>* throttles) {
+  if (maybe_throttle)
+    throttles->push_back(std::move(maybe_throttle));
+}
 
 // The SpecialAccessFileURLLoaderFactory provided to the extension background
 // pages.  Checks with the ChildProcessSecurityPolicy to validate the file
@@ -897,11 +897,10 @@ WolvicContentBrowserClient::CreateThrottlesForNavigation(
   throttles.push_back(
     std::make_unique<extensions::ExtensionNavigationThrottle>(handle));
 
-  // TODO(mshin): Enable the below code after migrating UserScriptListener
-  // MaybeAddThrottle(extensions::ExtensionsBrowserClient::Get()
-  //                   ->GetUserScriptListener()
-  //                   ->CreateNavigationThrottle(handle),
-  //               &throttles);
+  MaybeAddThrottle(extensions::ExtensionsBrowserClient::Get()
+                    ->GetUserScriptListener()
+                    ->CreateNavigationThrottle(handle),
+                &throttles);
 #endif
   return throttles;
 }

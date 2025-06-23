@@ -14,6 +14,7 @@
 #include "base/values.h"
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
+#include "components/extensions/browser/user_script_listener.h"
 #include "extensions/browser/extensions_browser_client.h"
 #include "extensions/browser/kiosk/kiosk_delegate.h"
 #include "extensions/common/api/declarative_net_request.h"
@@ -58,6 +59,7 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
     virtual network::mojom::NetworkContext* GetNetworkContext() = 0;
     virtual bool IsShuttingDown() = 0;
     virtual std::string GetApplicationLocale() = 0;
+    virtual std::vector<content::BrowserContext*> GetAllBrowserContexts() = 0;
   };
  
   ChromeExtensionsBrowserClient(Delegate* delegate);
@@ -75,6 +77,8 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
   // primarily be used for things that may need to be cleaned up before other
   // parts of the browser).
   void StartTearDown();
+
+  std::vector<content::BrowserContext*> GetAllBrowserContexts();
 
   // ExtensionsBrowserClient overrides:
   bool IsShuttingDown() override;
@@ -195,7 +199,7 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
                           content::BrowserContext* context) const override;
   bool IsWebUIAllowedToMakeNetworkRequests(const url::Origin& origin) override;
   network::mojom::NetworkContext* GetSystemNetworkContext() override;
-  extensions::UserScriptListener* GetUserScriptListener() override;
+  UserScriptListener* GetUserScriptListener() override;
   void SignalContentScriptsLoaded(content::BrowserContext* context) override;
   std::string GetUserAgent() const override;
   bool ShouldSchemeBypassNavigationChecks(
@@ -296,8 +300,7 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
 
   std::unique_ptr<extensions::KioskDelegate> kiosk_delegate_;
 
-  // TODO(mshin): Enable the below code after migrating UserScriptListener
-  // UserScriptListener user_script_listener_;
+  UserScriptListener user_script_listener_;
 
   raw_ptr<Delegate> delegate_;
 };

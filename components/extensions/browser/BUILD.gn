@@ -160,6 +160,8 @@ component("browser") {
     "chrome_url_request_util.h",
     "chrome_zipfile_installer.cc",
     "chrome_zipfile_installer.h",
+    "convert_user_script.cc",
+    "convert_user_script.h",
     "corrupted_extension_reinstaller.cc",
     "corrupted_extension_reinstaller.h",
     "crx_installer.cc",
@@ -220,6 +222,8 @@ component("browser") {
     "standard_management_policy_provider.h",
     "unpacked_installer.cc",
     "unpacked_installer.h",
+    "user_script_listener.cc",
+    "user_script_listener.h",
   ]
   deps = [
     "//components/javascript_dialogs",
