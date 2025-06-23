@@ -37,6 +37,7 @@
 #include "base/trace_event/trace_event.h"
 #include "components/crx_file/id_util.h"
 #include "components/extensions/browser/crx_installer.h"
+#include "components/extensions/browser/extension_error_controller.h"
 #include "components/extensions/browser/install_verifier.h"
 #include "components/extensions/browser/installed_loader.h"
 #include "components/extensions/browser/shared_module_service.h"
@@ -371,8 +372,7 @@ void ExtensionService::OnExternalProviderUpdateComplete(
   //   updater_->CheckNow(ExtensionUpdater::CheckParams());
   // }
 
-  // TODO(mshin): Enable the below code after migrating ExtensionErrorController
-  // error_controller_->ShowErrorIfNeeded();
+  error_controller_->ShowErrorIfNeeded();
   // TODO(mshin): Enable the below code after migrating ExternalInstallManager
   // external_install_manager_->UpdateExternalExtensionAlert();
 }
@@ -473,9 +473,8 @@ ExtensionService::ExtensionService(
   // if required.
   is_first_run_ = !extension_prefs_->SetAlertSystemFirstRun();
 
-  // TODO(mshin): Enable the below code after migrating ExtensionErrorController
-  // error_controller_ =
-  //     std::make_unique<ExtensionErrorController>(browser_context_, is_first_run_);
+  error_controller_ =
+      std::make_unique<ExtensionErrorController>(browser_context_, is_first_run_);
   // TODO(mshin): Enable the below code after migrating ExternalInstallManager
   // external_install_manager_ =
   //     std::make_unique<ExternalInstallManager>(browser_context_, is_first_run_);
@@ -936,8 +935,7 @@ void ExtensionService::PerformActionBasedOnOmahaAttributes(
   // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
   // allowlist_.PerformActionBasedOnOmahaAttributes(extension_id, attributes);
   // Show an error for the newly blocklisted extension.
-  // TODO(mshin): Enable the below code after migrating ExtensionErrorController
-  // error_controller_->ShowErrorIfNeeded();
+  error_controller_->ShowErrorIfNeeded();
 }
 
 // TODO(mshin): Enable the below code after migrating Blocklist
@@ -947,8 +945,7 @@ void ExtensionService::PerformActionBasedOnOmahaAttributes(
 //   // TODO(mshin): Enable the below code after migrating ExtensionTelemetryServiceVerdictHandler
 //   extension_telemetry_service_verdict_handler_.PerformActionBasedOnVerdicts(
 //       blocklist_state_map);
-//   // TODO(mshin): Enable the below code after migrating ExtensionErrorController
-//   // error_controller_->ShowErrorIfNeeded();
+//   error_controller_->ShowErrorIfNeeded();
 // }
 
 void ExtensionService::OnGreylistStateRemoved(const std::string& extension_id) {
@@ -1459,8 +1456,7 @@ void ExtensionService::OnAllExternalProvidersReady() {
     }
   }
 
-  // TODO(mshin): Enable the below code after migrating ExtensionErrorController
-  // error_controller_->ShowErrorIfNeeded();
+  error_controller_->ShowErrorIfNeeded();
 
   // TODO(mshin): Enable the below code after migrating ExternalInstallManager
   // external_install_manager_->UpdateExternalExtensionAlert();
@@ -1861,8 +1857,7 @@ void ExtensionService::OnExtensionInstalled(
 }
 
 void ExtensionService::OnExtensionManagementSettingsChanged() {
-  // TODO(mshin): Enable the below code after migrating ExtensionErrorController
-  // error_controller_->ShowErrorIfNeeded();
+  error_controller_->ShowErrorIfNeeded();
 
   // Revokes blocked permissions from active_permissions for all extensions.
   ExtensionManagement* settings =
@@ -2331,8 +2326,7 @@ bool ExtensionService::ShouldBlockExtension(const Extension* extension) {
 
 //   // TODO(mshin): Support Safe browsing
 //   // safe_browsing_verdict_handler_.ManageBlocklist(state_map);
-//   // TODO(mshin): Enable the below code after migrating ExtensionErrorController
-//   // error_controller_->ShowErrorIfNeeded();
+//   error_controller_->ShowErrorIfNeeded();
 // }
 
 // TODO(mshin): Enable the below code after migrating UpgradeObserver

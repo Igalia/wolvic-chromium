@@ -13,6 +13,7 @@
 #include "base/memory/raw_ptr.h"
 #include "base/memory/weak_ptr.h"
 #include "base/scoped_observation.h"
+#include "components/extensions/browser/error_console/error_console.h"
 #include "components/extensions/browser/extension_management.h"
 #include "components/extensions/browser/load_error_reporter.h"
 #include "components/extensions/common/api/developer_private.h"
@@ -60,9 +61,9 @@ class EntryPickerClient;
 }  // namespace api
 
 class DeveloperPrivateEventRouter : public ExtensionRegistryObserver,
+                                    public components_extensions::ErrorConsole::Observer,
                                     public components_extensions::ExtensionManagement::Observer
                                     /*
-                                    public ErrorConsole::Observer,
                                     public ProcessManagerObserver,
                                     public AppWindowRegistry::Observer,
                                     public CommandService::Observer,
@@ -102,11 +103,11 @@ class DeveloperPrivateEventRouter : public ExtensionRegistryObserver,
                               const Extension* extension,
                               extensions::UninstallReason reason) override;
 
-// TODO(mshin): Enable the below code after migrating developer private api
-//   // ErrorConsole::Observer:
-//   void OnErrorAdded(const ExtensionError* error) override;
-//   void OnErrorsRemoved(const std::set<ExtensionId>& extension_ids) override;
+  // ErrorConsole::Observer:
+  void OnErrorAdded(const ExtensionError* error) override;
+  void OnErrorsRemoved(const std::set<ExtensionId>& extension_ids) override;
 
+// TODO(mshin): Enable the below code after migrating developer private api
 //   // ProcessManagerObserver:
 //   void OnExtensionFrameRegistered(
 //       const ExtensionId& extension_id,
@@ -175,8 +176,9 @@ class DeveloperPrivateEventRouter : public ExtensionRegistryObserver,
 
 //   base::ScopedObservation<ExtensionRegistry, ExtensionRegistryObserver>
 //       extension_registry_observation_{this};
-//   base::ScopedObservation<ErrorConsole, ErrorConsole::Observer>
-//       error_console_observation_{this};
+  base::ScopedObservation<components_extensions::ErrorConsole,
+                          components_extensions::ErrorConsole::Observer>
+      error_console_observation_{this};
 //   base::ScopedObservation<ProcessManager, ProcessManagerObserver>
 //       process_manager_observation_{this};
 //   base::ScopedObservation<AppWindowRegistry, AppWindowRegistry::Observer>

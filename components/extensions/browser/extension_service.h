@@ -755,8 +755,7 @@ class ExtensionService : public ExtensionServiceInterface,
 
   // The controller for the UI that alerts the user about any blocklisted
   // extensions.
-  // TODO(mshin): Enable the below code after migrating ExtensionErrorController
-  // std::unique_ptr<ExtensionErrorController> error_controller_;
+  std::unique_ptr<ExtensionErrorController> error_controller_;
 
   // The manager for extensions that were externally installed that is
   // responsible for prompting the user about suspicious extensions.

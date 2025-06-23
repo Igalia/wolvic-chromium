@@ -10,8 +10,6 @@
 #include "base/functional/bind.h"
 #include "base/memory/scoped_refptr.h"
 #include "base/values.h"
-#include "chrome/browser/bitmap_fetcher/bitmap_fetcher.h"
-#include "chrome/browser/profiles/profile.h"
 #include "components/crx_file/id_util.h"
 #include "content/public/browser/storage_partition.h"
 #include "extensions/common/extension.h"

@@ -24,6 +24,7 @@
 #include "components/extensions/browser/chrome_extension_host_delegate.h"
 #include "components/extensions/browser/chrome_extension_web_contents_observer.h"
 #include "components/extensions/browser/chrome_url_request_util.h"
+#include "components/extensions/browser/error_console/error_console.h"
 #include "components/extensions/browser/event_router_forwarder.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/extension_system_factory.h"
@@ -549,8 +550,7 @@ ChromeExtensionsBrowserClient::GetExtensionWebContentsObserver(
 void ChromeExtensionsBrowserClient::ReportError(
     content::BrowserContext* context,
     std::unique_ptr<ExtensionError> error) {
-  // TODO(mshin): Enable the below code after migrating ErrorConsole
-  // ErrorConsole::Get(context)->ReportError(std::move(error));
+  ErrorConsole::Get(context)->ReportError(std::move(error));
 }
 
 void ChromeExtensionsBrowserClient::CleanUpWebView(

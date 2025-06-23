@@ -18,7 +18,6 @@
 #include "base/functional/bind.h"
 #include "base/metrics/histogram_macros.h"
 #include "base/strings/string_piece.h"
-#include "build/chromeos_buildflags.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/extension_webkit_preferences.h"
 #include "components/extensions/common/extension_constants.h"
@@ -62,11 +61,6 @@
 #include "extensions/common/permissions/permissions_data.h"
 #include "extensions/common/switches.h"
 #include "url/origin.h"
-
-#if BUILDFLAG(IS_CHROMEOS)
-#include "chrome/browser/chromeos/extensions/vpn_provider/vpn_service_factory.h"
-#include "chromeos/constants/chromeos_features.h"
-#endif  // BUILDFLAG(IS_CHROMEOS)
 
 using blink::web_pref::WebPreferences;
 using content::BrowserContext;
@@ -680,15 +674,7 @@ std::vector<url::Origin> ChromeContentBrowserClientExtensionsPart::
 std::unique_ptr<content::VpnServiceProxy>
 ChromeContentBrowserClientExtensionsPart::GetVpnServiceProxy(
     content::BrowserContext* browser_context) {
-#if BUILDFLAG(IS_CHROMEOS)
-  chromeos::VpnServiceInterface* vpn_service =
-      chromeos::VpnServiceFactory::GetForBrowserContext(browser_context);
-  if (!vpn_service)
-    return nullptr;
-  return vpn_service->GetVpnServiceProxy();
-#else
   return nullptr;
-#endif
 }
 
 // static
@@ -710,24 +696,6 @@ bool ChromeContentBrowserClientExtensionsPart::IsBuiltinComponent(
   }
 
   // const auto& extension_id = origin.host();
-
-#if BUILDFLAG(IS_CHROMEOS)
-  // Check if the component is the ODFS extension.
-  if (chromeos::features::IsUploadOfficeToCloudEnabled() &&
-      extension_id == extension_misc::kODFSExtensionId) {
-    // Check ODFS was loaded externally.
-    const Extension* extension = ExtensionRegistry::Get(browser_context)
-                                     ->GetInstalledExtension(extension_id);
-    if (!extension) {
-      // Occurs due to a race condition at startup where the ODFS is installed
-      // but does not yet appear in the extension registry.
-      LOG(ERROR) << "ODFS cannot be found in the extension registry";
-      return false;
-    }
-    return extension->location() == mojom::ManifestLocation::kExternalComponent;
-  }
-#endif
-
   // Check if the component is a loaded component extension.
   // TODO(mshin): Enable the below code after migrating ComponentLoader
   // return ExtensionSystem::Get(browser_context)

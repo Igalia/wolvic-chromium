@@ -92,4 +92,4 @@ class InstallObserver {
 
 }  // namespace components_extensions
 
-#endif  // CHROME_BROWSER_EXTENSIONS_INSTALL_OBSERVER_H_
+#endif  // COMPONENTS_EXTENSIONS_BROWSER_INSTALL_OBSERVER_H_

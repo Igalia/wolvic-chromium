@@ -29,6 +29,7 @@
 #include "base/uuid.h"
 #include "components/extensions/browser/chrome_zipfile_installer.h"
 #include "components/extensions/browser/crx_installer.h"
+#include "components/extensions/browser/error_console/error_console_factory.h"
 #include "components/extensions/browser/extension_install_prompt.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/extension_system_factory.h"
@@ -93,6 +94,11 @@
 #include "ui/base/l10n/l10n_util.h"
 #include "url/gurl.h"
 #include "url/origin.h"
+
+using components_extensions::ErrorConsole;
+using components_extensions::ErrorConsoleFactory;
+using components_extensions::ExtensionManagementFactory;
+using components_extensions::ExtensionSystemFactory;
 
 namespace extensions {
 
@@ -235,15 +241,15 @@ template <>
 void BrowserContextKeyedAPIFactory<
     DeveloperPrivateAPI>::DeclareFactoryDependencies() {
   DependsOn(ExtensionRegistryFactory::GetInstance());
-  // DependsOn(ErrorConsoleFactory::GetInstance());
+  DependsOn(ErrorConsoleFactory::GetInstance());
   // DependsOn(ProcessManagerFactory::GetInstance());
   // DependsOn(AppWindowRegistry::Factory::GetInstance());
   // DependsOn(WarningServiceFactory::GetInstance());
   DependsOn(ExtensionPrefsFactory::GetInstance());
-  DependsOn(components_extensions::ExtensionManagementFactory::GetInstance());
+  DependsOn(ExtensionManagementFactory::GetInstance());
   // DependsOn(CommandService::GetFactoryInstance());
   // DependsOn(EventRouterFactory::GetInstance());
-  DependsOn(components_extensions::ExtensionSystemFactory::GetInstance());
+  DependsOn(ExtensionSystemFactory::GetInstance());
   // DependsOn(PermissionsManager::GetFactory());
   // DependsOn(ToolbarActionsModelFactory::GetInstance());
 }
@@ -262,13 +268,13 @@ DeveloperPrivateAPI::DeveloperPrivateAPI(content::BrowserContext* context)
 DeveloperPrivateEventRouter::DeveloperPrivateEventRouter(content::BrowserContext* context)
     : browser_context_(context), event_router_(EventRouter::Get(browser_context_)) {
   // extension_registry_observation_.Observe(ExtensionRegistry::Get(browser_context_));
-  // error_console_observation_.Observe(ErrorConsole::Get(browser_context_));
+  error_console_observation_.Observe(ErrorConsole::Get(browser_context_));
   // process_manager_observation_.Observe(ProcessManager::Get(browser_context_));
   // app_window_registry_observation_.Observe(AppWindowRegistry::Get(browser_context_));
   // warning_service_observation_.Observe(WarningService::Get(browser_context_));
   // extension_prefs_observation_.Observe(ExtensionPrefs::Get(browser_context_));
   extension_management_observation_.Observe(
-      components_extensions::ExtensionManagementFactory::GetForBrowserContext(browser_context_));
+      ExtensionManagementFactory::GetForBrowserContext(browser_context_));
   // command_service_observation_.Observe(CommandService::Get(browser_context_));
   // extension_allowlist_observer_.Observe(
   //     ExtensionSystem::Get(browser_context_)->extension_service()->allowlist());
@@ -326,6 +332,28 @@ void DeveloperPrivateEventRouter::OnExtensionUninstalled(
   DCHECK(browser_context);
   BroadcastItemStateChanged(developer::EventType::kUninstalled,
                             extension->id());
+}
+
+void DeveloperPrivateEventRouter::OnErrorAdded(const ExtensionError* error) {
+  // TODO(mshin): Remove the below log after migrating a full DeveloperPrivate*.
+  LOG(ERROR) << "[DeveloperPrivateEventRouter] " << error->GetDebugString();
+
+  // We don't want to handle errors thrown by extensions subscribed to these
+  // events (currently only the Apps Developer Tool), because doing so risks
+  // entering a loop.
+  if (extension_ids_.count(error->extension_id()))
+    return;
+
+  BroadcastItemStateChanged(developer::EventType::kErrorAdded,
+                            error->extension_id());
+}
+
+void DeveloperPrivateEventRouter::OnErrorsRemoved(
+    const std::set<ExtensionId>& removed_ids) {
+  for (const ExtensionId& id : removed_ids) {
+    if (!extension_ids_.count(id))
+      BroadcastItemStateChanged(developer::EventType::kErrorsRemoved, id);
+  }
 }
 
 void DeveloperPrivateEventRouter::OnExtensionManagementSettingsChanged() {

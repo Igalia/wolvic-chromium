@@ -4,7 +4,9 @@
 
 #include "components/extensions/browser/chrome_extension_frame_host.h"
 
+#include "components/extensions/browser/error_console/error_console.h"
 #include "components/extensions/common/extension_constants.h"
+#include "content/public/browser/browser_context.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_process_host.h"
 #include "content/public/browser/web_contents.h"
@@ -16,9 +18,11 @@
 #include "third_party/blink/public/common/logging/logging_utils.h"
 #include "url/gurl.h"
 
+using extensions::ExtensionError;
 using extensions::ExtensionId;
 using extensions::ExtensionRegistry;
 using extensions::ExtensionSet;
+using extensions::RuntimeError;
 using extensions::StackTrace;
 
 namespace components_extensions {
@@ -89,15 +93,14 @@ void ChromeExtensionFrameHost::DetailedConsoleMessageAdded(
   if (extension_id.empty())
     extension_id = GURL(source).host();
 
-  // TODO(mshin) : Enable the below code aftre migrating ErrorConsole
-  // content::BrowserContext* browser_context = web_contents_->GetBrowserContext();
-  // ErrorConsole::Get(browser_context)
-  //     ->ReportError(std::unique_ptr<ExtensionError>(new RuntimeError(
-  //         extension_id, browser_context->IsOffTheRecord(), source, message,
-  //         stack_trace, web_contents_->GetLastCommittedURL(),
-  //         blink::ConsoleMessageLevelToLogSeverity(level),
-  //         render_frame_host->GetRoutingID(),
-  //         render_frame_host->GetProcess()->GetID())));
+  content::BrowserContext* browser_context = web_contents_->GetBrowserContext();
+  ErrorConsole::Get(browser_context)
+      ->ReportError(std::unique_ptr<ExtensionError>(new RuntimeError(
+          extension_id, browser_context->IsOffTheRecord(), source, message,
+          stack_trace, web_contents_->GetLastCommittedURL(),
+          blink::ConsoleMessageLevelToLogSeverity(level),
+          render_frame_host->GetRoutingID(),
+          render_frame_host->GetProcess()->GetID())));
 }
 
 void ChromeExtensionFrameHost::ContentScriptsExecuting(
