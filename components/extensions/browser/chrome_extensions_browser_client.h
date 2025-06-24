@@ -14,6 +14,7 @@
 #include "base/values.h"
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
+#include "components/extensions/browser/chrome_process_manager_delegate.h"
 #include "components/extensions/browser/user_script_listener.h"
 #include "extensions/browser/extensions_browser_client.h"
 #include "extensions/browser/kiosk/kiosk_delegate.h"
@@ -40,7 +41,6 @@ namespace components_extensions {
 
 class ChromeComponentExtensionResourceManager;
 class ChromeExtensionsAPIClient;
-class ChromeProcessManagerDelegate;
 class EventRouterForwarder;
 
 // Implementation of BrowserClient for Chrome, which includes
@@ -286,9 +286,7 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
 //       base::Value::List args,
 //       const std::string& extra);
 
-  // TODO(mshin): Enable the below code after migrating ChromeProcessManagerDelegate
-  // Support for ProcessManager.
-  // std::unique_ptr<ChromeProcessManagerDelegate> process_manager_delegate_;
+  std::unique_ptr<ChromeProcessManagerDelegate> process_manager_delegate_;
 
   // Client for API implementations.
   std::unique_ptr<ChromeExtensionsAPIClient> api_client_;

@@ -189,8 +189,7 @@ ChromeExtensionsBrowserClient::ChromeExtensionsBrowserClient(Delegate* delegate)
   static bool registered = RegisterTransformers();
   CHECK(registered);
 
-  // TODO(mshin): Enable the below code after migrating ChromeProcessManagerDelegate
-  // process_manager_delegate_ = std::make_unique<ChromeProcessManagerDelegate>();
+  process_manager_delegate_ = std::make_unique<ChromeProcessManagerDelegate>();
   api_client_ = std::make_unique<ChromeExtensionsAPIClient>();
   extensions::SetCurrentChannel(version_info::Channel::STABLE);
   // TODO(mshin): Enable the below code after migrating ChromeComponentExtensionResourceManager
@@ -392,10 +391,7 @@ void ChromeExtensionsBrowserClient::GetEarlyExtensionPrefsObservers(
 
 ProcessManagerDelegate*
 ChromeExtensionsBrowserClient::GetProcessManagerDelegate() const {
-  // TODO(mshin): Enable the below code after migrating ChromeProcessManagerDelegate  
-  // process_manager_delegate_ = std::make_unique<ChromeProcessManagerDelegate>();
-  // return process_manager_delegate_.get();
-  return nullptr;
+  return process_manager_delegate_.get();
 }
 
 mojo::PendingRemote<network::mojom::URLLoaderFactory>

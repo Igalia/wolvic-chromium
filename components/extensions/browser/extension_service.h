@@ -58,6 +58,7 @@ namespace extensions {
 class CrxInstallError;
 class ExtensionRegistry;
 class ExtensionSystem;
+class UpdateObserver;
 enum class UnloadedExtensionReason;
 }
 
@@ -72,7 +73,6 @@ class ExtensionErrorController;
 class ExtensionUpdater;
 class ExternalInstallManager;
 class SharedModuleService;
-class UpdateObserver;
 
 // This is an interface class to encapsulate the dependencies that
 // various classes have on ExtensionService. This allows easy mocking.
@@ -402,8 +402,8 @@ class ExtensionService : public ExtensionServiceInterface,
   void TerminateExtension(const std::string& extension_id);
 
   // Adds/Removes update observers.
-  void AddUpdateObserver(UpdateObserver* observer);
-  void RemoveUpdateObserver(UpdateObserver* observer);
+  void AddUpdateObserver(extensions::UpdateObserver* observer);
+  void RemoveUpdateObserver(extensions::UpdateObserver* observer);
 
   // Register/unregister an InstallGate with the service.
   void RegisterInstallGate(extensions::ExtensionPrefs::DelayReason reason,
@@ -769,8 +769,7 @@ class ExtensionService : public ExtensionServiceInterface,
   // The SharedModuleService used to check for import dependencies.
   std::unique_ptr<SharedModuleService> shared_module_service_;
 
-  // TODO(mshin): Enable the below code after migrating UpgradeObserver
-  // base::ObserverList<UpdateObserver, true>::Unchecked update_observers_;
+  base::ObserverList<extensions::UpdateObserver, true>::Unchecked update_observers_;
 
   // Helper to register and unregister extensions.
   extensions::ExtensionRegistrar extension_registrar_;

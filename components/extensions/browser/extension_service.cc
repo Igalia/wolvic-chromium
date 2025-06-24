@@ -117,6 +117,7 @@ using extensions::PermissionMessageProvider;
 using extensions::PermissionSet;
 using extensions::ProcessMap;
 using extensions::SharedModuleInfo;
+using extensions::UpdateObserver;
 
 namespace components_extensions {
 
@@ -1839,12 +1840,11 @@ void ExtensionService::OnExtensionInstalled(
       // Transfer ownership of |extension|.
       delayed_installs_.Insert(extension);
 
-      // TODO(mshin): Enable the below code after migrating UpgradeObserver
-      // if (delay_reason == ExtensionPrefs::DELAY_REASON_WAIT_FOR_IDLE) {
-      //   // Notify observers that app update is available.
-      //   for (auto& observer : update_observers_)
-      //     observer.OnAppUpdateAvailable(extension);
-      // }
+      if (delay_reason == ExtensionPrefs::DELAY_REASON_WAIT_FOR_IDLE) {
+        // Notify observers that app update is available.
+        for (auto& observer : update_observers_)
+          observer.OnAppUpdateAvailable(extension);
+      }
       return;
     case InstallGate::ABORT:
       // Do nothing to abort the install. One such case is the shared module
@@ -2260,7 +2260,7 @@ void ExtensionService::MaybeFinishDelayedInstallations() {
 //   CheckManagementPolicy();
 // }
 
-  // TODO(mshin): Enable the below code after migrating UpgradeObserver
+// TODO(mshin): Enable the below code after migrating UpgradeObserver
 // void ExtensionService::OnUpgradeRecommended() {
 //   // Notify observers that chrome update is available.
 //   for (auto& observer : update_observers_)
@@ -2329,14 +2329,13 @@ bool ExtensionService::ShouldBlockExtension(const Extension* extension) {
 //   error_controller_->ShowErrorIfNeeded();
 // }
 
-// TODO(mshin): Enable the below code after migrating UpgradeObserver
-// void ExtensionService::AddUpdateObserver(UpdateObserver* observer) {
-//   update_observers_.AddObserver(observer);
-// }
+void ExtensionService::AddUpdateObserver(UpdateObserver* observer) {
+  update_observers_.AddObserver(observer);
+}
 
-// void ExtensionService::RemoveUpdateObserver(UpdateObserver* observer) {
-//   update_observers_.RemoveObserver(observer);
-// }
+void ExtensionService::RemoveUpdateObserver(UpdateObserver* observer) {
+  update_observers_.RemoveObserver(observer);
+}
 
 void ExtensionService::RegisterInstallGate(ExtensionPrefs::DelayReason reason,
                                            InstallGate* install_delayer) {
