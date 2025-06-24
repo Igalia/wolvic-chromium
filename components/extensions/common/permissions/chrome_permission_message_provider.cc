@@ -68,12 +68,10 @@ ChromePermissionMessageProvider::~ChromePermissionMessageProvider() {
 
 PermissionMessages ChromePermissionMessageProvider::GetPermissionMessages(
     const PermissionIDSet& permissions) const {
-  // TODO(mshin): Enable the below code after migrating ChromePermissionMessageRule
-  // const std::vector<ChromePermissionMessageRule> rules =
-  //     ChromePermissionMessageRule::GetAllRules();
+  const std::vector<ChromePermissionMessageRule> rules =
+      ChromePermissionMessageRule::GetAllRules();
 
-  // return GetPermissionMessagesHelper(permissions, rules);
-  return PermissionMessages();
+  return GetPermissionMessagesHelper(permissions, rules);
 }
 
 bool ChromePermissionMessageProvider::IsPrivilegeIncrease(
@@ -285,31 +283,30 @@ bool ChromePermissionMessageProvider::IsHostPrivilegeIncrease(
   return false;
 }
 
-// TODO(mshin): Enable the below code after migrating ChromePermissionMessageRule
-// PermissionMessages ChromePermissionMessageProvider::GetPermissionMessagesHelper(
-//     const PermissionIDSet& permissions,
-//     const std::vector<ChromePermissionMessageRule>& rules) const {
-//   // Apply each of the rules, in order, to generate the messages for the given
-//   // permissions. Once a permission is used in a rule, remove it from the set
-//   // of available permissions so it cannot be applied to subsequent rules.
-//   PermissionIDSet remaining_permissions = permissions;
-//   PermissionMessages messages;
-//   for (const auto& rule : rules) {
-//     // Only apply the rule if we have all the required permission IDs.
-//     if (remaining_permissions.ContainsAllIDs(rule.required_permissions())) {
-//       // We can apply the rule. Add all the required permissions, and as many
-//       // optional permissions as we can, to the new message.
-//       PermissionIDSet used_permissions =
-//           remaining_permissions.GetAllPermissionsWithIDs(
-//               rule.all_permissions());
-//       messages.push_back(rule.GetPermissionMessage(used_permissions));
+PermissionMessages ChromePermissionMessageProvider::GetPermissionMessagesHelper(
+    const PermissionIDSet& permissions,
+    const std::vector<ChromePermissionMessageRule>& rules) const {
+  // Apply each of the rules, in order, to generate the messages for the given
+  // permissions. Once a permission is used in a rule, remove it from the set
+  // of available permissions so it cannot be applied to subsequent rules.
+  PermissionIDSet remaining_permissions = permissions;
+  PermissionMessages messages;
+  for (const auto& rule : rules) {
+    // Only apply the rule if we have all the required permission IDs.
+    if (remaining_permissions.ContainsAllIDs(rule.required_permissions())) {
+      // We can apply the rule. Add all the required permissions, and as many
+      // optional permissions as we can, to the new message.
+      PermissionIDSet used_permissions =
+          remaining_permissions.GetAllPermissionsWithIDs(
+              rule.all_permissions());
+      messages.push_back(rule.GetPermissionMessage(used_permissions));
 
-//       remaining_permissions =
-//           PermissionIDSet::Difference(remaining_permissions, used_permissions);
-//     }
-//   }
+      remaining_permissions =
+          PermissionIDSet::Difference(remaining_permissions, used_permissions);
+    }
+  }
 
-//   return messages;
-// }
+  return messages;
+}
 
 }  // namespace components_extensions

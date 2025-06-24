@@ -31,8 +31,12 @@ component("common") {
     "manifest_handlers/theme_handler.h",
     "initialize_extensions_client.cc",
     "initialize_extensions_client.h",
+    "permissions/chrome_api_permissions.cc",
+    "permissions/chrome_api_permissions.h",
     "permissions/chrome_permission_message_provider.cc",
     "permissions/chrome_permission_message_provider.h",
+    "permissions/chrome_permission_message_rules.cc",
+    "permissions/chrome_permission_message_rules.h",
   ]
   deps = [
     "//base",

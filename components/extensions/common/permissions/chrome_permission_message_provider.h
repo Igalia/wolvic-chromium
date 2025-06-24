@@ -8,6 +8,7 @@
 #include <set>
 #include <vector>
 
+#include "components/extensions/common/permissions/chrome_permission_message_rules.h"
 #include "extensions/common/permissions/permission_message_provider.h"
 
 namespace components_extensions {
@@ -83,10 +84,9 @@ class ChromePermissionMessageProvider : public extensions::PermissionMessageProv
                                const extensions::PermissionSet& requested_permissions,
                                extensions::Manifest::Type extension_type) const;
 
-// TODO(mshin): Enable the below code after migrating ChromePermissionMessageRule
-//   extensions::PermissionMessages GetPermissionMessagesHelper(
-//       const extensions::PermissionIDSet& permissions,
-//       const std::vector<extensions::ChromePermissionMessageRule>& rules) const;
+  extensions::PermissionMessages GetPermissionMessagesHelper(
+      const extensions::PermissionIDSet& permissions,
+      const std::vector<ChromePermissionMessageRule>& rules) const;
 };
 
 }  // namespace components_extensions

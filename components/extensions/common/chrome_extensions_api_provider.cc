@@ -11,6 +11,7 @@
 #include "components/extensions/common/api/manifest_features.h"
 #include "components/extensions/common/api/permission_features.h"
 #include "components/extensions/common/chrome_manifest_handlers.h"
+#include "components/extensions/common/permissions/chrome_api_permissions.h"
 #include "components/grit/components_resources.h"
 #include "extensions/common/features/json_feature_provider_source.h"
 #include "extensions/common/permissions/permissions_info.h"
@@ -61,10 +62,9 @@ std::string_view ChromeExtensionsAPIProvider::GetAPISchema(
 
 void ChromeExtensionsAPIProvider::RegisterPermissions(
     PermissionsInfo* permissions_info) {
-  // TODO(mshin): Enable the below code after migrating chrome_api_permissions
-  // permissions_info->RegisterPermissions(
-  //     chrome_api_permissions::GetPermissionInfos(),
-  //     chrome_api_permissions::GetPermissionAliases());
+  permissions_info->RegisterPermissions(
+      chrome_api_permissions::GetPermissionInfos(),
+      chrome_api_permissions::GetPermissionAliases());
 }
 
 void ChromeExtensionsAPIProvider::RegisterManifestHandlers() {
