@@ -3,4 +3,8 @@
   <structure type="chrome_scaled_image" name="IDR_EXTENSIONS_RATING_STAR_HALF_LEFT" file="extensions/extensions_rating_star_half_left.png" />
   <structure type="chrome_scaled_image" name="IDR_EXTENSIONS_RATING_STAR_OFF" file="extensions/extensions_rating_star_off.png" />
   <structure type="chrome_scaled_image" name="IDR_EXTENSIONS_RATING_STAR_ON" file="extensions/extensions_rating_star_on.png" />
+  <structure type="chrome_scaled_image" name="IDR_WEBSTORE_ICON" file="extensions/webstore_icon.png" />
+  <structure type="chrome_scaled_image" name="IDR_WEBSTORE_ICON_16" file="extensions/webstore_icon_16.png" />
+  <structure type="chrome_scaled_image" name="IDR_WEBSTORE_ICON_24" file="extensions/webstore_icon_24.png" />
+  <structure type="chrome_scaled_image" name="IDR_WEBSTORE_ICON_32" file="extensions/webstore_icon_32.png" />
 </grit-part>

@@ -19,6 +19,7 @@
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
 #include "components/extensions/browser/api/chrome_extensions_api_client.h"
+#include "components/extensions/browser/chrome_component_extension_resource_manager.h"
 #include "components/extensions/browser/chrome_content_browser_client_extensions_part.h"
 #include "components/extensions/browser/chrome_extensions_browser_api_provider.h"
 #include "components/extensions/browser/chrome_extension_host_delegate.h"
@@ -192,9 +193,8 @@ ChromeExtensionsBrowserClient::ChromeExtensionsBrowserClient(Delegate* delegate)
   process_manager_delegate_ = std::make_unique<ChromeProcessManagerDelegate>();
   api_client_ = std::make_unique<ChromeExtensionsAPIClient>();
   extensions::SetCurrentChannel(version_info::Channel::STABLE);
-  // TODO(mshin): Enable the below code after migrating ChromeComponentExtensionResourceManager
-  // resource_manager_ =
-  //     std::make_unique<ChromeComponentExtensionResourceManager>();
+  resource_manager_ =
+      std::make_unique<ChromeComponentExtensionResourceManager>();
 }
 
 ChromeExtensionsBrowserClient::~ChromeExtensionsBrowserClient() {
@@ -506,9 +506,7 @@ ChromeExtensionsBrowserClient::CreateRuntimeAPIDelegate(
 
 const ComponentExtensionResourceManager*
 ChromeExtensionsBrowserClient::GetComponentExtensionResourceManager() {
-  // TODO(mshin): Enable the below code after migrating ChromeComponentExtensionResourceManager
-  // return resource_manager_.get();
-  return nullptr;
+  return resource_manager_.get();
 }
 
 void ChromeExtensionsBrowserClient::BroadcastEventToRenderers(

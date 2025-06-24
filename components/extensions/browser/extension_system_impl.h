@@ -136,8 +136,7 @@ class ExtensionSystemImpl : public extensions::ExtensionSystem {
     // std::unique_ptr<InstallGate> update_install_gate_;
 
     // For verifying the contents of extensions read from disk.
-    // TODO(mshin): Enable the below code after migrating ChromeContentVerifierDelegate
-    // scoped_refptr<extensions::ContentVerifier> content_verifier_;
+    scoped_refptr<extensions::ContentVerifier> content_verifier_;
 
     std::unique_ptr<extensions::UninstallPingSender> uninstall_ping_sender_;
     base::OneShotEvent ready_;

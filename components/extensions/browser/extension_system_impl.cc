@@ -16,6 +16,7 @@
 #include "base/strings/string_tokenizer.h"
 #include "base/time/time.h"
 #include "base/trace_event/trace_event.h"
+#include "components/extensions/browser/chrome_content_verifier_delegate.h"
 #include "components/extensions/browser/crx_installer.h"
 #include "components/extensions/browser/extension_management.h"
 #include "components/extensions/browser/extension_service.h"
@@ -131,9 +132,8 @@ void ExtensionSystemImpl::Shared::Init(bool extensions_enabled) {
       !command_line->HasSwitch(::switches::kNoErrorDialogs);
   LoadErrorReporter::Init(allow_noisy_errors);
 
-  // TODO(mshin): Enable the below code after migrating ChromeContentVerifierDelegate
-  // content_verifier_ = new ContentVerifier(
-  //     browser_context_, std::make_unique<ChromeContentVerifierDelegate>(browser_context_));
+  content_verifier_ = new ContentVerifier(
+      browser_context_, std::make_unique<ChromeContentVerifierDelegate>(browser_context_));
 
   service_worker_manager_ = std::make_unique<ServiceWorkerManager>(browser_context_);
 
@@ -156,13 +156,12 @@ void ExtensionSystemImpl::Shared::Init(bool extensions_enabled) {
   // These services must be registered before the ExtensionService tries to
   // load any extensions.
   {
-    // TODO(mshin): Enable the below code after migrating ChromeContentVerifierDelegate
-    // InstallVerifier::Get(browser_context_)->Init();
-    // ChromeContentVerifierDelegate::VerifyInfo::Mode mode =
-    //     ChromeContentVerifierDelegate::GetDefaultMode();
-    // if (mode >= ChromeContentVerifierDelegate::VerifyInfo::Mode::BOOTSTRAP) {
-    //   content_verifier_->Start();
-    // }
+    InstallVerifier::Get(browser_context_)->Init();
+    ChromeContentVerifierDelegate::VerifyInfo::Mode mode =
+        ChromeContentVerifierDelegate::GetDefaultMode();
+    if (mode >= ChromeContentVerifierDelegate::VerifyInfo::Mode::BOOTSTRAP) {
+      content_verifier_->Start();
+    }
     management_policy_ = std::make_unique<ManagementPolicy>();
     RegisterManagementPolicyProviders();
   }
@@ -198,10 +197,9 @@ void ExtensionSystemImpl::Shared::Init(bool extensions_enabled) {
 }
 
 void ExtensionSystemImpl::Shared::Shutdown() {
-  // TODO(mshin): Enable the below code after migrating ChromeContentVerifierDelegate
-  // if (content_verifier_.get()) {
-  //   content_verifier_->Shutdown();
-  // }
+  if (content_verifier_.get()) {
+    content_verifier_->Shutdown();
+  }
   if (extension_service_) {
     extension_service_->Shutdown();
   }
@@ -249,9 +247,7 @@ AppSorting* ExtensionSystemImpl::Shared::app_sorting() {
 }
 
 ContentVerifier* ExtensionSystemImpl::Shared::content_verifier() {
-  // TODO(mshin): Enable the below code after migrating ChromeContentVerifierDelegate
-  // return content_verifier_.get();
-  return nullptr;
+  return content_verifier_.get();
 }
 
 //

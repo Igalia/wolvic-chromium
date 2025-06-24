@@ -19,6 +19,8 @@ if (is_ios) {
   import("//build/config/ios/bundle_data_from_filelist.gni")
 }
 
+import("//build/config/compontents_extensions_build.gni")
+
 about_credits_file = "$target_gen_dir/about_credits.html"
 
 group("resources") {
@@ -29,6 +31,10 @@ group("resources") {
     "../flags_ui/resources:resources",
     "../version_ui/resources:resources",
   ]
+
+  if (enable_extensions_in_components) {
+    public_deps += [ ":component_extension_resources" ]
+  }
 }
 
 grit("components_resources") {
@@ -113,6 +119,20 @@ grit("components_scaled_resources") {
     "components_resources_300_percent.pak",
   ]
   output_dir = "$root_gen_dir/components"
+}
+
+if (enable_extensions_in_components) {
+  grit("component_extension_resources") {
+    source = "component_extension_resources.grd"
+
+    outputs = [
+      "grit/component_extension_resources.h",
+      "grit/component_extension_resources_map.cc",
+      "grit/component_extension_resources_map.h",
+      "component_extension_resources.pak",
+    ]
+    output_dir = "$root_gen_dir/chrome"
+  }
 }
 
 action("about_credits") {

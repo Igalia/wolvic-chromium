@@ -21,10 +21,11 @@
 #include "base/time/time.h"
 #include "base/version.h"
 #include "components/extensions/browser/convert_user_script.h"
+#include "components/extensions/browser/extension_assets_manager.h"
 #include "components/extensions/browser/extension_service.h"
-#include "components/extensions/browser/load_error_reporter.h"
 #include "components/extensions/browser/install_tracker_factory.h"
 #include "components/extensions/browser/install_tracker.h"
+#include "components/extensions/browser/load_error_reporter.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/crx_file/crx_verifier.h"
 #include "components/strings/grit/components_strings.h"
@@ -903,13 +904,12 @@ void CrxInstaller::CompleteInstall(
     return;
   }
 
-  // TODO(mshin): Enable the below code after migrating ExtensionAssetsManager
-  // ExtensionAssetsManager* assets_manager =
-  //     ExtensionAssetsManager::GetInstance();
-  // assets_manager->InstallExtension(
-  //     extension(), unpacked_extension_root_, install_directory_, browser_context_,
-  //     base::BindOnce(&CrxInstaller::ReloadExtensionAfterInstall, this),
-  //     updates_from_webstore_or_empty_update_url);
+  ExtensionAssetsManager* assets_manager =
+      ExtensionAssetsManager::GetInstance();
+  assets_manager->InstallExtension(
+      extension(), unpacked_extension_root_, install_directory_, browser_context_,
+      base::BindOnce(&CrxInstaller::ReloadExtensionAfterInstall, this),
+      updates_from_webstore_or_empty_update_url);
 }
 
 void CrxInstaller::ReloadExtensionAfterInstall(

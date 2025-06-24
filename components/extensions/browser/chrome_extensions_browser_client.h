@@ -291,8 +291,7 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
   // Client for API implementations.
   std::unique_ptr<ChromeExtensionsAPIClient> api_client_;
 
-  // TODO(mshin): Enable the below code after migrating ChromeComponentExtensionResourceManager
-  // std::unique_ptr<ChromeComponentExtensionResourceManager> resource_manager_;
+  std::unique_ptr<ChromeComponentExtensionResourceManager> resource_manager_;
 
   std::unique_ptr<extensions::ExtensionCache> extension_cache_;
 

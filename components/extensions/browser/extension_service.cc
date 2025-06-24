@@ -37,6 +37,7 @@
 #include "base/trace_event/trace_event.h"
 #include "components/crx_file/id_util.h"
 #include "components/extensions/browser/crx_installer.h"
+#include "components/extensions/browser/extension_assets_manager.h"
 #include "components/extensions/browser/extension_error_controller.h"
 #include "components/extensions/browser/install_verifier.h"
 #include "components/extensions/browser/installed_loader.h"
@@ -913,12 +914,11 @@ void ExtensionService::UninstallExtensionOnFileThread(
     const base::FilePath& extensions_install_dir,
     const base::FilePath& extension_dir_to_delete,
     const base::FilePath& browser_context_dir) {
-  // TODO(mshin): Enable the below code after migrating ExtensionAssetsManager
-  // ExtensionAssetsManager* assets_manager =
-  //     ExtensionAssetsManager::GetInstance();
-  // assets_manager->UninstallExtension(id, profile_user_name,
-  //                                    extensions_install_dir,
-  //                                    extension_dir_to_delete, browser_context_dir);
+  ExtensionAssetsManager* assets_manager =
+      ExtensionAssetsManager::GetInstance();
+  assets_manager->UninstallExtension(id, profile_user_name,
+                                     extensions_install_dir,
+                                     extension_dir_to_delete, browser_context_dir);
 }
 
 bool ExtensionService::IsExtensionEnabled(
