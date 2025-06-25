@@ -26,6 +26,7 @@
 #include "components/extensions/browser/install_tracker_factory.h"
 #include "components/extensions/browser/install_tracker.h"
 #include "components/extensions/browser/load_error_reporter.h"
+#include "components/extensions/browser/permissions_updater.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/crx_file/crx_verifier.h"
 #include "components/strings/grit/components_strings.h"
@@ -1018,10 +1019,9 @@ void CrxInstaller::ReportSuccessFromUIThread() {
     if ((client_ || allow_silent_install_) && grant_permissions_ &&
         (!expected_version_.IsValid() ||
          expected_version_ == extension()->version())) {
-      // TODO(mshin): Enable the below code after migrating PermissionsUpdater
-      // PermissionsUpdater perms_updater(browser_context_);
-      // perms_updater.InitializePermissions(extension());
-      // perms_updater.GrantActivePermissions(extension());
+      PermissionsUpdater perms_updater(browser_context_);
+      perms_updater.InitializePermissions(extension());
+      perms_updater.GrantActivePermissions(extension());
     }
   }
 

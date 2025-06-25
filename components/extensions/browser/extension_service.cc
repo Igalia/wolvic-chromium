@@ -37,10 +37,12 @@
 #include "base/trace_event/trace_event.h"
 #include "components/crx_file/id_util.h"
 #include "components/extensions/browser/crx_installer.h"
+#include "components/extensions/browser/extension_action_storage_manager.h"
 #include "components/extensions/browser/extension_assets_manager.h"
 #include "components/extensions/browser/extension_error_controller.h"
 #include "components/extensions/browser/install_verifier.h"
 #include "components/extensions/browser/installed_loader.h"
+#include "components/extensions/browser/permissions_updater.h"
 #include "components/extensions/browser/shared_module_service.h"
 #include "components/extensions/browser/unpacked_installer.h"
 #include "components/extensions/common/extension_constants.h"
@@ -481,9 +483,8 @@ ExtensionService::ExtensionService(
   // external_install_manager_ =
   //     std::make_unique<ExternalInstallManager>(browser_context_, is_first_run_);
 
-  // TODO(mshin): Enable the below code after migrating ExtensionActionStorageManager
-  // extension_action_storage_manager_ =
-  //     std::make_unique<ExtensionActionStorageManager>(browser_context_);
+  extension_action_storage_manager_ =
+      std::make_unique<ExtensionActionStorageManager>(browser_context_);
 
   // TODO(mshin): Enable the below code after supporting Preference
   // SetCurrentDeveloperMode(
@@ -1152,8 +1153,7 @@ void ExtensionService::GrantPermissionsAndEnableExtension(
 
 void ExtensionService::GrantPermissions(const Extension* extension) {
   CHECK(extension);
-  // TODO(mshin): Enable the below code after migrating PermissionsUpdater
-  // PermissionsUpdater(GetBrowserContext()).GrantActivePermissions(extension);
+  PermissionsUpdater(GetBrowserContext()).GrantActivePermissions(extension);
 }
 
 // static
@@ -1194,8 +1194,7 @@ void ExtensionService::PostActivateExtension(
     scoped_refptr<const Extension> extension) {
   // Update policy permissions in case they were changed while extension was not
   // active.
-  // TODO(mshin): Enable the below code after migrating PermissionsUpdater
-  // PermissionsUpdater(GetBrowserContext()).ApplyPolicyHostRestrictions(*extension);
+  PermissionsUpdater(GetBrowserContext()).ApplyPolicyHostRestrictions(*extension);
 
   // TODO(kalman): Convert ExtensionSpecialStoragePolicy to a
   // BrowserContextKeyedService and use ExtensionRegistryObserver.
@@ -1266,14 +1265,13 @@ void ExtensionService::CheckManagementPolicy() {
   ExtensionManagement* management =
       ExtensionManagementFactory::GetForBrowserContext(GetBrowserContext());
 
-  // TODO(mshin): Enable the below code after migrating PermissionsUpdater
-  // PermissionsUpdater(GetBrowserContext()).SetDefaultPolicyHostRestrictions(
-  //     management->GetDefaultPolicyBlockedHosts(),
-  //     management->GetDefaultPolicyAllowedHosts());
+  PermissionsUpdater(GetBrowserContext()).SetDefaultPolicyHostRestrictions(
+      management->GetDefaultPolicyBlockedHosts(),
+      management->GetDefaultPolicyAllowedHosts());
 
-  // for (const auto& extension : registry_->enabled_extensions()) {
-  //   PermissionsUpdater(GetBrowserContext()).ApplyPolicyHostRestrictions(*extension);
-  // }
+  for (const auto& extension : registry_->enabled_extensions()) {
+    PermissionsUpdater(GetBrowserContext()).ApplyPolicyHostRestrictions(*extension);
+  }
 
   // Loop through the disabled extension list, find extensions to re-enable
   // automatically. These extensions are exclusive from the |to_disable| list
@@ -1574,8 +1572,7 @@ void ExtensionService::AddComponentExtension(const Extension* extension) {
 
 void ExtensionService::CheckPermissionsIncrease(const Extension* extension,
                                                 bool is_extension_loaded) {
-  // TODO(mshin): Enable the below code after migrating PermissionsUpdater
-  // PermissionsUpdater(browser_context_).InitializePermissions(extension);
+  PermissionsUpdater(browser_context_).InitializePermissions(extension);
 
   // We keep track of all permissions the user has granted each extension.
   // This allows extensions to gracefully support backwards compatibility
@@ -1870,9 +1867,8 @@ void ExtensionService::OnExtensionManagementSettingsChanged() {
             extension.get(),
             extension->permissions_data()->active_permissions()) &&
         CanBlockExtension(extension.get())) {
-      // TODO(mshin): Enable the below code after migrating PermissionsUpdater
-      // PermissionsUpdater(GetBrowserContext()).RemovePermissionsUnsafe(
-      //     extension.get(), *settings->GetBlockedPermissions(extension.get()));
+      PermissionsUpdater(GetBrowserContext()).RemovePermissionsUnsafe(
+          extension.get(), *settings->GetBlockedPermissions(extension.get()));
     }
   }
 

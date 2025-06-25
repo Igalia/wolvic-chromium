@@ -762,9 +762,8 @@ class ExtensionService : public ExtensionServiceInterface,
   // TODO(mshin): Enable the below code after migrating ExternalInstallManager
   // std::unique_ptr<ExternalInstallManager> external_install_manager_;
 
-  // TODO(mshin): Enable the below code after migrating ExtensionActionStorageManager
-  // std::unique_ptr<ExtensionActionStorageManager>
-  //     extension_action_storage_manager_;
+  std::unique_ptr<ExtensionActionStorageManager>
+      extension_action_storage_manager_;
 
   // The SharedModuleService used to check for import dependencies.
   std::unique_ptr<SharedModuleService> shared_module_service_;

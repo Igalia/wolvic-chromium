@@ -6,6 +6,7 @@
 #define COMPONENTS_EXTENSIONS_BROWSER_API_PERMISSIONS_PERMISSIONS_API_H_
 
 #include "base/auto_reset.h"
+#include "components/extensions/browser/extension_install_prompt.h"
 #include "extensions/browser/extension_function.h"
 #include "extensions/common/permissions/permission_set.h"
 
@@ -89,14 +90,12 @@ class PermissionsRequestFunction : public ExtensionFunction {
   bool ShouldKeepWorkerAliveIndefinitely() override;
 
  private:
-  // TODO(mshin): Enable the below code after migrating ExtensionInstallPrompt 
-  // void OnInstallPromptDone(ExtensionInstallPrompt::DoneCallbackPayload payload);
+  void OnInstallPromptDone(ExtensionInstallPrompt::DoneCallbackPayload payload);
   void OnRuntimePermissionsGranted();
   void OnOptionalPermissionsGranted();
   void RespondIfRequestsFinished();
 
-  // TODO(mshin): Enable the below code after migrating ExtensionInstallPrompt 
-  // std::unique_ptr<ExtensionInstallPrompt> install_ui_;
+  std::unique_ptr<ExtensionInstallPrompt> install_ui_;
 
   // Requested permissions that are currently withheld.
   std::unique_ptr<const PermissionSet> requested_withheld_;

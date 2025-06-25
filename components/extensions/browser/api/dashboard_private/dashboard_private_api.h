@@ -10,6 +10,7 @@
 #include <string>
 
 #include "components/extensions/common/api/dashboard_private.h"
+#include "components/extensions/browser/extension_install_prompt.h"
 #include "extensions/browser/extension_function.h"
 
 class SkBitmap;
@@ -53,7 +54,7 @@ class DashboardPrivateShowPermissionPromptForDelegatedInstallFunction
   //                             InstallHelperResultCode result,
   //                             const std::string& error_message) override;
 
-  // void OnInstallPromptDone(ExtensionInstallPrompt::DoneCallbackPayload payload);
+  void OnInstallPromptDone(ExtensionInstallPrompt::DoneCallbackPayload payload);
 
   ExtensionFunction::ResponseValue BuildResponse(
       api::dashboard_private::Result result,
@@ -67,8 +68,7 @@ class DashboardPrivateShowPermissionPromptForDelegatedInstallFunction
   // ExtensionInstallPrompt to prompt for confirmation of the install.
   scoped_refptr<Extension> dummy_extension_;
 
-  // TODO(mshin): Enable the below code after migrating ExtensionInstallPrompt
-  // std::unique_ptr<ExtensionInstallPrompt> install_prompt_;
+  std::unique_ptr<ExtensionInstallPrompt> install_prompt_;
 };
 
 }  // namespace extensions

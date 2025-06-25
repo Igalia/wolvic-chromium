@@ -12,6 +12,7 @@
 #include "build/build_config.h"
 #include "components/extensions/browser/extension_management.h"
 #include "components/extensions/browser/extension_service.h"
+#include "components/extensions/browser/permissions_updater.h"
 #include "components/extensions/browser/shared_module_service.h"
 #include "components/prefs/pref_service.h"
 #include "components/variations/variations_associated_data.h"
@@ -249,9 +250,8 @@ std::unique_ptr<const PermissionSet> GetInstallPromptPermissionSetForExtension(
     bool include_optional_permissions) {
   // Initialize permissions if they have not already been set so that
   // any transformations are correctly reflected in the install prompt.
-  // TODO(mshin): Enable the below code after migrating PermissionsUpdater
-  // PermissionsUpdater(context, PermissionsUpdater::INIT_FLAG_TRANSIENT)
-  //     .InitializePermissions(extension);
+  PermissionsUpdater(context, PermissionsUpdater::INIT_FLAG_TRANSIENT)
+      .InitializePermissions(extension);
 
   std::unique_ptr<const PermissionSet> permissions_to_display =
       extension->permissions_data()->active_permissions().Clone();

@@ -9,10 +9,16 @@
 
 #include "base/values.h"
 #include "components/extensions/common/api/resources_private.h"
+#include "components/strings/grit/components_strings.h"
+#include "extensions/browser/extensions_browser_client.h"
 #include "pdf/buildflags.h"
 #include "printing/buildflags/buildflags.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "ui/base/webui/web_ui_util.h"
+
+#if BUILDFLAG(ENABLE_PDF)
+#include "chrome/browser/pdf/pdf_extension_util.h"
+#endif  // BUILDFLAG(ENABLE_PDF)
 
 // To add a new component to this API, simply:
 // 1. Add your component to the Component enum in
@@ -22,6 +28,29 @@
 
 namespace extensions {
 
+namespace {
+
+void AddStringsForIdentity(base::Value::Dict* dict) {
+  dict->Set("window-title",
+            l10n_util::GetStringUTF16(IDS_EXTENSION_CONFIRM_PERMISSIONS));
+}
+
+#if BUILDFLAG(ENABLE_PDF)
+bool IsPdfAnnotationsEnabled(content::BrowserContext* context) {
+#if BUILDFLAG(IS_CHROMEOS_ASH)
+  PrefService* prefs =
+      context ? Profile::FromBrowserContext(context)->GetPrefs() : nullptr;
+  if (prefs && prefs->IsManagedPreference(prefs::kPdfAnnotationsEnabled) &&
+      !prefs->GetBoolean(prefs::kPdfAnnotationsEnabled)) {
+    return false;
+  }
+#endif  // BUILDFLAG(IS_CHROMEOS_ASH)
+  return true;
+}
+#endif  // BUILDFLAG(ENABLE_PDF)
+
+}  // namespace
+
 namespace get_strings = api::resources_private::GetStrings;
 
 ResourcesPrivateGetStringsFunction::ResourcesPrivateGetStringsFunction() {}
@@ -29,12 +58,35 @@ ResourcesPrivateGetStringsFunction::ResourcesPrivateGetStringsFunction() {}
 ResourcesPrivateGetStringsFunction::~ResourcesPrivateGetStringsFunction() {}
 
 ExtensionFunction::ResponseAction ResourcesPrivateGetStringsFunction::Run() {
-  // TODO(mshin): Replace g_browser_process to the general browser process instance
-  // const std::string& app_locale = g_browser_process->GetApplicationLocale();
-  // webui::SetLoadTimeDataDefaults(app_locale, &dict);
-  //
-  // return RespondNow(WithArguments(std::move(dict)));
-  return RespondNow(Error("Not Implement"));
+  std::optional<get_strings::Params> params =
+      get_strings::Params::Create(args());
+  base::Value::Dict dict;
+
+  api::resources_private::Component component = params->component;
+
+  switch (component) {
+    case api::resources_private::Component::kIdentity:
+      AddStringsForIdentity(&dict);
+      break;
+    case api::resources_private::Component::kPdf: {
+#if BUILDFLAG(ENABLE_PDF)
+      pdf_extension_util::AddStrings(pdf_extension_util::PdfViewerContext::kAll,
+                                     &dict);
+      bool enable_printing = true;
+      pdf_extension_util::AddAdditionalData(
+          enable_printing, IsPdfAnnotationsEnabled(browser_context()), &dict);
+#endif  // BUILDFLAG(ENABLE_PDF)
+      break;
+    }
+    case api::resources_private::Component::kNone:
+      NOTREACHED();
+  }
+
+  const std::string& app_locale = 
+      ExtensionsBrowserClient::Get()->GetApplicationLocale();
+  webui::SetLoadTimeDataDefaults(app_locale, &dict);
+
+  return RespondNow(WithArguments(std::move(dict)));
 }
 
 }  // namespace extensions

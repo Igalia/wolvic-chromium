@@ -89,7 +89,7 @@ ChromeExtensionsRendererClient* ChromeExtensionsRendererClient::GetInstance() {
 }
 
 bool ChromeExtensionsRendererClient::IsIncognitoProcess() const {
-  // TODO(mshin): Enable the below code after supporting
+  // TODO(mshin): Enable the below code after supporting ChromeRenderThreadObserver
   // content::RenderThreadObserver in embedder layer
   // return ChromeRenderThreadObserver::is_incognito_process();
   return true;

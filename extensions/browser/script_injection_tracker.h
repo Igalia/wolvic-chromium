@@ -14,6 +14,8 @@
 #include "extensions/common/mojom/host_id.mojom-forward.h"
 #include "url/gurl.h"
 
+#include "components/extensions/common/buildflags.h"
+
 namespace content {
 class BrowserContext;
 class NavigationHandle;
@@ -21,13 +23,23 @@ class RenderFrameHost;
 class RenderProcessHost;
 }  // namespace content
 
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+namespace components_extensions {
+class PermissionsUpdater;
+}
+#endif
+
 namespace extensions {
 
 class ActiveTabPermissionGranter;
 class Extension;
 class ExtensionWebContentsObserver;
 class UserScriptLoader;
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+using components_extensions::PermissionsUpdater;
+#else
 class PermissionsUpdater;
+#endif
 class RequestContentScript;
 class ScriptExecutor;
 

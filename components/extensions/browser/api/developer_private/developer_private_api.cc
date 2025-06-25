@@ -1264,9 +1264,8 @@ void DeveloperPrivateRemoveMultipleExtensionsFunction::OnDialogAccepted() {
     }
     // If an extension fails to be uninstalled, it will not pause the
     // uninstall of the other extensions on the list.
-    // TODO(mshin): Enable the below code after migrating ExtensionService
-    // ExtensionSystem::Get(browser_context_)->extension_service()->UninstallExtension(
-    //     extension_id, UNINSTALL_REASON_USER_INITIATED, nullptr);
+    ExtensionSystem::Get(browser_context_)->extension_service()->UninstallExtension(
+        extension_id, UNINSTALL_REASON_USER_INITIATED, nullptr);
   }
   Respond(NoArguments());
 }

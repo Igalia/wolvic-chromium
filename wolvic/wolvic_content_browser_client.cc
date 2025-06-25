@@ -1127,7 +1127,7 @@ bool WolvicContentBrowserClient::HandleExternalProtocol(
     const std::optional<url::Origin>& initiating_origin,
     content::RenderFrameHost* initiator_document,
     mojo::PendingRemote<network::mojom::URLLoaderFactory>* out_factory) {
-// TODO(mshin) : Support ExtensionNavigationUIData
+// TODO(mshin) : Support ChromeNavigationUIData
 #if 0//BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
   // External protocols are disabled for guests. An exception is made for the
   // "mailto" protocol, so that pages that utilize it work properly in a

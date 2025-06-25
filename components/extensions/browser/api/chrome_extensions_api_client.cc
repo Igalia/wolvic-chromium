@@ -13,6 +13,7 @@
 #include "base/memory/scoped_refptr.h"
 #include "base/strings/string_util.h"
 #include "build/build_config.h"
+#include "components/extensions/browser/extension_action_runner.h"
 #include "components/extensions/browser/extension_util.h"
 #include "components/signin/core/browser/signin_header_helper.h"
 #include "components/supervised_user/core/common/buildflags.h"
@@ -45,6 +46,8 @@ using extensions::ContentRulesRegistry;
 using extensions::DevicePermissionsPrompt;
 using extensions::DisplayInfoProvider;
 using extensions::Extension;
+using extensions::ExtensionAction;
+using extensions::ExtensionActionManager;
 using extensions::ExtensionId;
 using extensions::ExtensionOptionsGuest;
 using extensions::ExtensionOptionsGuestDelegate;
@@ -154,11 +157,10 @@ void ChromeExtensionsAPIClient::NotifyWebRequestWithheld(
       content::WebContents::FromRenderFrameHost(render_frame_host);
   if (!web_contents)
     return;
-  // TODO(mshin): Enable the below code after migrating ExtensionActionRunner
-  // ExtensionActionRunner* runner =
-  //     ExtensionActionRunner::GetForWebContents(web_contents);
-  // if (!runner)
-  //   return;
+  ExtensionActionRunner* runner =
+      ExtensionActionRunner::GetForWebContents(web_contents);
+  if (!runner)
+    return;
 
   const extensions::Extension* extension =
       extensions::ExtensionRegistry::Get(web_contents->GetBrowserContext())
@@ -175,16 +177,14 @@ void ChromeExtensionsAPIClient::NotifyWebRequestWithheld(
   // TODO(https://157736): We can remove this if extensions require host
   // permissions to the initiator, since then we'll never get into this type
   // of circumstance (the request would be blocked, rather than withheld).
-  // TODO(mshin): Enable the below code after migrating Permission
-  // if (!extension->permissions_data()
-  //          ->withheld_permissions()
-  //          .explicit_hosts()
-  //          .MatchesURL(render_frame_host->GetLastCommittedURL())) {
-  //   return;
-  // }
+  if (!extension->permissions_data()
+           ->withheld_permissions()
+           .explicit_hosts()
+           .MatchesURL(render_frame_host->GetLastCommittedURL())) {
+    return;
+  }
 
-  // TODO(mshin): Enable the below code after migrating ExtensionActionRunner
-  // runner->OnWebRequestBlocked(extension);
+  runner->OnWebRequestBlocked(extension);
 }
 
 void ChromeExtensionsAPIClient::UpdateActionCount(
@@ -198,19 +198,19 @@ void ChromeExtensionsAPIClient::UpdateActionCount(
           extension_id);
   DCHECK(extension);
 
-  // TODO(mshin): Enable the below code after migrating ExtensionAction
-  // ExtensionAction* action =
-  //     ExtensionActionManager::Get(context)->GetExtensionAction(*extension);
-  // DCHECK(action);
+  ExtensionAction* action =
+      ExtensionActionManager::Get(context)->GetExtensionAction(*extension);
+  DCHECK(action);
 
-  // action->SetDNRActionCount(tab_id, action_count);
+  action->SetDNRActionCount(tab_id, action_count);
 
-  // // The badge text should be cleared if |action| contains explicitly set badge
-  // // text for the |tab_id| when the preference is then toggled on. In this case,
-  // // the matched action count should take precedence over the badge text.
-  // if (clear_badge_text)
-  //   action->ClearBadgeText(tab_id);
+  // The badge text should be cleared if |action| contains explicitly set badge
+  // text for the |tab_id| when the preference is then toggled on. In this case,
+  // the matched action count should take precedence over the badge text.
+  if (clear_badge_text)
+    action->ClearBadgeText(tab_id);
 
+  // TODO(mshin): Enable the below code after migrating ExtensionTabUtil
   // content::WebContents* tab_contents = nullptr;
   // if (ExtensionTabUtil::GetTabById(
   //         tab_id, context, true /* include_incognito */, &tab_contents) &&
@@ -223,13 +223,13 @@ void ChromeExtensionsAPIClient::UpdateActionCount(
 void ChromeExtensionsAPIClient::ClearActionCount(
     content::BrowserContext* context,
     const Extension& extension) {
-  // TODO(mshin): Enable the below code after migrating ExtensionAction
-  // ExtensionAction* action =
-  //     ExtensionActionManager::Get(context)->GetExtensionAction(extension);
-  // DCHECK(action);
+  ExtensionAction* action =
+      ExtensionActionManager::Get(context)->GetExtensionAction(extension);
+  DCHECK(action);
 
-  // action->ClearDNRActionCountForAllTabs();
+  action->ClearDNRActionCountForAllTabs();
 
+  // TODO(mshin): Enable the below code after migrating ExtensionTabUtil
   // std::vector<content::WebContents*> contents_to_notify =
   //     ExtensionTabUtil::GetAllActiveWebContentsForContext(
   //         context, true /* include_incognito */);

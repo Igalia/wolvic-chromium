@@ -9,6 +9,7 @@
 #include "base/files/file_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
+#include "components/strings/grit/components_strings.h"
 #include "extensions/common/manifest.h"
 #include "extensions/common/manifest_constants.h"
 #include "ui/base/l10n/l10n_util.h"
@@ -208,10 +209,9 @@ bool ThemeHandler::Validate(const Extension* extension,
           base::FilePath image_path =
               extension->path().Append(base::FilePath::FromUTF8Unsafe(*val));
           if (!base::PathExists(image_path)) {
-            // TODO(mshin): Replace the below code after supporting Resources
-            *error = "Could not load " + image_path.MaybeAsASCII() + " for theme.";
-                // l10n_util::GetStringFUTF8(IDS_EXTENSION_INVALID_IMAGE_PATH,
-                //                           image_path.LossyDisplayName());
+            *error =
+                l10n_util::GetStringFUTF8(IDS_EXTENSION_INVALID_IMAGE_PATH,
+                                          image_path.LossyDisplayName());
             return false;
           }
         }

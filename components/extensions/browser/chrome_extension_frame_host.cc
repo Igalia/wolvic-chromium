@@ -5,6 +5,7 @@
 #include "components/extensions/browser/chrome_extension_frame_host.h"
 
 #include "components/extensions/browser/error_console/error_console.h"
+#include "components/extensions/browser/extension_action_runner.h"
 #include "components/extensions/common/extension_constants.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/render_frame_host.h"
@@ -39,16 +40,15 @@ void ChromeExtensionFrameHost::RequestScriptInjectionPermission(
     extensions::mojom::RunLocation run_location,
     RequestScriptInjectionPermissionCallback callback) {
 
-  // TODO(mshin): Remove & Enable the below code when migrating ExtensionActionRunner
   std::move(callback).Run(false);
-  // ExtensionActionRunner* runner =
-  //     ExtensionActionRunner::GetForWebContents(web_contents_);
-  // if (!runner) {
-  //   std::move(callback).Run(false);
-  //   return;
-  // }
-  // runner->OnRequestScriptInjectionPermission(extension_id, script_type,
-  //                                            run_location, std::move(callback));
+  ExtensionActionRunner* runner =
+      ExtensionActionRunner::GetForWebContents(web_contents_);
+  if (!runner) {
+    std::move(callback).Run(false);
+    return;
+  }
+  runner->OnRequestScriptInjectionPermission(extension_id, script_type,
+                                             run_location, std::move(callback));
 }
 
 void ChromeExtensionFrameHost::GetAppInstallState(

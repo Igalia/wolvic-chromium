@@ -21,6 +21,15 @@ namespace extensions {
 namespace ShowPermissionPromptForDelegatedInstall =
     api::dashboard_private::ShowPermissionPromptForDelegatedInstall;
 
+namespace {
+
+// Error messages that can be returned by the API.
+// const char kDashboardInvalidIconUrlError[] = "Invalid icon url";
+// const char kDashboardInvalidIdError[] = "Invalid id";
+// const char kDashboardInvalidManifestError[] = "Invalid manifest";
+const char kDashboardUserCancelledError[] = "User cancelled install";
+}
+
 DashboardPrivateShowPermissionPromptForDelegatedInstallFunction::
     DashboardPrivateShowPermissionPromptForDelegatedInstallFunction() {
 }
@@ -95,20 +104,20 @@ DashboardPrivateShowPermissionPromptForDelegatedInstallFunction::Run() {
 //   Release();
 // }
 
-// void DashboardPrivateShowPermissionPromptForDelegatedInstallFunction::
-//     OnInstallPromptDone(ExtensionInstallPrompt::DoneCallbackPayload payload) {
-//   // TODO(crbug.com/984069): Handle `ACCEPTED_WITH_WITHHELD_PERMISSIONS` when it
-//   // is supported for this case.
-//   DCHECK_NE(payload.result,
-//             ExtensionInstallPrompt::Result::ACCEPTED_WITH_WITHHELD_PERMISSIONS);
-//   bool accepted = (payload.result == ExtensionInstallPrompt::Result::ACCEPTED);
-//   Respond(
-//       BuildResponse(accepted ? api::dashboard_private::Result::kEmptyString
-//                              : api::dashboard_private::Result::kUserCancelled,
-//                     accepted ? std::string() : kDashboardUserCancelledError));
+void DashboardPrivateShowPermissionPromptForDelegatedInstallFunction::
+    OnInstallPromptDone(ExtensionInstallPrompt::DoneCallbackPayload payload) {
+  // TODO(crbug.com/984069): Handle `ACCEPTED_WITH_WITHHELD_PERMISSIONS` when it
+  // is supported for this case.
+  DCHECK_NE(payload.result,
+            ExtensionInstallPrompt::Result::ACCEPTED_WITH_WITHHELD_PERMISSIONS);
+  bool accepted = (payload.result == ExtensionInstallPrompt::Result::ACCEPTED);
+  Respond(
+      BuildResponse(accepted ? api::dashboard_private::Result::kEmptyString
+                             : api::dashboard_private::Result::kUserCancelled,
+                    accepted ? std::string() : kDashboardUserCancelledError));
 
-//   Release();  // Matches the AddRef in Run().
-// }
+  Release();  // Matches the AddRef in Run().
+}
 
 ExtensionFunction::ResponseValue
 DashboardPrivateShowPermissionPromptForDelegatedInstallFunction::BuildResponse(

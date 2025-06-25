@@ -17,6 +17,7 @@
 #include "components/extensions/browser/extension_management.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/load_error_reporter.h"
+#include "components/extensions/browser/permissions_updater.h"
 #include "components/crx_file/id_util.h"
 #include "components/sync/model/string_ordinal.h"
 #include "content/public/browser/browser_task_traits.h"
@@ -148,10 +149,9 @@ bool UnpackedInstaller::LoadFromCommandLine(const base::FilePath& path_in,
   }
 
   extension()->permissions_data()->BindToCurrentThread();
-  // TODO(mshin): Enable the below code after migrating PermissionsUpdater
-  // PermissionsUpdater(
-  //     service_weak_->GetBrowserContext(), PermissionsUpdater::INIT_FLAG_TRANSIENT)
-  //     .InitializePermissions(extension());
+  PermissionsUpdater(
+      service_weak_->GetBrowserContext(), PermissionsUpdater::INIT_FLAG_TRANSIENT)
+      .InitializePermissions(extension());
   StartInstallChecks();
 
   *extension_id = extension()->id();
@@ -398,10 +398,9 @@ void UnpackedInstaller::InstallExtension() {
     prefs->SetInstallParam(extension()->id(), *install_param_);
   }
 
-  // TODO(mshin): Enable the below code after migrating PermissionsUpdater
-  // PermissionsUpdater perms_updater(service_weak_->GetBrowserContext());
-  // perms_updater.InitializePermissions(extension());
-  // perms_updater.GrantActivePermissions(extension());
+  PermissionsUpdater perms_updater(service_weak_->GetBrowserContext());
+  perms_updater.InitializePermissions(extension());
+  perms_updater.GrantActivePermissions(extension());
 
   service_weak_->OnExtensionInstalled(extension(), syncer::StringOrdinal(),
                                       extensions::kInstallFlagInstallImmediately,

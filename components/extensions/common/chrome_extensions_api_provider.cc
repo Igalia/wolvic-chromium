@@ -46,7 +46,6 @@ void ChromeExtensionsAPIProvider::AddBehaviorFeatures(
 
 void ChromeExtensionsAPIProvider::AddAPIJSONSources(
     JSONFeatureProviderSource* json_source) {
-  // TODO(mshin): Support Resources
   json_source->LoadJSON(IDR_CHROME_EXTENSION_API_FEATURES);
 }
 
