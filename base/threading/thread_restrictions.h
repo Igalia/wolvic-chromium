@@ -287,6 +287,15 @@ namespace components_extensions {
 class InstalledLoader;
 class UnpackedInstaller;
 }  // namespace components_extensions
+namespace network {
+struct ResourceRequest;
+}
+namespace components_extensions::chrome_url_request_util {
+base::FilePath GetBundleResourcePath(
+const network::ResourceRequest& request,
+const base::FilePath& extension_resources_path,
+int* resource_id);
+} // namespace components_extensions::chrome_url_request_util
 namespace font_service::internal {
 class MappedFontFile;
 }
@@ -619,6 +628,7 @@ class BASE_EXPORT [[maybe_unused, nodiscard]] ScopedAllowBlocking {
   friend class crosapi::LacrosThreadTypeDelegate;
   friend class crypto::ScopedAllowBlockingForNSS;  // http://crbug.com/59847
   friend class drive::FakeDriveService;
+  friend base::FilePath components_extensions::chrome_url_request_util::GetBundleResourcePath(const network::ResourceRequest&, const base::FilePath&, int*);
   friend class extensions::InstalledLoader;
   friend class extensions::UnpackedInstaller;
   friend class components_extensions::InstalledLoader;

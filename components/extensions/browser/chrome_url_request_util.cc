@@ -265,10 +265,19 @@ base::FilePath GetBundleResourcePath(
   // |chrome_resources_path| corresponds to src/chrome/browser/resources in
   // source tree.
   base::FilePath chrome_resources_path;
+#if BUILDFLAG(IS_ANDROID)
+  if (!base::PathService::Get(base::DIR_ANDROID_APP_DATA, &chrome_resources_path)) {
+    return base::FilePath();
+  }
+#else
   if (!base::PathService::Get(base::DIR_ASSETS, &chrome_resources_path)) {
     return base::FilePath();
   }
+#endif
   chrome_resources_path = chrome_resources_path.Append(FILE_PATH_LITERAL("resources"));
+
+  // Synchronously reading files in /proc is safe.
+  base::ScopedAllowBlocking scoped_allow_blocking;
   if (!base::PathExists(chrome_resources_path))
     return base::FilePath();
 

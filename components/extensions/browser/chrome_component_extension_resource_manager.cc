@@ -119,9 +119,15 @@ bool ChromeComponentExtensionResourceManager::IsComponentExtensionResource(
   base::FilePath resources_dir;
   base::FilePath relative_path;
 
+#if BUILDFLAG(IS_ANDROID)
+  if (!base::PathService::Get(base::DIR_ANDROID_APP_DATA, &resources_dir)) {
+    return false;
+  }
+#else
   if (!base::PathService::Get(base::DIR_ASSETS, &resources_dir)) {
     return false;
   }
+#endif
   resources_dir = resources_dir.Append(FILE_PATH_LITERAL("resources"));
   if (!resources_dir.AppendRelativePath(directory_path, &relative_path)) {
     return false;

@@ -195,6 +195,18 @@ repack("pak") {
     sources += [ "$root_gen_dir/content/webxr_internals_resources.pak" ]
   }
 
+  if (enable_extensions_in_components) {
+    sources += [
+      "$root_gen_dir/components/components_resources.pak",
+      "$root_gen_dir/extensions/extensions_renderer_resources.pak",
+      "$root_gen_dir/extensions/extensions_resources.pak",
+    ]
+    deps += [
+      "//components/resources",
+      "//extensions:extensions_resources",
+    ]
+  }
+
   output = "$root_out_dir/wolvic.pak"
 }
 
@@ -301,6 +313,7 @@ static_library("content_native_lib") {
       "//components/extensions/common",
       "//components/extensions/common:buildflags",
       "//components/extensions/renderer",
+      "//extensions/components/javascript_dialog_extensions_client",
     ]
 
     public_deps += [
