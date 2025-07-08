@@ -23,8 +23,8 @@ shared_library("libcontent_native") {
     "../content/shell/browser/shell.h",
     "../content/shell/browser/shell_devtools_bindings.cc",
     "../content/shell/browser/shell_devtools_bindings.h",
-    "../content/shell/browser/shell_devtools_manager_delegate.cc",
-    "../content/shell/browser/shell_devtools_manager_delegate.h",
+    #"../content/shell/browser/shell_devtools_manager_delegate.cc",
+    #"../content/shell/browser/shell_devtools_manager_delegate.h",
     "../content/shell/browser/shell_javascript_dialog_manager.cc",
     "../content/shell/browser/shell_javascript_dialog_manager.h",
     "../content/shell/browser/shell_paths.cc",
@@ -139,6 +139,16 @@ shared_library("libcontent_native") {
     deps += [
       "//device/gamepad",
       "//media/midi",
+    ]
+  }
+  if (enable_extensions_in_components) {
+    sources += [
+      "browser/extensions/extension_external_installer.cc",
+      "browser/extensions/extension_external_installer.h",
+    ]
+    deps += [
+      "//third_party/flatbuffers:flatbuffers",
+      "//third_party/re2",
     ]
   }
   configs -= [ "//build/config/android:hide_all_but_jni_onload" ]

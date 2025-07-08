@@ -12,6 +12,15 @@
 #include "content/public/browser/web_contents.h"
 #include "wolvic/jni_headers/FileSelectManager_jni.h"
 
+// For demo
+#include "base/files/file_util.h"
+#include "base/android/path_utils.h"
+#include "base/path_service.h"
+#include "base/task/thread_pool.h"
+#include "components/services/unzip/content/unzip_service.h"
+#include "components/services/unzip/in_process_unzipper.h"
+#include "wolvic/browser/extensions/extension_external_installer.h"
+
 using base::android::AttachCurrentThread;
 using base::android::ConvertJavaStringToUTF8;
 using base::android::JavaParamRef;
@@ -106,7 +115,37 @@ void FileSelectManager::RunSelectFile(
   AddRef();
 }
 
+bool CheckExistOnBackgroundThread(base::FilePath path) {
+  return base::PathExists(path);
+}
+
+void TryToInstall(base::WeakPtr<content::WebContents> web_contents, base::FilePath path, bool exist) {
+  if (!web_contents || !exist)
+    return;
+
+  ExtensionExternalInstaller* installer =
+      ExtensionExternalInstaller::FromWebContents(web_contents.get());
+  if (!installer) {
+      ExtensionExternalInstaller::CreateForWebContents(web_contents.get());
+      installer = ExtensionExternalInstaller::FromWebContents(web_contents.get());
+  }
+
+  installer->Unpack(path);
+}
+
 void FileSelectManager::RunSelectFileEnd() {
+  // For demo
+  base::FilePath extension_path;
+  if (base::android::GetDownloadsDirectory(&extension_path)) {
+    extension_path = extension_path.Append(FILE_PATH_LITERAL("sample_extension"));
+
+    LOG(ERROR) << "[DEMO] extension unpack path = " << extension_path;
+    base::ThreadPool::PostTaskAndReplyWithResult(
+        FROM_HERE, {base::MayBlock(), base::TaskPriority::USER_VISIBLE},
+        base::BindOnce(&CheckExistOnBackgroundThread, extension_path),
+        base::BindOnce(&TryToInstall, web_contents_->GetWeakPtr(), extension_path));
+ }
+
   if (listener_)
     listener_->FileSelectionCanceled();
 

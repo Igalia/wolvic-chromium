@@ -20,7 +20,7 @@
 #include "content/public/common/content_switches.h"
 #include "content/public/common/window_container_type.mojom-shared.h"
 #include "content/shell/browser/shell.h"
-#include "content/shell/browser/shell_devtools_manager_delegate.h"
+// #include "content/shell/browser/shell_devtools_manager_delegate.h"
 #include "media/mojo/mojom/media_drm_storage.mojom.h"
 #include "net/net_buildflags.h"
 #include "services/network/public/mojom/network_context.mojom.h"
@@ -313,11 +313,11 @@ WolvicContentBrowserClient::CreateBrowserMainParts(
   return std::unique_ptr<content::BrowserMainParts>(browser_main_parts_);
 }
 
-std::unique_ptr<content::DevToolsManagerDelegate>
-WolvicContentBrowserClient::CreateDevToolsManagerDelegate() {
-  return std::make_unique<content::ShellDevToolsManagerDelegate>(
-      browser_context());
-}
+// std::unique_ptr<content::DevToolsManagerDelegate>
+// WolvicContentBrowserClient::CreateDevToolsManagerDelegate() {
+//   return std::make_unique<content::ShellDevToolsManagerDelegate>(
+//       browser_context());
+// }
 
 std::unique_ptr<content::LoginDelegate>
 WolvicContentBrowserClient::CreateLoginDelegate(
