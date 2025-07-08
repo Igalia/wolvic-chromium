@@ -22,6 +22,7 @@
 #include "content/shell/browser/shell.h"
 #include "content/shell/browser/shell_devtools_manager_delegate.h"
 #include "media/mojo/mojom/media_drm_storage.mojom.h"
+#include "net/net_buildflags.h"
 #include "services/network/public/mojom/network_context.mojom.h"
 #include "third_party/blink/public/common/associated_interfaces/associated_interface_registry.h"
 #include "wolvic/browser/dialogs/http_auth_manager.h"
@@ -654,6 +655,14 @@ void WolvicContentBrowserClient::GetAdditionalAllowedSchemesForFileSystem(
 #endif
 }
 
+void WolvicContentBrowserClient::GetSchemesBypassingSecureContextCheckAllowlist(
+    std::set<std::string>* schemes) {
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  schemes->insert(extensions::kExtensionScheme);
+#endif
+}
+
+
 content::StoragePartitionConfig
 WolvicContentBrowserClient::GetStoragePartitionConfigForSite(
     content::BrowserContext* browser_context,
@@ -819,6 +828,37 @@ WolvicContentBrowserClient::DetermineAddressSpaceFromURL(const GURL& url) {
   return network::mojom::IPAddressSpace::kUnknown;
 }
 
+bool WolvicContentBrowserClient::IsHandledURL(const GURL& url) {
+  const std::string& scheme = url.scheme();
+  static const char* const kProtocolList[] = {
+    url::kHttpScheme,
+    url::kHttpsScheme,
+#if BUILDFLAG(ENABLE_WEBSOCKETS)
+    url::kWsScheme,
+    url::kWssScheme,
+#endif  // BUILDFLAG(ENABLE_WEBSOCKETS)
+    url::kFileScheme,
+    content::kChromeDevToolsScheme,
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+    extensions::kExtensionScheme,
+#endif
+    content::kChromeUIScheme,
+    content::kChromeUIUntrustedScheme,
+    url::kDataScheme,
+#if BUILDFLAG(IS_ANDROID)
+    url::kContentScheme,
+#endif  // BUILDFLAG(IS_ANDROID)
+    url::kAboutScheme,
+    url::kBlobScheme,
+    url::kFileSystemScheme,
+  };
+  for (const char* supported_protocol : kProtocolList) {
+    if (scheme == supported_protocol)
+      return true;
+  }
+  return false;
+}
+
 bool WolvicContentBrowserClient::CanCommitURL(
     content::RenderProcessHost* process_host,
     const GURL& url) {
@@ -927,6 +967,9 @@ void WolvicContentBrowserClient::
 RegisterNonNetworkServiceWorkerUpdateURLLoaderFactories(
     content::BrowserContext* browser_context,
     NonNetworkURLLoaderFactoryMap* factories) {
+  DCHECK(browser_context);
+  DCHECK(factories);
+
 #if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
   factories->emplace(
       extensions::kExtensionScheme,

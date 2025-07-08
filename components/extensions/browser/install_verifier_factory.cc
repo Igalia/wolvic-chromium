@@ -15,6 +15,7 @@ using content::BrowserContext;
 using extensions::ExtensionPrefs;
 using extensions::ExtensionPrefsFactory;
 using extensions::ExtensionRegistryFactory;
+using extensions::ExtensionsBrowserClient;
 
 namespace components_extensions {
 
@@ -22,7 +23,8 @@ namespace components_extensions {
 InstallVerifier* InstallVerifierFactory::GetForBrowserContext(
     BrowserContext* context) {
   return static_cast<InstallVerifier*>(
-      GetInstance()->GetServiceForBrowserContext(context, true));
+      GetInstance()->GetServiceForBrowserContext(
+          ExtensionsBrowserClient::Get()->GetOriginalContext(context), true));
 }
 
 // static

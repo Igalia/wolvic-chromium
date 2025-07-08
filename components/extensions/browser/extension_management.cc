@@ -31,6 +31,7 @@
 #include "components/pref_registry/pref_registry_syncable.h"
 #include "components/prefs/pref_service.h"
 #include "extensions/browser/extension_prefs.h"
+#include "extensions/browser/extensions_browser_client.h"
 #include "extensions/browser/pref_names.h"
 #include "extensions/common/extension.h"
 #include "extensions/common/extension_features.h"
@@ -49,6 +50,7 @@ using extensions::APIPermissionSet;
 using extensions::Extension;
 using extensions::ExtensionId;
 using extensions::ExtensionIdSet;
+using extensions::ExtensionsBrowserClient;
 using extensions::ManagementPolicy;
 using extensions::Manifest;
 using extensions::ManifestPermissionSet;
@@ -862,7 +864,8 @@ internal::IndividualSettings* ExtensionManagement::AccessByUpdateUrl(
 ExtensionManagement* ExtensionManagementFactory::GetForBrowserContext(
     content::BrowserContext* context) {
   return static_cast<ExtensionManagement*>(
-      GetInstance()->GetServiceForBrowserContext(context, true));
+      GetInstance()->GetServiceForBrowserContext(
+          ExtensionsBrowserClient::Get()->GetOriginalContext(context), true));
 }
 
 // static

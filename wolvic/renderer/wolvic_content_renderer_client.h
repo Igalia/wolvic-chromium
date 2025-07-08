@@ -28,6 +28,20 @@ class WolvicContentRendererClient : public content::ContentRendererClient {
   void RenderThreadStarted() override;
   void ExposeInterfacesToBrowser(mojo::BinderMap* binders) override;
   void RenderFrameCreated(content::RenderFrame* render_frame) override;
+  void PrepareErrorPage(content::RenderFrame* render_frame,
+                        const blink::WebURLError& error,
+                        const std::string& http_method,
+                        content::mojom::AlternativeErrorPageOverrideInfoPtr
+                            alternative_error_page_info,
+                        std::string* error_html) override;
+  void PrepareErrorPageForHttpStatusError(
+      content::RenderFrame* render_frame,
+      const blink::WebURLError& error,
+      const std::string& http_method,
+      int http_status,
+      content::mojom::AlternativeErrorPageOverrideInfoPtr
+          alternative_error_page_info,
+      std::string* error_html) override;
   void WebViewCreated(blink::WebView* web_view,
                       bool was_created_by_renderer,
                       const url::Origin* outermost_origin) override;

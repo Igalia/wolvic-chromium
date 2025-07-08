@@ -34,7 +34,8 @@ ExtensionSystemImpl::Shared*
 ExtensionSystemSharedFactory::GetForBrowserContext(
     content::BrowserContext* context) {
   return static_cast<ExtensionSystemImpl::Shared*>(
-      GetInstance()->GetServiceForBrowserContext(context, true));
+      GetInstance()->GetServiceForBrowserContext(
+          ExtensionsBrowserClient::Get()->GetOriginalContext(context), true));
 }
 
 // static

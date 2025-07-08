@@ -202,7 +202,7 @@ ChromeExtensionsBrowserClient::~ChromeExtensionsBrowserClient() {
 }
 
 void ChromeExtensionsBrowserClient::StartTearDown() {
-  user_script_listener_.StartTearDown();
+  GetUserScriptListener()->StartTearDown();
 }
 
 bool ChromeExtensionsBrowserClient::IsShuttingDown() {
@@ -252,7 +252,7 @@ content::BrowserContext* ChromeExtensionsBrowserClient::GetOffTheRecordContext(
   // TODO(mshin): Support Profile for Embedder
   // return static_cast<Profile*>(context)->GetPrimaryOTRProfile(
   //     /*create_if_needed=*/true);
-  return nullptr;
+  return context->IsOffTheRecord() ? context : context->GetOTRBrowserContext();
 }
 
 content::BrowserContext* ChromeExtensionsBrowserClient::GetOriginalContext(
@@ -261,7 +261,7 @@ content::BrowserContext* ChromeExtensionsBrowserClient::GetOriginalContext(
 
   // TODO(mshin): Support Profile for Embedder
   // return static_cast<Profile*>(context)->GetOriginalProfile();
-  return context;
+  return delegate_->GetOriginalBrowserContext(context);
 }
 
 content::BrowserContext*
@@ -277,7 +277,7 @@ ChromeExtensionsBrowserClient::GetContextRedirectedToOriginal(
 
   // const ProfileSelections selections = builder.Build();
   // return selections.ApplyProfileSelection(Profile::FromBrowserContext(context));
-  return nullptr;
+  return delegate_->GetOriginalBrowserContext(context);
 }
 
 content::BrowserContext* ChromeExtensionsBrowserClient::GetContextOwnInstance(
@@ -292,7 +292,7 @@ content::BrowserContext* ChromeExtensionsBrowserClient::GetContextOwnInstance(
 
   // const ProfileSelections selections = builder.Build();
   // return selections.ApplyProfileSelection(Profile::FromBrowserContext(context));
-  return nullptr;
+  return context;
 }
 
 content::BrowserContext*
@@ -307,7 +307,7 @@ ChromeExtensionsBrowserClient::GetContextForOriginalOnly(
 
   // ProfileSelections selections = builder.Build();
   // return selections.ApplyProfileSelection(Profile::FromBrowserContext(context));
-  return nullptr;
+  return context;
 }
 
 bool ChromeExtensionsBrowserClient::AreExtensionsDisabledForContext(
@@ -377,9 +377,7 @@ bool ChromeExtensionsBrowserClient::AllowCrossRendererResourceLoad(
 
 PrefService* ChromeExtensionsBrowserClient::GetPrefServiceForContext(
     content::BrowserContext* context) {
-  // TODO(mshin): Enable the below code after supporting PrefService
-  // return static_cast<Profile*>(context)->GetPrefs();
-  return nullptr;
+  return delegate_->GetPrefServiceForContext(context);
 }
 
 void ChromeExtensionsBrowserClient::GetEarlyExtensionPrefsObservers(
@@ -685,13 +683,18 @@ ChromeExtensionsBrowserClient::GetSystemNetworkContext() {
   return delegate_->GetNetworkContext();
 }
 
+
 UserScriptListener* ChromeExtensionsBrowserClient::GetUserScriptListener() {
-  return &user_script_listener_;
+  if (!user_script_listener_) {
+    user_script_listener_ = std::make_unique<UserScriptListener>();
+  }
+
+  return user_script_listener_.get();
 }
 
 void ChromeExtensionsBrowserClient::SignalContentScriptsLoaded(
     content::BrowserContext* context) {
-  user_script_listener_.OnScriptsLoaded(context);
+  GetUserScriptListener()->OnScriptsLoaded(context);
 }
 
 std::string ChromeExtensionsBrowserClient::GetUserAgent() const {

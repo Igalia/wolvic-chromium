@@ -37,7 +37,7 @@ class WolvicBrowserProcess
 
   static WolvicBrowserProcess* GetInstance();
  
-  void Init(WolvicBrowserContext* context);
+  void Init(WolvicBrowserContext* context, WolvicBrowserContext* otr_context);
   void StartTearDown();
 
 #if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
@@ -50,12 +50,17 @@ class WolvicBrowserProcess
   bool IsShuttingDown() override;
   std::string GetApplicationLocale() override;
   std::vector<content::BrowserContext*> GetAllBrowserContexts() override;
+  content::BrowserContext*
+  GetOriginalBrowserContext(content::BrowserContext* context) override;
+  PrefService*
+  GetPrefServiceForContext(content::BrowserContext* context) override;
 #else
   ~WolvicBrowserProcess();
 #endif
  private:
   bool tearing_down_ = false;
   raw_ptr<WolvicBrowserContext> context_;
+  raw_ptr<WolvicBrowserContext> otr_context_;
 #if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
   std::unique_ptr<components_extensions::ChromeExtensionsBrowserClient>
       extensions_browser_client_;

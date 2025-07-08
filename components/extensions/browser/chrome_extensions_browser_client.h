@@ -60,6 +60,10 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
     virtual bool IsShuttingDown() = 0;
     virtual std::string GetApplicationLocale() = 0;
     virtual std::vector<content::BrowserContext*> GetAllBrowserContexts() = 0;
+    virtual content::BrowserContext*
+    GetOriginalBrowserContext(content::BrowserContext* context) = 0;
+    virtual PrefService*
+    GetPrefServiceForContext(content::BrowserContext* context) = 0;
   };
  
   ChromeExtensionsBrowserClient(Delegate* delegate);
@@ -297,7 +301,7 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
 
   std::unique_ptr<extensions::KioskDelegate> kiosk_delegate_;
 
-  UserScriptListener user_script_listener_;
+  std::unique_ptr<UserScriptListener> user_script_listener_;
 
   raw_ptr<Delegate> delegate_;
 };

@@ -22,7 +22,8 @@ namespace components_extensions {
 InstallTracker* InstallTrackerFactory::GetForBrowserContext(
     content::BrowserContext* context) {
   return static_cast<InstallTracker*>(
-      GetInstance()->GetServiceForBrowserContext(context, true));
+      GetInstance()->GetServiceForBrowserContext(
+          ExtensionsBrowserClient::Get()->GetOriginalContext(context), true));
 }
 
 InstallTrackerFactory* InstallTrackerFactory::GetInstance() {

@@ -11,6 +11,7 @@
 
 using content::BrowserContext;
 using extensions::ExtensionRegistryFactory;
+using extensions::ExtensionsBrowserClient;
 
 namespace components_extensions {
 
@@ -18,7 +19,8 @@ namespace components_extensions {
 ErrorConsole* ErrorConsoleFactory::GetForBrowserContext(
     BrowserContext* context) {
   return static_cast<ErrorConsole*>(
-      GetInstance()->GetServiceForBrowserContext(context, true));
+      GetInstance()->GetServiceForBrowserContext(
+          ExtensionsBrowserClient::Get()->GetOriginalContext(context), true));
 }
 
 // static

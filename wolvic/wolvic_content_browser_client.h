@@ -123,7 +123,8 @@ class WolvicContentBrowserClient : public content::ContentBrowserClient {
   void BrowserURLHandlerCreated(content::BrowserURLHandler* handler) override;
   void GetAdditionalAllowedSchemesForFileSystem(
     std::vector<std::string>* additional_schemes) override;
-
+  void GetSchemesBypassingSecureContextCheckAllowlist(
+      std::set<std::string>* schemes) override;
   content::StoragePartitionConfig GetStoragePartitionConfigForSite(
       content::BrowserContext* browser_context,
       const GURL& site) override;
@@ -156,6 +157,7 @@ class WolvicContentBrowserClient : public content::ContentBrowserClient {
       std::vector<std::string>* additional_schemes) override;
   network::mojom::IPAddressSpace DetermineAddressSpaceFromURL(
       const GURL& url) override;
+  bool IsHandledURL(const GURL& url) override;
   bool CanCommitURL(content::RenderProcessHost* process_host,
                     const GURL& url) override;
   bool IsSuitableHost(content::RenderProcessHost* process_host,

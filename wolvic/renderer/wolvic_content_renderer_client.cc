@@ -19,9 +19,12 @@
 #include "components/extensions/common/buildflags.h"
 #if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
 #include "base/command_line.h"
+#include "base/process/current_process.h"
+#include "components/extensions/common/chrome_resource_request_blocked_reason.h"
 #include "components/extensions/common/initialize_extensions_client.h"
 #include "components/extensions/renderer/api/chrome_extensions_renderer_api_provider.h"
 #include "components/extensions/renderer/chrome_extensions_renderer_client.h"
+#include "content/public/renderer/render_thread.h"
 #include "extensions/common/constants.h"
 #include "extensions/common/context_data.h"
 #include "extensions/common/extension_urls.h"
@@ -36,6 +39,7 @@
 #include "services/service_manager/public/cpp/binder_registry.h"
 #include "third_party/blink/public/common/security/protocol_handler_security_level.h"
 #include "third_party/blink/public/mojom/css/preferred_color_scheme.mojom.h"
+#include "third_party/blink/public/platform/scheduler/web_renderer_process_type.h"
 #include "third_party/blink/public/platform/web_content_security_policy_struct.h"
 #include "third_party/blink/public/platform/web_runtime_features.h"
 #include "third_party/blink/public/platform/web_string.h"
@@ -63,6 +67,11 @@ bool IsStandaloneContentExtensionProcess() {
 #endif
 }
 
+bool IsExtensionExtendedErrorCode(int extended_error_code) {
+  return extended_error_code ==
+         static_cast<int>(ChromeResourceRequestBlockedReason::kExtension);
+}
+
 }
 
 WolvicContentRendererClient::WolvicContentRendererClient() {
@@ -85,6 +94,21 @@ WolvicContentRendererClient::GetSupportedKeySystems(
 void WolvicContentRendererClient::RenderThreadStarted() {
   visited_link_reader_ = std::make_unique<visitedlink::VisitedLinkReader>();
 #if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  content::RenderThread* thread = content::RenderThread::Get();
+  const bool is_extension = IsStandaloneContentExtensionProcess();
+
+  thread->SetRendererProcessType(
+      is_extension
+          ? blink::scheduler::WebRendererProcessType::kExtensionRenderer
+          : blink::scheduler::WebRendererProcessType::kRenderer);
+
+  if (is_extension) {
+    // The process name was set to "Renderer" in RendererMain(). Update it to
+    // "Extension Renderer" to highlight that it's hosting an extension.
+    base::CurrentProcess::GetInstance().SetProcessType(
+        base::CurrentProcessType::PROCESS_RENDERER_EXTENSION);
+  }
+
   ChromeExtensionsRendererClient* chrome_extensions_renderer_client =
       ChromeExtensionsRendererClient::GetInstance();
   chrome_extensions_renderer_client->AddAPIProvider(
@@ -95,6 +119,8 @@ void WolvicContentRendererClient::RenderThreadStarted() {
   WebSecurityPolicy::RegisterURLSchemeAsExtension(
       WebString::FromASCII(extensions::kExtensionScheme));
   WebSecurityPolicy::RegisterURLSchemeAsCodeCacheWithHashing(
+      WebString::FromASCII(extensions::kExtensionScheme));
+  WebSecurityPolicy::AddSchemeToSecureContextSafelist(
       WebString::FromASCII(extensions::kExtensionScheme));
 #endif
 
@@ -158,6 +184,45 @@ void WolvicContentRendererClient::RenderFrameCreated(
 #endif
 }
 
+void WolvicContentRendererClient::PrepareErrorPage(
+    content::RenderFrame* render_frame,
+    const blink::WebURLError& error,
+    const std::string& http_method,
+    content::mojom::AlternativeErrorPageOverrideInfoPtr
+        alternative_error_page_info,
+    std::string* error_html) {
+  if (error_html && error_html->empty()) {
+    bool is_blocked_by_extension = false;
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+    is_blocked_by_extension = IsExtensionExtendedErrorCode(error.extended_reason());
+#endif
+
+    *error_html =
+        "<head><title>Error</title></head><body>" +
+        (is_blocked_by_extension ?
+            std::string("This page has been blocked by an extension.") :
+            std::string("Could not load the requested resource.")) +
+        "<br/>Error code: " + base::NumberToString(error.reason()) +
+        (!is_blocked_by_extension && error.reason() < 0 ?
+            " (" + net::ErrorToString(error.reason()) + ")" : "") +
+        "</body>";
+  }
+}
+
+void WolvicContentRendererClient::PrepareErrorPageForHttpStatusError(
+    content::RenderFrame* render_frame,
+    const blink::WebURLError& error,
+    const std::string& http_method,
+    int http_status,
+    content::mojom::AlternativeErrorPageOverrideInfoPtr
+        alternative_error_page_info,
+    std::string* error_html) {
+  if (error_html) {
+    *error_html =
+        "<head><title>Error</title></head><body>Server returned HTTP status " +
+        base::NumberToString(http_status) + "</body>";
+  }
+}
 
 void WolvicContentRendererClient::WebViewCreated(
     blink::WebView* web_view,

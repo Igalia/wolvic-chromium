@@ -27,11 +27,13 @@ WolvicBrowserProcess::WolvicBrowserProcess() {
 
 WolvicBrowserProcess::~WolvicBrowserProcess() {
   context_ = nullptr;
+  otr_context_ = nullptr;
   g_wolvic_browser_process = nullptr;
 }
 
-void WolvicBrowserProcess::Init(WolvicBrowserContext* context) {
+void WolvicBrowserProcess::Init(WolvicBrowserContext* context, WolvicBrowserContext* otr_context) {
   context_ = context;
+  otr_context_ = otr_context;
 #if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
   // TODO(mshin): Enable the below code after migrating AppWindowClient
   // components_extensions::AppWindowClient::Set(ChromeAppWindowClient::GetInstance());
@@ -75,10 +77,24 @@ std::string WolvicBrowserProcess::GetApplicationLocale() {
 
 std::vector<content::BrowserContext*> WolvicBrowserProcess::GetAllBrowserContexts() {
   std::vector<content::BrowserContext*> result;
-  result.push_back(context_.get());
+  if (context_) {
+    result.push_back(context_.get());
+  }
+  if (otr_context_) {
+    result.push_back(otr_context_.get());
+  }
   return result;
 }
 
+content::BrowserContext*
+WolvicBrowserProcess::GetOriginalBrowserContext(content::BrowserContext* context) {
+  return context_ ? context_.get() : context;
+}
+
+PrefService*
+WolvicBrowserProcess::GetPrefServiceForContext(content::BrowserContext* context) {
+  return static_cast<WolvicBrowserContext*>(context)->GetPrefService();
+}
 #endif
 
 } // namespace wolvic

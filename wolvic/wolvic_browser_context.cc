@@ -60,6 +60,15 @@
 #include "wolvic/jni_headers/WolvicBrowserContext_jni.h"
 #include "wolvic/wolvic_permission_manager.h"
 
+#include "components/extensions/common/buildflags.h"
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+#include "extensions/browser/api/audio/audio_api.h"
+#include "extensions/browser/api/runtime/runtime_api.h"
+#include "extensions/browser/extension_prefs.h"
+#include "extensions/browser/permissions_manager.h"
+#include "extensions/browser/pref_names.h"
+#endif  // BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+
 namespace wolvic {
 
 WolvicBrowserContext::WolvicBrowserContext(const base::FilePath& path,
@@ -76,9 +85,6 @@ WolvicBrowserContext::WolvicBrowserContext(const base::FilePath& path,
   auto proto_db_provider = std::make_unique<leveldb_proto::ProtoDatabaseProvider>(
       path, /*is_in_memory=*/false);
   GetDefaultStoragePartition()->SetProtoDatabaseProvider(std::move(proto_db_provider));
-
-  BrowserContextDependencyManager::GetInstance()->CreateBrowserContextServices(
-      this);
 
   JNIEnv* env = base::android::AttachCurrentThread();
   base::android::ScopedJavaLocalRef<jobject> jobj =
@@ -116,6 +122,9 @@ void WolvicBrowserContext::FinishInitWhileIOAllowed() {
   key_ = std::make_unique<SimpleFactoryKey>(path_, off_the_record_);
   SimpleKeyMap::GetInstance()->Associate(this, key_.get());
   CreateUserPrefService();
+
+  BrowserContextDependencyManager::GetInstance()->CreateBrowserContextServices(
+      this);
 
   visitedlink_writer_ =
       std::make_unique<visitedlink::VisitedLinkWriter>(this, this, true);
@@ -174,8 +183,11 @@ void WolvicBrowserContext::CreateUserPrefService() {
 
   PrefNameSet persistent_prefs;
   RegisterPrefs(pref_registry.get(), &persistent_prefs);
-  PrefServiceFactory pref_service_factory;
 
+  BrowserContextDependencyManager::GetInstance()
+    ->RegisterProfilePrefsForServices(pref_registry.get());
+
+  PrefServiceFactory pref_service_factory;
   pref_service_factory.set_user_prefs(base::MakeRefCounted<SegregatedPrefStore>(
       base::MakeRefCounted<InMemoryPrefStore>(),
       base::MakeRefCounted<JsonPrefStore>(GetPrefStorePath()),
@@ -195,6 +207,22 @@ void WolvicBrowserContext::RegisterPrefs(
   password_manager::PasswordManager::RegisterProfilePrefs(registry);
   signin::IdentityManager::RegisterProfilePrefs(registry);
   safe_browsing::RegisterProfilePrefs(registry);
+
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  // ExtensionWebUI::RegisterProfilePrefs(registry);
+  // RegisterAnimationPolicyPrefs(registry);
+  // components_extensions::ActivityLog::RegisterProfilePrefs(registry);
+  extensions::AudioAPI::RegisterUserPrefs(registry);
+  extensions::ExtensionPrefs::RegisterProfilePrefs(registry);
+  // extensions::ExtensionsUI::RegisterProfilePrefs(registry);
+  extensions::PermissionsManager::RegisterProfilePrefs(registry);
+  extensions::RuntimeAPI::RegisterPrefs(registry);
+  // TODO(devlin): This would be more inline with the other calls here if it
+  // were nested in either a class or separate namespace with a simple
+  // Register[Profile]Prefs() name.
+  // extensions::RegisterSettingsOverriddenUiPrefs(registry);
+  // update_client::RegisterProfilePrefs(registry);
+#endif  // BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
 }
 
 std::unique_ptr<content::ZoomLevelDelegate>

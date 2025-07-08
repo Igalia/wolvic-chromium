@@ -92,7 +92,7 @@ bool HasIsolatedStorage(const ExtensionId& extension_id,
       ExtensionRegistry::Get(context)->GetInstalledExtension(extension_id);
   // Extension is null when the extension is cleaned up after it's unloaded and
   // won't be present in the ExtensionRegistry.
-  return HasIsolatedStorage(*extension, context);
+  return extension ? HasIsolatedStorage(*extension, context) : false;
 }
 
 bool HasIsolatedStorage(const Extension& extension,
