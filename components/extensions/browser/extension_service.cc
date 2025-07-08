@@ -36,6 +36,7 @@
 #include "base/time/time.h"
 #include "base/trace_event/trace_event.h"
 #include "components/crx_file/id_util.h"
+#include "components/extensions/browser/component_loader.h"
 #include "components/extensions/browser/crx_installer.h"
 #include "components/extensions/browser/extension_action_storage_manager.h"
 #include "components/extensions/browser/extension_assets_manager.h"
@@ -464,8 +465,7 @@ ExtensionService::ExtensionService(
     //                         context));
   }
 
-  // TODO(mshin): Enable the below code after migrating ComponentLoader
-  // component_loader_ = std::make_unique<ComponentLoader>(system_, context);
+  component_loader_ = std::make_unique<ComponentLoader>(system_, context);
 
   // TODO(mshin): Enable the below code after migrating ExternalProvider
   // if (extensions_enabled_) {
@@ -536,8 +536,7 @@ void ExtensionService::Init() {
   DCHECK(!system_->is_ready());  // Can't redo init.
   DCHECK_EQ(registry_->enabled_extensions().size(), 0u);
 
-  // TODO(mshin): Enable the below code after migrating ComponentLoader
-  // component_loader_->LoadAll();
+  component_loader_->LoadAll();
   bool load_saved_extensions = true;
   bool load_command_line_extensions = extensions_enabled_;
   if (load_saved_extensions)
@@ -757,11 +756,10 @@ void ExtensionService::LoadExtensionForReload(
 
   // If we're reloading a component extension, use the component extension
   // loader's reloader.
-  // TODO(mshin): Enable the below code after migrating ComponentLoader
-  // if (component_loader_->Exists(extension_id)) {
-  //   component_loader_->Reload(extension_id);
-  //   return;
-  // }
+  if (component_loader_->Exists(extension_id)) {
+    component_loader_->Reload(extension_id);
+    return;
+  }
 
   // Check the installed extensions to see if what we're reloading was already
   // installed.
@@ -1485,8 +1483,7 @@ void ExtensionService::ReloadExtensionsForTest() {
   // Calling UnloadAllExtensionsForTest here triggers a false-positive presubmit
   // warning about calling test code in production.
   UnloadAllExtensionsInternal();
-  // TODO(mshin): Enable the below code after migrating ComponentLoader
-  // component_loader_->LoadAll();
+  component_loader_->LoadAll();
   InstalledLoader(this).LoadAllExtensions();
   OnInstalledExtensionsLoaded();
   // Don't call SetReadyAndNotifyListeners() since tests call this multiple

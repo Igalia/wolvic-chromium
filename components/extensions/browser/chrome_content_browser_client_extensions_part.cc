@@ -18,6 +18,7 @@
 #include "base/functional/bind.h"
 #include "base/metrics/histogram_macros.h"
 #include "base/strings/string_piece.h"
+#include "components/extensions/browser/component_loader.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/extension_webkit_preferences.h"
 #include "components/extensions/common/extension_constants.h"
@@ -695,14 +696,12 @@ bool ChromeContentBrowserClientExtensionsPart::IsBuiltinComponent(
     return false;
   }
 
-  // const auto& extension_id = origin.host();
+  const auto& extension_id = origin.host();
   // Check if the component is a loaded component extension.
-  // TODO(mshin): Enable the below code after migrating ComponentLoader
-  // return ExtensionSystem::Get(browser_context)
-  //     ->extension_service()
-  //     ->component_loader()
-  //     ->Exists(extension_id);
-  return false;
+  return ExtensionSystem::Get(browser_context)
+      ->extension_service()
+      ->component_loader()
+      ->Exists(extension_id);
 }
 
 // static

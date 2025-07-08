@@ -439,8 +439,7 @@ class ExtensionService : public ExtensionServiceInterface,
   // TODO(mshin): Enable the below code after migrating ExtensionUpdater
   // ExtensionUpdater* updater() { return updater_.get(); }
 
-  // TODO(mshin): Enable the below code after migrating ComponentLoader
-  // ComponentLoader* component_loader() { return component_loader_.get(); }
+  ComponentLoader* component_loader() { return component_loader_.get(); }
 
   bool browser_terminating() const { return browser_terminating_; }
 
@@ -719,8 +718,7 @@ class ExtensionService : public ExtensionServiceInterface,
       host_observation_{this};
 
   // Keeps track of loading and unloading component extensions.
-  // TODO(mshin): Enable the below code after migrating ComponentLoader
-  // std::unique_ptr<ComponentLoader> component_loader_;
+  std::unique_ptr<ComponentLoader> component_loader_;
 
   // A collection of external extension providers.  Each provider reads
   // a source of external extension information.  Examples include the

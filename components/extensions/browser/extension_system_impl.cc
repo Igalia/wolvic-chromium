@@ -17,6 +17,7 @@
 #include "base/time/time.h"
 #include "base/trace_event/trace_event.h"
 #include "components/extensions/browser/chrome_content_verifier_delegate.h"
+#include "components/extensions/browser/component_loader.h"
 #include "components/extensions/browser/crx_installer.h"
 #include "components/extensions/browser/extension_management.h"
 #include "components/extensions/browser/extension_service.h"
@@ -170,10 +171,9 @@ void ExtensionSystemImpl::Shared::Init(bool extensions_enabled) {
   // extensions.
   quota_service_ = std::make_unique<QuotaService>();
 
-  // TODO(mshin): Enable the below code after migrating ComponentLoader
-  // bool skip_session_extensions = false;
-  // extension_service_->component_loader()->AddDefaultComponentExtensions(
-  //     skip_session_extensions);
+  bool skip_session_extensions = false;
+  extension_service_->component_loader()->AddDefaultComponentExtensions(
+      skip_session_extensions);
 
   // app_sorting_ = std::make_unique<ChromeAppSorting>(browser_context_);
 
