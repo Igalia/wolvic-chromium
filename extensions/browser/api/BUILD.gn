@@ -82,6 +82,11 @@ group("api_implementations") {
       "//extensions/browser/api/media_perception_private",
     ]
   }
+  if (enable_extensions_in_components) {
+    public_deps -= [
+      "//extensions/browser/api/app_window",
+    ]
+  }
 }
 
 # A helper to instantiate all keyed service factories needed for any extension

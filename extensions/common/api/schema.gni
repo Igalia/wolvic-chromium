@@ -93,7 +93,6 @@ if (enable_extensions_in_components) {
   extensions_api_schema_files_ -= [
     "app_window.idl",
     "hid.idl",
-    "system_cpu.idl",
   ]
 }
 

@@ -17,9 +17,12 @@
 #include "base/strings/stringprintf.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/values.h"
+#include "components/extensions/common/buildflags.h"
 #include "components/keyed_service/content/browser_context_dependency_manager.h"
 #include "content/public/browser/browser_thread.h"
+#if !BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
 #include "extensions/browser/api/hid/hid_device_manager.h"
+#endif
 #include "extensions/browser/api/usb/usb_device_manager.h"
 #include "extensions/browser/extension_host.h"
 #include "extensions/browser/extension_prefs.h"
@@ -569,12 +572,14 @@ void DevicePermissionsManager::AllowHidDevice(
     device_permissions->entries_.insert(device_entry);
     device_permissions->ephemeral_hid_devices_[device.guid] = device_entry;
 
+#if !BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
     // Make sure the HidDeviceManager is active. HidDeviceManager is
     // responsible for removing the permission entry for an ephemeral hid
     // device. Only do this when an ephemeral device has been added.
     HidDeviceManager* device_manager = HidDeviceManager::Get(context_);
     DCHECK(device_manager);
     device_manager->LazyInitialize();
+#endif
   }
 }
 
