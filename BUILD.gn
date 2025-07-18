@@ -11,6 +11,7 @@
 import("//build/config/cast.gni")
 import("//build/config/chromeos/ui_mode.gni")
 import("//build/config/compiler/compiler.gni")
+import("//build/config/compontents_extensions_build.gni")
 import("//build/config/cronet/config.gni")
 import("//build/config/dcheck_always_on.gni")
 import("//build/config/features.gni")
@@ -284,6 +285,12 @@ group("gn_all") {
         "//extensions:extensions_unittests",
         "//extensions/browser/api/declarative_net_request/filter_list_converter",
         "//extensions/shell:app_shell_unittests",
+      ]
+    }
+
+    if (enable_extensions_in_components) {
+      deps += [
+        "//components/extensions/test:extensions_in_components_unittests",
       ]
     }
 

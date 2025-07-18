@@ -319,11 +319,14 @@ inline constexpr char kChromeUIExtensionsInternalsURL[] = "chrome://extensions-i
 inline constexpr char kChromeUIExtensionsURL[] = "chrome://extensions/";
 inline constexpr char kChromeUIFaviconHost[] = "favicon";
 inline constexpr char kChromeUIFaviconURL[] = "chrome://favicon/";
+inline constexpr char kChromeUINewTabURL[] = "chrome://newtab/";
+inline constexpr char kChromeUINewTabPageURL[] = "chrome://new-tab-page/";
 inline constexpr char kChromeUIThemeHost[] = "theme";
 inline constexpr char kChromeUIThemeURL[] = "chrome://theme/";
 inline constexpr char kChromeUIWebUITestHost[] = "webui-test";
 inline constexpr char kChromeUIUntrustedWebUITestURL[] = "chrome-untrusted://webui-test/";
 inline constexpr char kChromeSearchScheme[] = "chrome-search";
+
 }
 
 namespace switches {

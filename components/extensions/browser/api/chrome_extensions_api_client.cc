@@ -15,6 +15,7 @@
 #include "build/build_config.h"
 #include "components/extensions/browser/extension_action_runner.h"
 #include "components/extensions/browser/extension_util.h"
+#include "components/extensions/common/extension_constants.h"
 #include "components/signin/core/browser/signin_header_helper.h"
 #include "components/supervised_user/core/common/buildflags.h"
 #include "components/value_store/value_store_factory.h"
@@ -65,6 +66,7 @@ using extensions::SupervisedUserExtensionsDelegate;
 using extensions::ValueStoreCache;
 using extensions::VirtualKeyboardDelegate;
 using extensions::WebRequestInfo;
+using extensions::WebRequestResourceType;
 using extensions::WebViewGuest;
 using extensions::WebViewGuestDelegate;
 using extensions::ContentRulesRegistry;
@@ -108,8 +110,12 @@ void ChromeExtensionsAPIClient::AttachWebContentsHelpers(
 bool ChromeExtensionsAPIClient::ShouldHideResponseHeader(
     const GURL& url,
     const std::string& header_name) const {
-  // Add the condition if want to hide a response header
-  return false;
+  // Gaia may send a OAUth2 authorization code in the Dice response header,
+  // which could allow an extension to generate a refresh token for the account.
+  return (
+      (url.host_piece() == GaiaUrls::GetInstance()->gaia_url().host_piece()) &&
+      (base::CompareCaseInsensitiveASCII(header_name,
+                                         signin::kDiceResponseHeader) == 0));
 }
 
 bool ChromeExtensionsAPIClient::ShouldHideBrowserNetworkRequest(
@@ -121,17 +127,39 @@ bool ChromeExtensionsAPIClient::ShouldHideBrowserNetworkRequest(
   // But we do still need to protect some sensitive sub-frame navigation
   // requests.
   // Exclude main frame navigation requests.
-  // TODO(mshin): Enable the below code after supporting DevTools
-  // bool is_browser_request =
-  //     request.render_process_id == -1 &&
-  //     request.web_request_type != extensions::WebRequestResourceType::MAIN_FRAME;
+  bool is_browser_request =
+      request.render_process_id == -1 &&
+      request.web_request_type != WebRequestResourceType::MAIN_FRAME;
 
   // Hide requests made by the Devtools frontend.
-  // bool is_sensitive_request =
-  //     is_browser_request && DevToolsUI::IsFrontendResourceURL(request.url);
+  // TODO(mshin): Enable the below code after supporting Devtools
+  bool is_sensitive_request =
+      is_browser_request && false; // DevToolsUI::IsFrontendResourceURL(request.url);
 
-  // return is_sensitive_request;
-  return false;
+  // Hide requests made by the browser on behalf of the NTP.
+  is_sensitive_request |=
+      (is_browser_request &&
+       request.initiator ==
+           url::Origin::Create(GURL(kChromeUINewTabURL)));
+
+  // Hide requests made by the browser on behalf of the 1P WebUI NTP.
+  is_sensitive_request |=
+      (is_browser_request &&
+       request.initiator ==
+           url::Origin::Create(GURL(kChromeUINewTabPageURL)));
+
+  // Hide requests made by the NTP Instant renderer.
+  // TODO(mshin): Enable the below code after supporting InstantService
+  // auto* instant_service =
+  //     context
+  //         ? InstantServiceFactory::GetForProfile(static_cast<Profile*>(context))
+  //         : nullptr;
+  // if (instant_service) {
+  //   is_sensitive_request |=
+  //       instant_service->IsInstantProcess(request.render_process_id);
+  // }
+
+  return is_sensitive_request;
 }
 
 void ChromeExtensionsAPIClient::NotifyWebRequestWithheld(

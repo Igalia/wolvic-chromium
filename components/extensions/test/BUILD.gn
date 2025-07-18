@@ -1,0 +1,50 @@
+import("//build/config/features.gni")
+import("//build/config/compontents_extensions_build.gni")
+import("//build/config/ui.gni")
+import("//testing/test.gni")
+
+assert(enable_extensions_in_components)
+
+test("extensions_in_components_unittests") {
+  use_xvfb = use_xvfb_in_this_config
+  testonly = true
+
+  sources = [
+    "run_all_unittests.cc",
+    "test_extension_environment.cc",
+    "test_extension_environment.h",
+  ]
+
+  data = [
+    "//chrome/test/data/extensions/",
+    "$root_out_dir/content_shell.pak",
+    "$root_out_dir/extensions_shell_and_test.pak",
+  ]
+
+  deps = [
+    "//content/public/browser",
+    "//content/public/common",
+    "//content/test:test_support",
+    "//components/embedder_support:browser_util",
+    "//components/extensions/browser:unit_tests",
+    "//extensions/common",
+    "//extensions:shell_and_test_pak",
+    "//gin:v8_snapshot_assets",
+    "//testing/gtest",
+    "//ui/base",
+    "//ui/resources:ui_test_pak",
+  ]
+
+  if (is_android) {
+    deps += [
+      "//base:base_unittest_support_java",
+      "//content/public/android:content_java",
+      "//ui/android:ui_java",
+    ]
+  }
+
+  public_deps = [
+    "//components/extensions/browser/api",
+    "//components/extensions/browser/api:api_registration",
+  ]
+}

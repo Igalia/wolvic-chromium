@@ -31,6 +31,8 @@
 namespace components_extensions {
 class ExtensionService;
 }
+
+using components_extensions::ExtensionService;
 #endif
 
 namespace base {
@@ -50,7 +52,9 @@ namespace extensions {
 class AppSorting;
 class ContentVerifier;
 class Extension;
+#if !BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
 class ExtensionService;
+#endif
 class ExtensionSet;
 class ManagementPolicy;
 class QuotaService;

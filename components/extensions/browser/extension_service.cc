@@ -492,9 +492,11 @@ ExtensionService::ExtensionService(
   //     context->GetPrefs()->GetBoolean(prefs::kExtensionsUIDeveloperMode));
 }
 
-// PendingExtensionManager* ExtensionService::pending_extension_manager() {
-//   return &pending_extension_manager_;
-// }
+PendingExtensionManager* ExtensionService::pending_extension_manager() {
+  // TODO(mshin): Enable the below code after migrating PendingExtensionManager
+  // return &pending_extension_manager_;
+  return nullptr;
+}
 
 CorruptedExtensionReinstaller*
 ExtensionService::corrupted_extension_reinstaller() {

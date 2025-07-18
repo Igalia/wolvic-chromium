@@ -72,6 +72,7 @@ class ExtensionActionStorageManager;
 class ExtensionErrorController;
 class ExtensionUpdater;
 class ExternalInstallManager;
+class PendingExtensionManager;
 class SharedModuleService;
 
 // This is an interface class to encapsulate the dependencies that
@@ -81,8 +82,7 @@ class ExtensionServiceInterface {
   virtual ~ExtensionServiceInterface() = default;
 
   // Gets the object managing the set of pending extensions.
-  // TODO(mshin): Enable the below code after migrating CWSInfoService
-  // virtual PendingExtensionManager* pending_extension_manager() = 0;
+  virtual PendingExtensionManager* pending_extension_manager() = 0;
 
   // Gets the object managing reinstalls of the corrupted extensions.
   virtual CorruptedExtensionReinstaller* corrupted_extension_reinstaller() = 0;
@@ -191,9 +191,7 @@ class ExtensionService : public ExtensionServiceInterface,
   ~ExtensionService() override;
 
   // ExtensionServiceInterface implementation.
-  //
-  // TODO(mshin): Enable the below code after migrating PendingExtensionManager
-  // PendingExtensionManager* pending_extension_manager() override;
+  PendingExtensionManager* pending_extension_manager() override;
   CorruptedExtensionReinstaller* corrupted_extension_reinstaller() override;
   scoped_refptr<CrxInstaller> CreateUpdateInstaller(
       const extensions::CRXFileInfo& file,
@@ -489,10 +487,6 @@ class ExtensionService : public ExtensionServiceInterface,
   }
 
   void UninstallMigratedExtensionsForTest() { UninstallMigratedExtensions(); }
-
-  void ProfileMarkedForPermanentDeletionForTest() {
-    OnProfileMarkedForPermanentDeletion(browser_context_);
-  }
 #endif
 
   void set_browser_terminating_for_test(bool value) {
