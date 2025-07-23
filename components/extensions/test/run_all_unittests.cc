@@ -12,6 +12,7 @@
 #include "build/buildflag.h"
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_client.h"
+#include "content/public/common/content_paths.h"
 #include "content/public/test/content_test_suite_base.h"
 #include "content/public/test/unittest_test_suite.h"
 #include "components/extensions/browser/chrome_extensions_browser_client.h"
@@ -23,6 +24,8 @@
 #include "extensions/common/extension_paths.h"
 #include "extensions/test/test_extensions_client.h"
 #include "ui/base/resource/resource_bundle.h"
+#include "ui/base/resource/resource_scale_factor.h"
+#include "ui/base/ui_base_paths.h"
 #include "ui/gl/test/gl_surface_test_support.h"
 #include "url/url_util.h"
 
@@ -72,7 +75,6 @@ class ExtensionsUnitTestSuiteInitializer
   }
 
   void OnTestStart(const testing::TestInfo& test_info) override {
-    // TestingBrowserProcess::CreateInstance();
     extension_event_router_forwarder_ =
         base::MakeRefCounted<EventRouterForwarder>();
 
@@ -146,26 +148,27 @@ void ExtensionsTestSuite::Initialize() {
   }
   RegisterInProcessThreads();
 
+  content::RegisterPathProvider();
+  ui::RegisterPathProvider();
   extensions::RegisterPathProvider();
 
-  base::FilePath extensions_shell_and_test_pak_path;
-#if BUILDFLAG(IS_ANDROID)
-  // on Android all pak files are inside the paks folder.
-  base::PathService::Get(base::DIR_ANDROID_APP_DATA,
-                               &extensions_shell_and_test_pak_path);
-  extensions_shell_and_test_pak_path =
-    extensions_shell_and_test_pak_path.Append(FILE_PATH_LITERAL("paks"));
-#else
-  base::PathService::Get(base::DIR_ASSETS, &extensions_shell_and_test_pak_path);
-#endif  // BUILDFLAG(IS_ANDROID)
+  base::FilePath ui_test_pak_path;
+  ASSERT_TRUE(base::PathService::Get(ui::UI_TEST_PAK, &ui_test_pak_path));
+  ui::ResourceBundle::InitSharedInstanceWithPakPath(ui_test_pak_path);
 
-  ui::ResourceBundle::InitSharedInstanceWithPakPath(
-      extensions_shell_and_test_pak_path.AppendASCII(
-          "extensions_shell_and_test.pak"));
+  base::FilePath pak_path;
+#if BUILDFLAG(IS_ANDROID)
+  base::PathService::Get(ui::DIR_RESOURCE_PAKS_ANDROID, &pak_path);
+#else
+  base::PathService::Get(base::DIR_ASSETS, &pak_path);
+#endif
+
+  ui::ResourceBundle::GetSharedInstance().AddDataPackFromPath(
+      pak_path.AppendASCII("extensions_tests_resources.pak"),
+      ui::kScaleFactorNone);
 }
 
 void ExtensionsTestSuite::Shutdown() {
-  extensions::ExtensionsClient::Set(nullptr);
   ui::ResourceBundle::CleanupSharedInstance();
   content::ContentTestSuiteBase::Shutdown();
 }

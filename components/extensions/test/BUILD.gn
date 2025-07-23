@@ -2,8 +2,44 @@ import("//build/config/features.gni")
 import("//build/config/compontents_extensions_build.gni")
 import("//build/config/ui.gni")
 import("//testing/test.gni")
+import("//tools/grit/repack.gni")
 
 assert(enable_extensions_in_components)
+
+repack("extensions_tests_pak") {
+  testonly = true
+  sources = [
+    "$root_gen_dir/components/components_resources.pak",
+    "$root_gen_dir/components/strings/components_strings_en-US.pak",
+    "$root_gen_dir/content/content_resources.pak",
+    "$root_gen_dir/extensions/extensions_browser_resources_100_percent.pak",
+    "$root_gen_dir/extensions/extensions_renderer_resources.pak",
+    "$root_gen_dir/extensions/extensions_resources.pak",
+    "$root_gen_dir/extensions/strings/extensions_strings_en-US.pak",
+    "$root_gen_dir/net/net_resources.pak",
+    "$root_gen_dir/third_party/blink/public/resources/blink_resources.pak",
+    "$root_gen_dir/third_party/blink/public/resources/blink_scaled_resources_100_percent.pak",
+    "$root_gen_dir/third_party/blink/public/strings/blink_strings_en-US.pak",
+  ]
+
+  output = "$root_out_dir/extensions_tests_resources.pak"
+  deps = [
+    "//components/resources",
+    "//components/strings",
+    "//content:content_resources",
+    "//content/browser/resources:resources",
+    "//extensions:extensions_browser_resources_grit",
+    "//extensions:extensions_renderer_resources_grit",
+    "//extensions:extensions_resources_grd_grit",
+    "//extensions/strings",
+    "//extensions/strings:strings_grit",
+    "//mojo/public/js:resources",
+    "//net:net_resources",
+    "//third_party/blink/public:resources",
+    "//third_party/blink/public:scaled_resources_100_percent",
+    "//third_party/blink/public/strings",
+  ]
+}
 
 test("extensions_in_components_unittests") {
   use_xvfb = use_xvfb_in_this_config
@@ -16,9 +52,9 @@ test("extensions_in_components_unittests") {
   ]
 
   data = [
+    "$root_out_dir/extensions_tests_resources.pak",
+    "$root_out_dir/ui_test.pak",
     "//chrome/test/data/extensions/",
-    "$root_out_dir/content_shell.pak",
-    "$root_out_dir/extensions_shell_and_test.pak",
   ]
 
   deps = [
@@ -46,5 +82,6 @@ test("extensions_in_components_unittests") {
   public_deps = [
     "//components/extensions/browser/api",
     "//components/extensions/browser/api:api_registration",
+    "//components/strings:components_strings",
   ]
 }

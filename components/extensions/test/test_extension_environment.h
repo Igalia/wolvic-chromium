@@ -12,13 +12,12 @@
 #include "base/memory/scoped_refptr.h"
 #include "build/build_config.h"
 #include "content/public/test/test_browser_context.h"
+#include "components/prefs/pref_service.h"
 #include "extensions/common/extension.h"
 
 #if BUILDFLAG(IS_WIN)
 #include "ui/base/win/scoped_ole_initializer.h"
 #endif
-
-class PrefService;
 
 namespace base {
 class Value;
@@ -64,6 +63,7 @@ class TestExtensionEnvironment {
 
   static TestExtensionEnvironment* GetInstance();
 
+  explicit TestExtensionEnvironment(content::TestBrowserContext* browser_context);
   explicit TestExtensionEnvironment(
       Type type = Type::kWithTaskEnvironment,
       ProfileCreationType profile_creation_type = ProfileCreationType::kCreate
@@ -115,8 +115,12 @@ class TestExtensionEnvironment {
 
   PrefService* GetPrefService() const { return user_pref_service_.get(); }
 
+  void SetPrefService(std::unique_ptr<PrefService> pref_service) {
+    user_pref_service_ = std::move(pref_service);
+  }
+
  private:
-  void Init();
+  void Initialize();
 
   // If |task_environment_| is needed, then it needs to constructed before
   // |browser_context_| and destroyed after |browser_context_|.

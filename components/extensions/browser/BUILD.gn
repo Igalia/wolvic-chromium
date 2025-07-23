@@ -272,10 +272,18 @@ static_library("test_support") {
   testonly = true
 
   sources = [
+    "chrome_extension_test_notification_observer.cc",
+    "chrome_extension_test_notification_observer.h",
     "chrome_test_extension_loader.cc",
     "chrome_test_extension_loader.h",
     "extension_management_test_util.cc",
     "extension_management_test_util.h",
+    "extension_service_test_base.cc",
+    "extension_service_test_base.h",
+    "extension_service_test_with_install.cc",
+    "extension_service_test_with_install.h",
+    "extension_service_user_test_base.cc",
+    "extension_service_user_test_base.h",
     "fake_crx_installer.cc",
     "fake_crx_installer.h",
     "load_error_waiter.cc",
@@ -314,6 +322,7 @@ source_set("unit_tests") {
   sources = [
     "api/chrome_extensions_api_client_unittest.cc",
     "api/device_permissions_manager_unittest.cc",
+    "api/runtime/chrome_runtime_api_delegate_unittest.cc",
   ]
 
   data = [

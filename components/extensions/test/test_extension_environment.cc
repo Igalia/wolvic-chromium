@@ -11,7 +11,6 @@
 #include "base/values.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/test_extension_system.h"
-#include "components/prefs/pref_service.h"
 #include "components/sessions/content/session_tab_helper.h"
 #include "content/public/test/browser_task_environment.h"
 #include "content/public/test/test_utils.h"
@@ -76,6 +75,12 @@ TestExtensionEnvironment* TestExtensionEnvironment::GetInstance() {
 }
 
 TestExtensionEnvironment::TestExtensionEnvironment(
+    TestBrowserContext* browser_context)
+    : browser_context_ptr_(browser_context) {
+  Initialize();
+}
+
+TestExtensionEnvironment::TestExtensionEnvironment(
     Type type,
     ProfileCreationType profile_creation_mode)
     : task_environment_(
@@ -86,15 +91,19 @@ TestExtensionEnvironment::TestExtensionEnvironment(
                    ? nullptr
                    : std::make_unique<TestBrowserContext>()),
       browser_context_ptr_(browser_context_.get()) {
+  Initialize();
+}
+
+void TestExtensionEnvironment::Initialize() {
   DCHECK(!g_test_extensions_environment);
   g_test_extensions_environment = this;
 
-  if (browser_context_) {
+  if (browser_context_ptr_) {
     local_state_ = extensions::shell_prefs::CreateLocalState(
-        browser_context_->GetPath());
+        browser_context_ptr_->GetPath());
     user_pref_service_ = extensions::shell_prefs::CreateUserPrefService(
-        browser_context_.get());
-    extensions::ExtensionSystem::Get(browser_context_.get())->InitForRegularProfile(true);
+        browser_context_ptr_.get());
+    extensions::ExtensionSystem::Get(browser_context_ptr_.get())->InitForRegularProfile(true);
   }
 }
 

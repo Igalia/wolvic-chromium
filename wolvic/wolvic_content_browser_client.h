@@ -253,6 +253,7 @@ class WolvicContentBrowserClient : public content::ContentBrowserClient {
       const GURL& url) override;
   bool ShouldServiceWorkerInheritPolicyContainerFromCreator(
       const GURL& url) override;
+  void OnWebContentsCreated(content::WebContents* web_contents) override;
   bool ShouldSendOutermostOriginToRenderer(
       const url::Origin& outermost_origin) override;
   bool ShouldUseFirstPartyStorageKey(const url::Origin& origin) override;

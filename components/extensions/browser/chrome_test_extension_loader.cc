@@ -9,6 +9,7 @@
 #include "base/files/file_util.h"
 #include "base/test/test_future.h"
 #include "base/threading/thread_restrictions.h"
+#include "components/extensions/browser/chrome_extension_test_notification_observer.h"
 #include "components/extensions/browser/crx_installer.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/extension_util.h"
@@ -248,11 +249,10 @@ bool ChromeTestExtensionLoader::WaitForExtensionReady(
 
   // TODO(devlin): Should this use |context_to_use|? Or should
   // WaitForExtensionViewsToLoad check both contexts if one is OTR?
-  // TODO(mshin): Enable the below code after migrating ChromeExtensionTestNotificationObserver
-  // if (!ChromeExtensionTestNotificationObserver(browser_context_)
-  //          .WaitForExtensionViewsToLoad()) {
-  //   return false;
-  // }
+  if (!ChromeExtensionTestNotificationObserver(browser_context_)
+           .WaitForExtensionViewsToLoad()) {
+    return false;
+  }
 
   return true;
 }

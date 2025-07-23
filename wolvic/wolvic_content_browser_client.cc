@@ -267,6 +267,20 @@ void AddChromeSchemeFactories(
                           std::move(allowed_webui_hosts)));
   }
 }
+
+void AttachUniversalWebContentsObservers(content::WebContents* web_contents) {
+  // This function is for attaching *universal* WebContentsObservers - ones that
+  // should be attached to *every* WebContents.  Such universal observers and/or
+  // helpers are relatively rare and therefore only a limited set of observers
+  // should be handled below.
+  //
+  // In particular, helpers handled by TabHelpers::AttachTabHelpers typically
+  // only apply to tabs, but not to other flavors of WebContents.  As pointed
+  // out by //docs/tab_helpers.md there are WebContents that are not tabs
+  // and not every WebContents has (or needs) every tab helper.
+  components_extensions::ChromeExtensionWebContentsObserver::CreateForWebContents(
+      web_contents);
+}
 #endif
 
 }  // namespace
@@ -1267,6 +1281,12 @@ bool WolvicContentBrowserClient::
   return url.SchemeIs(extensions::kExtensionScheme);
 #else
   return false;
+#endif
+}
+
+void WolvicContentBrowserClient::OnWebContentsCreated(content::WebContents* web_contents) {
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  AttachUniversalWebContentsObservers(web_contents);
 #endif
 }
 
