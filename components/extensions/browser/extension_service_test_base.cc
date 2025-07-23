@@ -26,6 +26,7 @@
 #include "components/extensions/browser/shared_module_service.h"
 #include "components/extensions/browser/test_extension_system.h"
 #include "components/extensions/test/test_extension_environment.h"
+#include "components/extensions/test/test_extension_paths.h"
 #include "components/crx_file/crx_verifier.h"
 #include "components/policy/core/common/policy_service_impl.h"
 #include "components/pref_registry/pref_registry_syncable.h"
@@ -37,6 +38,7 @@
 #include "content/public/common/content_client.h"
 #include "content/public/test/browser_task_environment.h"
 #include "content/public/test/test_browser_context.h"
+#include "extensions/browser/api/audio/audio_api.h"
 #include "extensions/browser/extension_prefs.h"
 #include "extensions/browser/extension_prefs_factory.h"
 #include "extensions/browser/extension_prefs_observer.h"
@@ -50,10 +52,12 @@
 namespace components_extensions {
 
 using content::TestBrowserContext;
+using extensions::AudioAPI;
 using extensions::ExtensionsClient;
 using extensions::ExtensionPrefs;
 using extensions::ExtensionRegistry;
 using extensions::ExtensionSystem;
+using extensions::PermissionsManager;
 
 namespace {
 
@@ -185,6 +189,11 @@ BuildTestingBrowserContext(
         prefs_path, base::SingleThreadTaskRunner::GetCurrentDefault().get());
     scoped_refptr<user_prefs::PrefRegistrySyncable> registry(
         new user_prefs::PrefRegistrySyncable);
+
+    ExtensionPrefs::RegisterProfilePrefs(registry.get());
+    AudioAPI::RegisterUserPrefs(registry.get());
+    PermissionsManager::RegisterProfilePrefs(registry.get());
+
     std::unique_ptr<sync_preferences::PrefServiceSyncable> prefs(
         factory.CreateSyncable(registry.get()));
     env->SetPrefService(std::move(prefs));
@@ -265,13 +274,7 @@ ExtensionServiceTestBase::ExtensionServiceTestBase(
       registry_(nullptr),
       verifier_format_override_(crx_file::VerifierFormat::CRX3) {
   base::FilePath test_data_dir;
-  if (!base::PathService::Get(base::DIR_SRC_TEST_DATA_ROOT, &test_data_dir)) {
-    ADD_FAILURE();
-    return;
-  }
-  test_data_dir = test_data_dir.Append(FILE_PATH_LITERAL("chrome"));
-  test_data_dir = test_data_dir.Append(FILE_PATH_LITERAL("test"));
-  test_data_dir = test_data_dir.Append(FILE_PATH_LITERAL("data"));
+  base::PathService::Get(components_extensions::DIR_TEST_DATA, &test_data_dir);
   if (!base::PathExists(test_data_dir)) {  // We don't want to create this.
     ADD_FAILURE();
     return;

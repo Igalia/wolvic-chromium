@@ -49,6 +49,8 @@ test("extensions_in_components_unittests") {
     "run_all_unittests.cc",
     "test_extension_environment.cc",
     "test_extension_environment.h",
+    "test_extension_paths.cc",
+    "test_extension_paths.h",
   ]
 
   data = [

@@ -323,6 +323,7 @@ source_set("unit_tests") {
     "api/chrome_extensions_api_client_unittest.cc",
     "api/device_permissions_manager_unittest.cc",
     "api/runtime/chrome_runtime_api_delegate_unittest.cc",
+    "component_loader_unittest.cc"
   ]
 
   data = [

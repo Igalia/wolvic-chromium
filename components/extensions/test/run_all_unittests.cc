@@ -19,6 +19,7 @@
 #include "components/extensions/browser/event_router_forwarder.h"
 #include "components/extensions/common/initialize_extensions_client.h"
 #include "components/extensions/test/test_extension_environment.h"
+#include "components/extensions/test/test_extension_paths.h"
 #include "extensions/browser/extensions_browser_client.h"
 #include "extensions/common/constants.h"
 #include "extensions/common/extension_paths.h"
@@ -148,9 +149,10 @@ void ExtensionsTestSuite::Initialize() {
   }
   RegisterInProcessThreads();
 
+  components_extensions::RegisterPathProvider();
   content::RegisterPathProvider();
-  ui::RegisterPathProvider();
   extensions::RegisterPathProvider();
+  ui::RegisterPathProvider();
 
   base::FilePath ui_test_pak_path;
   ASSERT_TRUE(base::PathService::Get(ui::UI_TEST_PAK, &ui_test_pak_path));

@@ -282,7 +282,9 @@ std::vector<content::BrowserContext*> GetAllRelatedProfiles(
     content::BrowserContext* off_the_record_context =
         context->GetOTRBrowserContext();
 
-    related_contexts.push_back(off_the_record_context);
+    if (off_the_record_context) {
+      related_contexts.push_back(off_the_record_context);
+    }
   }
 
   return related_contexts;
