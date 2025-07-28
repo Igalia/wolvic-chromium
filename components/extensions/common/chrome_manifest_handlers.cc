@@ -30,7 +30,7 @@ void RegisterChromeManifestHandlers() {
 
   // TODO(mshin): Enable the below code after migrating step by step
   registry->RegisterHandler(std::make_unique<AppLaunchManifestHandler>());
-  // registry->RegisterHandler(std::make_unique<DevToolsPageHandler>());
+  registry->RegisterHandler(std::make_unique<DevToolsPageHandler>());
   registry->RegisterHandler(std::make_unique<MinimumChromeVersionChecker>());
   registry->RegisterHandler(std::make_unique<NativelyConnectableHandler>());
   // registry->RegisterHandler(std::make_unique<OmniboxHandler>());
