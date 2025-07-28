@@ -283,4 +283,4 @@ StateStore* ExtensionActionStorageManager::GetStateStore() {
   return ExtensionSystem::Get(browser_context_)->state_store();
 }
 
-}  // namespace extensions
+}  // namespace components_extensions

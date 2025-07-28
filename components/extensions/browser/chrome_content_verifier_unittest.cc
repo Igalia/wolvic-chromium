@@ -169,12 +169,6 @@ TEST_F(ChromeContentVerifierTest, CaseSensitivityInManifestPaths) {
                                             "_locales/en_GB/messages.json",
                                             "H.png", "g.png", "i.png"};
   // Ensure we've seen known paths as hash-mismatch on FetchComplete.
-  // LOG(ERROR) << "MYSH CaseSensitivityInManifestPaths path=" << extension()->path();
-  LOG(ERROR) << "MYSH CaseSensitivityInManifestPaths size=" << verifier_observer.did_hash_mismatch();
-  LOG(ERROR) << "MYSH CaseSensitivityInManifestPaths size=" << verifier_observer.hash_mismatch_unix_paths().size();
-  // for (auto& path : verifier_observer.hash_mismatch_unix_paths()) {
-  //   LOG(ERROR) << "MYSH verifier_observer.hash_mismatch_unix_paths()=" << path;
-  // }
   EXPECT_TRUE(IsSuperset(verifier_observer.hash_mismatch_unix_paths(),
                          ToFilePaths(transcoded_paths)));
   // Sanity check: ensure they are explicitly excluded from verification.

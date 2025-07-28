@@ -551,4 +551,4 @@ void ExtensionActionRunner::RunCallbackOnPendingScript(
     std::move(pending_script->permit_script).Run(granted);
 }
 
-}  // namespace extensions
+}  // namespace components_extensions

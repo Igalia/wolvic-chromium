@@ -68,7 +68,7 @@ registration generated. See the JSON Schema Compiler for more information.
 
 ## File Location
 Extension APIs are defined in two main locations:
-[src/chrome/common/extensions/api](/chrome/common/extensions/api/) and
+[src/components/extensions/common/api](/components/extensions/common/api/) and
 [src/extensions/common/api](/extensions/common/api/). These represent
 two different layers in the extensions system. The chrome layer is for
 concepts that are purely chrome-related, whereas the extensions layer is for

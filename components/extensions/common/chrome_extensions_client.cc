@@ -247,4 +247,4 @@ std::optional<int> ChromeExtensionsClient::GetExtensionExtendedErrorCode()
   return static_cast<int>(ChromeResourceRequestBlockedReason::kExtension);
 }
 
-}  // namespace extensions
+}  // namespace components_extensions

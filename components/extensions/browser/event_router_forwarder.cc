@@ -106,4 +106,4 @@ void EventRouterForwarder::CallEventRouter(
   }
 }
 
-}  // namespace extensions
+}  // namespace components_extensions

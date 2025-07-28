@@ -59,6 +59,6 @@ class StandardManagementPolicyProvider : public extensions::ManagementPolicy::Pr
                        std::u16string* error) const;
 };
 
-}  // namespace extensions
+}  // namespace components_extensions
 
 #endif  // COMPONENTS_EXTENSIONS_BROWSER_STANDARD_MANAGEMENT_POLICY_PROVIDER_H_

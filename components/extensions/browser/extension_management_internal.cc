@@ -263,4 +263,4 @@ void GlobalSettings::Reset() {
 
 }  // namespace internal
 
-}  // namespace extensions
+}  // namespace components_extensions

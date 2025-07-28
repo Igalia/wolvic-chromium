@@ -21,8 +21,7 @@
 #include "base/test/task_environment.h"
 #include "base/threading/thread.h"
 #include "base/values.h"
-#include "chrome/common/chrome_paths.h"
-#include "chrome/common/extensions/extension_features_unittest.h"
+#include "components/extensions/common/extension_features_unittest.h"
 #include "extensions/common/api/extension_action/action_info.h"
 #include "extensions/common/extension.h"
 #include "extensions/common/extension_api.h"
@@ -36,7 +35,7 @@
 #include "extensions/test/test_context_data.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-namespace extensions {
+namespace components_extensions {
 
 namespace {
 
@@ -1052,4 +1051,4 @@ TEST(ExtensionAPITest, GetSchemaFromDifferentThreads) {
   EXPECT_EQ(another_thread_schema, current_thread_schema);
 }
 
-}  // namespace extensions
+}  // namespace components_extensions

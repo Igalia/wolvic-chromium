@@ -15,14 +15,14 @@
 #include "build/build_config.h"
 #include "content/public/browser/browser_thread.h"
 #include "components/grit/components_scaled_resources.h"
-#include "chrome/grit/component_extension_resources_map.h"
+#include "components/grit/component_extension_resources_map.h"
 #include "extensions/common/constants.h"
 #include "extensions/common/extension_id.h"
 #include "pdf/buildflags.h"
 #include "ppapi/buildflags/buildflags.h"
 #include "ui/base/resource/resource_bundle.h"
 
-#if BUILDFLAG(ENABLE_PDF)
+#if 0//BUILDFLAG(ENABLE_PDF)
 #include <utility>
 #include "chrome/browser/pdf/pdf_extension_util.h"
 #include "chrome/grit/pdf_resources_map.h"

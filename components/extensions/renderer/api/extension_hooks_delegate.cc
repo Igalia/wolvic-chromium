@@ -369,4 +369,4 @@ RequestResult ExtensionHooksDelegate::HandleGetBackgroundPage(
   return result;
 }
 
-}  // namespace extensions
+}  // namespace components_extensions

@@ -82,6 +82,6 @@ class InstalledLoader {
   std::set<base::FilePath> invalid_extensions_;
 };
 
-}  // namespace extensions
+}  // namespace components_extensions
 
 #endif  // COMPONENTS_EXTENSIONS_BROWSER_INSTALLED_LOADER_H_

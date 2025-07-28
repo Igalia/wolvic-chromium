@@ -24,8 +24,8 @@ using net::NetworkChangeNotifier;
 // manifest_types.json, then use it here.
 //
 // See:
-// chrome/common/extensions/api/manifest_types.json
-// chrome/common/extensions/manifest_handlers/externally_connectable.*
+// components/extensions/common/api/manifest_types.json
+// components/extensions/common/manifest_handlers/externally_connectable.*
 //
 // Do the same in (at least) file_handlers_parser.cc as well.
 

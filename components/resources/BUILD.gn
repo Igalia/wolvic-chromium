@@ -131,7 +131,7 @@ if (enable_extensions_in_components) {
       "grit/component_extension_resources_map.h",
       "component_extension_resources.pak",
     ]
-    output_dir = "$root_gen_dir/chrome"
+    output_dir = "$root_gen_dir/components"
   }
 }
 

@@ -491,4 +491,4 @@ ScopedInstallVerifierBypassForTest::~ScopedInstallVerifierBypassForTest() {
   g_bypass_for_test = old_value_;
 }
 
-}  // namespace extensions
+}  // namespace components_extensions

@@ -114,4 +114,4 @@ void ChromeExtensionTestNotificationObserver::OnExtensionActionUpdated(
   MaybeQuit();
 }
 
-}  // namespace extensions
+}  // namespace components_extensions
