@@ -58,6 +58,11 @@ static_library("test_support") {
     "//extensions:test_support",
     "//extensions/browser",
     "//extensions/browser:test_support",
+    "//extensions/common",
+    "//extensions/common:mojom",
+    "//extensions/common:test_support",
+    "//extensions/renderer",
+    "//extensions/renderer:unit_test_support",
     "//extensions/shell:app_shell_lib",
   ]
 }
@@ -110,6 +115,11 @@ source_set("unit_tests") {
     "../common/permissions/permission_set_unittest.cc",
     "../common/permissions/permissions_data_unittest.cc",
     "../common/permissions/settings_override_permission_unittest.cc",
+    "../renderer/api/extension_hooks_delegate_unittest.cc",
+    "../renderer/api/identity_hooks_delegate_unittest.cc",
+    "../renderer/chrome_native_extension_bindings_system_unittest.cc",
+    "../renderer/custom_types_unittest.cc",
+    "../renderer/renderer_permissions_policy_delegate_unittest.cc",
   ]
 
   data = [
@@ -122,6 +132,7 @@ source_set("unit_tests") {
     ":test_support",
     "//components/extensions/common:extension_features_unittest",
     "//services/device/public/cpp:test_support",
+    "//v8",
   ]
 
   public_deps = [ "//base/test:test_support" ]
