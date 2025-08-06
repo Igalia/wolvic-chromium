@@ -33,6 +33,8 @@ static_library("test_support") {
     "../browser/test_extension_service.h",
     "../browser/test_extension_system.cc",
     "../browser/test_extension_system.h",
+    "../common/extension_test_util.cc",
+    "../common/extension_test_util.h",
     "../common/manifest_tests/chrome_manifest_test.cc",
     "../common/manifest_tests/chrome_manifest_test.h",
   ]
@@ -42,6 +44,7 @@ static_library("test_support") {
     "//components/crx_file",
     "//components/extensions/browser",
     "//components/extensions/common",
+    "//components/extensions/common:test_features",
     "//components/extensions/renderer",
     "//components/policy/core/common:test_support",
     "//components/safe_browsing/core/browser/db:database_manager",
@@ -67,6 +70,16 @@ source_set("unit_tests") {
     "../browser/api/runtime/chrome_runtime_api_delegate_unittest.cc",
     "../browser/chrome_content_verifier_unittest.cc",
     "../browser/component_loader_unittest.cc",
+    "../common/api/common_extension_api_unittest.cc",
+    "../common/api/extension_action/browser_action_manifest_unittest.cc",
+    "../common/api/url_handlers/url_handlers_parser_unittest.cc",
+    "../common/chrome_extensions_client_unittest.cc",
+    "../common/chrome_manifest_url_handlers_unittest.cc",
+    "../common/extension_unittest.cc",
+    "../common/manifest_handlers/content_scripts_manifest_unittest.cc",
+    "../common/manifest_handlers/exclude_matches_manifest_unittest.cc",
+    "../common/manifest_handlers/natively_connectable_handler_unittest.cc",
+    "../common/manifest_handlers/settings_overrides_handler_unittest.cc",
     "../common/manifest_tests/extension_manifests_chromepermission_unittest.cc",
     "../common/manifest_tests/extension_manifests_contentsecuritypolicy_unittest.cc",
     "../common/manifest_tests/extension_manifests_default_extent_path_unittest.cc",
@@ -91,6 +104,12 @@ source_set("unit_tests") {
     "../common/manifest_tests/extension_manifests_webview_accessible_resources_unittest.cc",
     "../common/manifest_tests/permissions_parser_unittest.cc",
     "../common/manifest_unittest.cc",
+    "../common/permissions/chrome_api_permissions_unittest.cc",
+    "../common/permissions/chrome_permission_message_provider_unittest.cc",
+    "../common/permissions/chrome_permission_message_rules_unittest.cc",
+    "../common/permissions/permission_set_unittest.cc",
+    "../common/permissions/permissions_data_unittest.cc",
+    "../common/permissions/settings_override_permission_unittest.cc",
   ]
 
   data = [
@@ -101,6 +120,7 @@ source_set("unit_tests") {
 
   deps = [
     ":test_support",
+    "//components/extensions/common:extension_features_unittest",
     "//services/device/public/cpp:test_support",
   ]
 

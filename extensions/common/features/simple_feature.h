@@ -28,10 +28,22 @@
 #include "extensions/common/mojom/feature_session_type.mojom.h"
 #include "extensions/common/mojom/manifest.mojom-shared.h"
 
+#include "components/extensions/common/buildflags.h"
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+namespace components_extensions {
+class ExtensionAPITest;
+FORWARD_DECLARE_TEST(ExtensionAPITest,
+                     DefaultConfigurationFeatures);
+}
+#endif
+
 namespace extensions {
 
 class FeatureProviderTest;
+
+#if !BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
 class ExtensionAPITest;
+#endif
 
 class SimpleFeature : public Feature {
  public:
@@ -232,7 +244,13 @@ class SimpleFeature : public Feature {
   friend struct FeatureComparator;
   FRIEND_TEST_ALL_PREFIXES(FeatureProviderTest, ManifestFeatureTypes);
   FRIEND_TEST_ALL_PREFIXES(FeatureProviderTest, PermissionFeatureTypes);
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  friend class components_extensions::ExtensionAPITest;
+  FRIEND_TEST_ALL_PREFIXES(components_extensions::ExtensionAPITest,
+                           DefaultConfigurationFeatures);
+#else
   FRIEND_TEST_ALL_PREFIXES(ExtensionAPITest, DefaultConfigurationFeatures);
+#endif
   FRIEND_TEST_ALL_PREFIXES(FeaturesGenerationTest, FeaturesTest);
 
   // Holds String to Enum value mappings.

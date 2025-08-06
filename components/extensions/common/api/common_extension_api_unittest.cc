@@ -37,6 +37,21 @@
 
 namespace components_extensions {
 
+namespace manifest_keys = extensions::manifest_keys;
+namespace mojom = extensions::mojom;
+
+using extensions::ActionInfo;
+using extensions::CheckAliasStatus;
+using extensions::Extension;
+using extensions::ExtensionsClient;
+using extensions::ExtensionAPI;
+using extensions::ExtensionBuilder;
+using extensions::Feature;
+using extensions::FeatureProvider;
+using extensions::ScopedCurrentFeatureSessionType;
+using extensions::SimpleFeature;
+using extensions::TestContextData;
+
 namespace {
 
 const char* const kTestFeatures[] = {
@@ -244,7 +259,7 @@ TEST(ExtensionAPITest, APIFeatures) {
     bool expected = test_data[i].expect_is_available;
     Feature::Availability availability = api.IsAvailable(
         test_data[i].api_full_name, nullptr, test_data[i].context,
-        test_data[i].url, CheckAliasStatus::NOT_ALLOWED, kUnspecifiedContextId,
+        test_data[i].url, CheckAliasStatus::NOT_ALLOWED, extensions::kUnspecifiedContextId,
         TestContextData());
     EXPECT_EQ(expected, availability.is_available())
         << base::StringPrintf("Test %d: Feature '%s' was %s: %s",
@@ -268,22 +283,22 @@ TEST(ExtensionAPITest, APIFeaturesAlias) {
   ASSERT_FALSE(api.IsAvailable("alias_api_source", nullptr,
                                mojom::ContextType::kUnprivilegedExtension,
                                GURL(), CheckAliasStatus::NOT_ALLOWED,
-                               kUnspecifiedContextId, TestContextData())
+                               extensions::kUnspecifiedContextId, TestContextData())
                    .is_available());
   ASSERT_TRUE(api.IsAvailable("alias_api_source", nullptr,
                               mojom::ContextType::kUnprivilegedExtension,
                               GURL(), CheckAliasStatus::ALLOWED,
-                              kUnspecifiedContextId, TestContextData())
+                              extensions::kUnspecifiedContextId, TestContextData())
                   .is_available());
   ASSERT_TRUE(api.IsAvailable("alias_api_source.bar", nullptr,
                               mojom::ContextType::kUnprivilegedExtension,
                               GURL(), CheckAliasStatus::ALLOWED,
-                              kUnspecifiedContextId, TestContextData())
+                              extensions::kUnspecifiedContextId, TestContextData())
                   .is_available());
   ASSERT_FALSE(api.IsAvailable("alias_api_source.foo", nullptr,
                                mojom::ContextType::kUnprivilegedExtension,
                                GURL(), CheckAliasStatus::ALLOWED,
-                               kUnspecifiedContextId, TestContextData())
+                               extensions::kUnspecifiedContextId, TestContextData())
                    .is_available());
 
   scoped_refptr<const Extension> extension =
@@ -299,11 +314,11 @@ TEST(ExtensionAPITest, APIFeaturesAlias) {
   ASSERT_FALSE(api.IsAnyFeatureAvailableToContext(
       *test_feature, extension.get(),
       mojom::ContextType::kUnprivilegedExtension, GURL(),
-      CheckAliasStatus::NOT_ALLOWED, kUnspecifiedContextId, TestContextData()));
+      CheckAliasStatus::NOT_ALLOWED, extensions::kUnspecifiedContextId, TestContextData()));
   EXPECT_TRUE(api.IsAnyFeatureAvailableToContext(
       *test_feature, extension.get(),
       mojom::ContextType::kUnprivilegedExtension, GURL(),
-      CheckAliasStatus::ALLOWED, kUnspecifiedContextId, TestContextData()));
+      CheckAliasStatus::ALLOWED, extensions::kUnspecifiedContextId, TestContextData()));
 }
 
 TEST(ExtensionAPITest, IsAnyFeatureAvailableToContext) {
@@ -388,7 +403,7 @@ TEST(ExtensionAPITest, IsAnyFeatureAvailableToContext) {
               api.IsAnyFeatureAvailableToContext(
                   *test_feature, test_data[i].extension, test_data[i].context,
                   test_data[i].url, CheckAliasStatus::NOT_ALLOWED,
-                  kUnspecifiedContextId, TestContextData()))
+                  extensions::kUnspecifiedContextId, TestContextData()))
         << i;
   }
 }
@@ -445,7 +460,7 @@ TEST(ExtensionAPITest, SessionTypeFeature) {
               api.IsAvailable(test.api_name, app.get(),
                               mojom::ContextType::kPrivilegedExtension, GURL(),
                               CheckAliasStatus::NOT_ALLOWED,
-                              kUnspecifiedContextId, TestContextData())
+                              extensions::kUnspecifiedContextId, TestContextData())
                   .is_available())
         << "Test case (" << test.api_name << ", "
         << static_cast<int>(test.current_session_type) << ").";
@@ -522,47 +537,47 @@ TEST(ExtensionAPITest, ExtensionWithUnprivilegedAPIs) {
   EXPECT_TRUE(extension_api->IsAnyFeatureAvailableToContext(
       *api_features.GetFeature("storage"), nullptr,
       mojom::ContextType::kPrivilegedExtension, GURL(),
-      CheckAliasStatus::NOT_ALLOWED, kUnspecifiedContextId, TestContextData()));
+      CheckAliasStatus::NOT_ALLOWED, extensions::kUnspecifiedContextId, TestContextData()));
   EXPECT_TRUE(extension_api->IsAnyFeatureAvailableToContext(
       *api_features.GetFeature("storage"), nullptr,
       mojom::ContextType::kUnprivilegedExtension, GURL(),
-      CheckAliasStatus::NOT_ALLOWED, kUnspecifiedContextId, TestContextData()));
+      CheckAliasStatus::NOT_ALLOWED, extensions::kUnspecifiedContextId, TestContextData()));
   EXPECT_TRUE(extension_api->IsAnyFeatureAvailableToContext(
       *api_features.GetFeature("storage"), nullptr,
       mojom::ContextType::kContentScript, GURL(), CheckAliasStatus::NOT_ALLOWED,
-      kUnspecifiedContextId, TestContextData()));
+      extensions::kUnspecifiedContextId, TestContextData()));
 
   // "extension" is partially unprivileged.
   EXPECT_TRUE(extension_api->IsAnyFeatureAvailableToContext(
       *api_features.GetFeature("extension"), nullptr,
       mojom::ContextType::kPrivilegedExtension, GURL(),
-      CheckAliasStatus::NOT_ALLOWED, kUnspecifiedContextId, TestContextData()));
+      CheckAliasStatus::NOT_ALLOWED, extensions::kUnspecifiedContextId, TestContextData()));
   EXPECT_TRUE(extension_api->IsAnyFeatureAvailableToContext(
       *api_features.GetFeature("extension"), nullptr,
       mojom::ContextType::kUnprivilegedExtension, GURL(),
-      CheckAliasStatus::NOT_ALLOWED, kUnspecifiedContextId, TestContextData()));
+      CheckAliasStatus::NOT_ALLOWED, extensions::kUnspecifiedContextId, TestContextData()));
   EXPECT_TRUE(extension_api->IsAnyFeatureAvailableToContext(
       *api_features.GetFeature("extension"), nullptr,
       mojom::ContextType::kContentScript, GURL(), CheckAliasStatus::NOT_ALLOWED,
-      kUnspecifiedContextId, TestContextData()));
+      extensions::kUnspecifiedContextId, TestContextData()));
   EXPECT_TRUE(extension_api->IsAnyFeatureAvailableToContext(
       *api_features.GetFeature("extension.getURL"), nullptr,
       mojom::ContextType::kContentScript, GURL(), CheckAliasStatus::NOT_ALLOWED,
-      kUnspecifiedContextId, TestContextData()));
+      extensions::kUnspecifiedContextId, TestContextData()));
 
   // "history" is entirely privileged.
   EXPECT_TRUE(extension_api->IsAnyFeatureAvailableToContext(
       *api_features.GetFeature("history"), nullptr,
       mojom::ContextType::kPrivilegedExtension, GURL(),
-      CheckAliasStatus::NOT_ALLOWED, kUnspecifiedContextId, TestContextData()));
+      CheckAliasStatus::NOT_ALLOWED, extensions::kUnspecifiedContextId, TestContextData()));
   EXPECT_FALSE(extension_api->IsAnyFeatureAvailableToContext(
       *api_features.GetFeature("history"), nullptr,
       mojom::ContextType::kUnprivilegedExtension, GURL(),
-      CheckAliasStatus::NOT_ALLOWED, kUnspecifiedContextId, TestContextData()));
+      CheckAliasStatus::NOT_ALLOWED, extensions::kUnspecifiedContextId, TestContextData()));
   EXPECT_FALSE(extension_api->IsAnyFeatureAvailableToContext(
       *api_features.GetFeature("history"), nullptr,
       mojom::ContextType::kContentScript, GURL(), CheckAliasStatus::NOT_ALLOWED,
-      kUnspecifiedContextId, TestContextData()));
+      extensions::kUnspecifiedContextId, TestContextData()));
 }
 
 scoped_refptr<Extension> CreateHostedApp() {
@@ -620,31 +635,31 @@ TEST(ExtensionAPITest, HostedAppPermissions) {
                    ->IsAvailable("runtime", extension.get(),
                                  mojom::ContextType::kPrivilegedExtension,
                                  GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                 kUnspecifiedContextId, TestContextData())
+                                 extensions::kUnspecifiedContextId, TestContextData())
                    .is_available());
   EXPECT_FALSE(extension_api
                    ->IsAvailable("runtime.id", extension.get(),
                                  mojom::ContextType::kPrivilegedExtension,
                                  GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                 kUnspecifiedContextId, TestContextData())
+                                 extensions::kUnspecifiedContextId, TestContextData())
                    .is_available());
   EXPECT_FALSE(extension_api
                    ->IsAvailable("runtime.sendMessage", extension.get(),
                                  mojom::ContextType::kPrivilegedExtension,
                                  GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                 kUnspecifiedContextId, TestContextData())
+                                 extensions::kUnspecifiedContextId, TestContextData())
                    .is_available());
   EXPECT_FALSE(extension_api
                    ->IsAvailable("runtime.sendNativeMessage", extension.get(),
                                  mojom::ContextType::kPrivilegedExtension,
                                  GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                 kUnspecifiedContextId, TestContextData())
+                                 extensions::kUnspecifiedContextId, TestContextData())
                    .is_available());
   EXPECT_FALSE(extension_api
                    ->IsAvailable("tabs.create", extension.get(),
                                  mojom::ContextType::kPrivilegedExtension,
                                  GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                 kUnspecifiedContextId, TestContextData())
+                                 extensions::kUnspecifiedContextId, TestContextData())
                    .is_available());
 }
 
@@ -665,21 +680,21 @@ TEST(ExtensionAPITest, AppAndFriendsAvailability) {
                                    mojom::ContextType::kPrivilegedExtension,
                                    GURL("http://foo.com"),
                                    CheckAliasStatus::NOT_ALLOWED,
-                                   kUnspecifiedContextId, TestContextData())
+                                   extensions::kUnspecifiedContextId, TestContextData())
                      .is_available());
     EXPECT_TRUE(extension_api
                     ->IsAvailable("app.runtime", extension.get(),
                                   mojom::ContextType::kPrivilegedExtension,
                                   GURL("http://foo.com"),
                                   CheckAliasStatus::NOT_ALLOWED,
-                                  kUnspecifiedContextId, TestContextData())
+                                  extensions::kUnspecifiedContextId, TestContextData())
                     .is_available());
     EXPECT_TRUE(extension_api
                     ->IsAvailable("app.window", extension.get(),
                                   mojom::ContextType::kPrivilegedExtension,
                                   GURL("http://foo.com"),
                                   CheckAliasStatus::NOT_ALLOWED,
-                                  kUnspecifiedContextId, TestContextData())
+                                  extensions::kUnspecifiedContextId, TestContextData())
                     .is_available());
   }
   // Make sure chrome.app.runtime and chrome.app.window are not available to
@@ -693,21 +708,21 @@ TEST(ExtensionAPITest, AppAndFriendsAvailability) {
                                   mojom::ContextType::kPrivilegedExtension,
                                   GURL("http://foo.com"),
                                   CheckAliasStatus::NOT_ALLOWED,
-                                  kUnspecifiedContextId, TestContextData())
+                                  extensions::kUnspecifiedContextId, TestContextData())
                     .is_available());
     EXPECT_FALSE(extension_api
                      ->IsAvailable("app.runtime", extension.get(),
                                    mojom::ContextType::kPrivilegedExtension,
                                    GURL("http://foo.com"),
                                    CheckAliasStatus::NOT_ALLOWED,
-                                   kUnspecifiedContextId, TestContextData())
+                                   extensions::kUnspecifiedContextId, TestContextData())
                      .is_available());
     EXPECT_FALSE(extension_api
                      ->IsAvailable("app.window", extension.get(),
                                    mojom::ContextType::kPrivilegedExtension,
                                    GURL("http://foo.com"),
                                    CheckAliasStatus::NOT_ALLOWED,
-                                   kUnspecifiedContextId, TestContextData())
+                                   extensions::kUnspecifiedContextId, TestContextData())
                      .is_available());
   }
 }
@@ -723,12 +738,12 @@ TEST(ExtensionAPITest, ExtensionWithDependencies) {
     EXPECT_TRUE(api->IsAvailable("ttsEngine", extension.get(),
                                  mojom::ContextType::kPrivilegedExtension,
                                  GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                 kUnspecifiedContextId, TestContextData())
+                                 extensions::kUnspecifiedContextId, TestContextData())
                     .is_available());
     EXPECT_FALSE(api->IsAvailable("tts", extension.get(),
                                   mojom::ContextType::kPrivilegedExtension,
                                   GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                  kUnspecifiedContextId, TestContextData())
+                                  extensions::kUnspecifiedContextId, TestContextData())
                      .is_available());
   }
 
@@ -742,12 +757,12 @@ TEST(ExtensionAPITest, ExtensionWithDependencies) {
     EXPECT_FALSE(api->IsAvailable("ttsEngine", extension.get(),
                                   mojom::ContextType::kPrivilegedExtension,
                                   GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                  kUnspecifiedContextId, TestContextData())
+                                  extensions::kUnspecifiedContextId, TestContextData())
                      .is_available());
     EXPECT_TRUE(api->IsAvailable("tts", extension.get(),
                                  mojom::ContextType::kPrivilegedExtension,
                                  GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                 kUnspecifiedContextId, TestContextData())
+                                 extensions::kUnspecifiedContextId, TestContextData())
                     .is_available());
   }
 }
@@ -756,7 +771,7 @@ bool MatchesURL(
     ExtensionAPI* api, const std::string& api_name, const std::string& url) {
   return api
       ->IsAvailable(api_name, nullptr, mojom::ContextType::kWebPage, GURL(url),
-                    CheckAliasStatus::NOT_ALLOWED, kUnspecifiedContextId,
+                    CheckAliasStatus::NOT_ALLOWED, extensions::kUnspecifiedContextId,
                     TestContextData())
       .is_available();
 }
@@ -837,7 +852,8 @@ TEST(ExtensionAPITest, DefaultConfigurationFeatures) {
     const SimpleFeature* feature = test_data[i].feature;
     ASSERT_TRUE(feature) << i;
 
-    EXPECT_TRUE(feature->allowlist().empty());
+    // TODO(mshin): Enable the below code after migrating AllowList
+    // EXPECT_TRUE(feature->allowlist().empty());
     EXPECT_TRUE(feature->extension_types().empty());
 
     EXPECT_FALSE(feature->location());
@@ -968,10 +984,11 @@ TEST(ExtensionAPITest, NoPermissions) {
       {"windows.remove", true},
       {"windows.update", true},
       // Test some allowlisted functions. These require no permissions.
-      {"app.getDetails", true},
-      {"app.getIsInstalled", true},
-      {"app.installState", true},
-      {"app.runningState", true},
+      // mshin : Not support Platform Apps API(chrome.app)
+      // {"app.getDetails", true},
+      // {"app.getIsInstalled", true},
+      // {"app.installState", true},
+      // {"app.runningState", true},
       {"management.getPermissionWarningsByManifest", true},
       {"management.uninstallSelf", true},
       // But other functions in those modules do.
@@ -989,7 +1006,7 @@ TEST(ExtensionAPITest, NoPermissions) {
                   ->IsAvailable(kTests[i].permission_name, extension.get(),
                                 mojom::ContextType::kPrivilegedExtension,
                                 GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                kUnspecifiedContextId, TestContextData())
+                                extensions::kUnspecifiedContextId, TestContextData())
                   .is_available())
         << "Permission being tested: " << kTests[i].permission_name;
   }
@@ -1008,13 +1025,13 @@ TEST(ExtensionAPITest, ManifestKeys) {
                   ->IsAvailable("browserAction", extension.get(),
                                 mojom::ContextType::kPrivilegedExtension,
                                 GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                kUnspecifiedContextId, TestContextData())
+                                extensions::kUnspecifiedContextId, TestContextData())
                   .is_available());
   EXPECT_FALSE(extension_api
                    ->IsAvailable("pageAction", extension.get(),
                                  mojom::ContextType::kPrivilegedExtension,
                                  GURL(), CheckAliasStatus::NOT_ALLOWED,
-                                 kUnspecifiedContextId, TestContextData())
+                                 extensions::kUnspecifiedContextId, TestContextData())
                    .is_available());
 }
 

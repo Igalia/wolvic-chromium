@@ -321,6 +321,7 @@ inline constexpr char kChromeUIFaviconHost[] = "favicon";
 inline constexpr char kChromeUIFaviconURL[] = "chrome://favicon/";
 inline constexpr char kChromeUINewTabURL[] = "chrome://newtab/";
 inline constexpr char kChromeUINewTabPageURL[] = "chrome://new-tab-page/";
+inline constexpr char kChromeUISettingsURL[] = "chrome://settings/";
 inline constexpr char kChromeUIThemeHost[] = "theme";
 inline constexpr char kChromeUIThemeURL[] = "chrome://theme/";
 inline constexpr char kChromeUIWebUITestHost[] = "webui-test";

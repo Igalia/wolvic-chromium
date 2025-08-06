@@ -17,6 +17,15 @@
 #include "base/lazy_instance.h"
 #include "extensions/common/manifest.h"
 
+#include "components/extensions/common/buildflags.h"
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+namespace components_extensions {
+class ChromeExtensionsClientTest;
+FORWARD_DECLARE_TEST(ChromeExtensionsClientTest,
+                     CheckManifestHandlerRegistryForOverflow);
+}
+#endif
+
 namespace extensions {
 class Extension;
 class ManifestPermission;
@@ -141,8 +150,14 @@ class ManifestHandlerRegistry {
   FRIEND_TEST_ALL_PREFIXES(ManifestHandlerPerfTest, MANUAL_LookupTest);
   FRIEND_TEST_ALL_PREFIXES(ManifestHandlerPerfTest,
                            MANUAL_CommonMeasureFinalization);
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  friend class components_extensions::ChromeExtensionsClientTest;
+  FRIEND_TEST_ALL_PREFIXES(components_extensions::ChromeExtensionsClientTest,
+                           CheckManifestHandlerRegistryForOverflow);
+#else
   FRIEND_TEST_ALL_PREFIXES(ChromeExtensionsClientTest,
                            CheckManifestHandlerRegistryForOverflow);
+#endif
 
   ManifestHandlerRegistry();
   ~ManifestHandlerRegistry();

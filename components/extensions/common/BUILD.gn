@@ -1,6 +1,8 @@
 import("//build/buildflag_header.gni")
 import("//build/config/features.gni")
 import("//build/config/compontents_extensions_build.gni")
+import("//tools/json_schema_compiler/json_features.gni")
+import("//tools/json_schema_compiler/json_schema_api.gni")
 
 assert(enable_extensions_in_components)
 
@@ -57,4 +59,16 @@ component("common") {
 buildflag_header("buildflags") {
   header = "buildflags.h"
   flags = [ "ENABLE_EXTENSIONS_IN_COMPONENTS=$enable_extensions_in_components" ]
+}
+
+json_features("extension_features_unittest") {
+  feature_type = "APIFeature"
+  method_name = "AddUnittestAPIFeatures"
+  sources = [
+    "//chrome/test/data/extensions/extension_api_unittest/api_features.json",
+  ]
+}
+
+group("test_features") {
+  public_deps = [ ":extension_features_unittest" ]
 }
