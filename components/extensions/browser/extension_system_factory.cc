@@ -4,6 +4,7 @@
 
 #include "components/extensions/browser/extension_system_factory.h"
 
+#include "components/extensions/browser/forced_extensions/install_stage_tracker_factory.h"
 #include "components/extensions/browser/extension_management.h"
 #include "components/extensions/browser/install_verifier_factory.h"
 #include "components/keyed_service/content/browser_context_dependency_manager.h"
@@ -64,8 +65,7 @@ ExtensionSystemSharedFactory::ExtensionSystemSharedFactory()
   // IdentityManager for webstore authentication.
   // TODO(mshin): Enable the below code after migrating IdentityManagerFactory
   // DependsOn(IdentityManagerFactory::GetInstance());
-  // TODO(mshin): Enable the below code after migrating InstallStageTrackerFactory
-  // DependsOn(InstallStageTrackerFactory::GetInstance());
+  DependsOn(InstallStageTrackerFactory::GetInstance());
   // ExtensionService (owned by the ExtensionSystem) depends on
   // ExtensionHostRegistry.
   DependsOn(ExtensionHostRegistry::GetFactory());

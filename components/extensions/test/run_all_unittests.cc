@@ -58,11 +58,14 @@ class ExtensionsUnitTestSuiteInitializer
         browser_context()->GetDefaultStoragePartition()->GetNetworkContext();
   }
 
-  bool IsShuttingDown() override { return false; }
+  bool IsShuttingDown() override {
+    return TestExtensionEnvironment::GetInstance()->IsShuttingDown();
+  }
+
   std::string GetApplicationLocale() override { return "en-US"; }
 
   std::vector<content::BrowserContext*> GetAllBrowserContexts() override {
-    return {};
+    return TestExtensionEnvironment::GetInstance()->GetAllBrowserContexts();
   }
 
   content::BrowserContext*

@@ -15,6 +15,7 @@
 #include "base/memory/singleton.h"
 #include "base/observer_list.h"
 #include "base/values.h"
+#include "components/extensions/browser/forced_extensions/install_stage_tracker.h"
 #include "components/keyed_service/content/browser_context_keyed_service_factory.h"
 #include "components/keyed_service/core/keyed_service.h"
 #include "components/prefs/pref_change_registrar.h"
@@ -286,10 +287,9 @@ class ExtensionManagement : public KeyedService {
   // |forced_stage| is reported for the extensions which have installation mode
   // as INSTALLATION_FORCED, and |other_stage| is reported for all other
   // installation modes.
-  // TODO(mshin): Enable the below code after migrating InstallStageTracker
-  // void ReportExtensionManagementInstallCreationStage(
-  //     InstallStageTracker::InstallCreationStage forced_stage,
-  //     InstallStageTracker::InstallCreationStage other_stage);
+  void ReportExtensionManagementInstallCreationStage(
+      InstallStageTracker::InstallCreationStage forced_stage,
+      InstallStageTracker::InstallCreationStage other_stage);
 
   // Helper to return an extension install list, in format specified by
   // ExternalPolicyLoader::AddExtension().
@@ -335,8 +335,7 @@ class ExtensionManagement : public KeyedService {
   std::unique_ptr<internal::GlobalSettings> global_settings_;
 
   const raw_ptr<content::BrowserContext> browser_context_ = nullptr;
-  // TODO(mshin): Support Preference
-  // raw_ptr<PrefService> pref_service_ = nullptr;
+  raw_ptr<PrefService> pref_service_ = nullptr;
 
   base::ObserverList<Observer, true>::Unchecked observer_list_;
   PrefChangeRegistrar pref_change_registrar_;

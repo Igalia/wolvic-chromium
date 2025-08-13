@@ -33,6 +33,7 @@
 #include "components/supervised_user/core/common/buildflags.h"
 #include "components/sync_preferences/pref_service_mock_factory.h"
 #include "components/sync_preferences/pref_service_syncable.h"
+#include "components/sync_preferences/testing_pref_service_syncable.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_client.h"
@@ -169,11 +170,9 @@ BuildTestingBrowserContext(
 //  profile_builder.SetPath(profile_dir);
 //  return profile_builder.Build();
 
-  auto browser_context = std::make_unique<TestBrowserContext>(profile_dir);
-  auto env = std::make_unique<TestExtensionEnvironment>(browser_context.get());
-
-  // If pref_file is empty, TestingProfile automatically creates
-  // sync_preferences::TestingPrefServiceSyncable instance.
+  // If pref_file is empty, TestingPrefServiceSyncable is automatically created
+  // in TestExtensionEnvironment.
+  std::unique_ptr<sync_preferences::PrefServiceSyncable> prefs;
   if (params.prefs_content.has_value()) {
     base::FilePath prefs_path =
         profile_dir.Append(kPreferencesFilename);
@@ -190,32 +189,15 @@ BuildTestingBrowserContext(
     scoped_refptr<user_prefs::PrefRegistrySyncable> registry(
         new user_prefs::PrefRegistrySyncable);
 
-    ExtensionPrefs::RegisterProfilePrefs(registry.get());
-    AudioAPI::RegisterUserPrefs(registry.get());
-    PermissionsManager::RegisterProfilePrefs(registry.get());
+    prefs = factory.CreateSyncable(registry.get());
 
-    std::unique_ptr<sync_preferences::PrefServiceSyncable> prefs(
-        factory.CreateSyncable(registry.get()));
-    env->SetPrefService(std::move(prefs));
+    AudioAPI::RegisterUserPrefs(registry.get());
+    ExtensionPrefs::RegisterProfilePrefs(registry.get());
+    PermissionsManager::RegisterProfilePrefs(registry.get());
   }
 
-  bool extensions_disabled =
-      base::CommandLine::ForCurrentProcess()->HasSwitch(
-          switches::kDisableExtensions);
-  std::unique_ptr<extensions::ExtensionPrefs> extension_prefs =
-      extensions::ExtensionPrefs::Create(
-          browser_context.get(),
-          env->GetPrefService(),
-          profile_dir.AppendASCII("Extensions"),
-          ExtensionPrefValueMapFactory::GetForBrowserContext(
-              browser_context.get()),
-          extensions_disabled,
-          std::vector<extensions::EarlyExtensionPrefsObserver*>());
-  extensions::ExtensionPrefsFactory::GetInstance()->SetInstanceForTesting(
-      browser_context.get(), std::move(extension_prefs));
-
-  ExtensionSystemFactory::GetInstance()->SetTestingFactory(
-      browser_context.get(), base::BindRepeating(&TestExtensionSystem::Build));
+  auto browser_context = std::make_unique<TestBrowserContext>(profile_dir);
+  auto env = std::make_unique<TestExtensionEnvironment>(browser_context.get(), std::move(prefs));
 
   return {std::move(browser_context), std::move(env)};
 }
@@ -437,13 +419,13 @@ void ExtensionServiceTestBase::TearDown() {
   }
   policy_provider_.Shutdown();
 
-  content::SetBrowserClientForTesting(original_client_.get());
-  original_client_ = nullptr;
-
   // TODO(mshin): Consider to use DependencyManager instead of the below code
   extensions::ProcessManager::Get(browser_context_.get())->Shutdown();
   env_ = nullptr;
   browser_context_ = nullptr;
+
+  content::SetBrowserClientForTesting(original_client_.get());
+  original_client_ = nullptr;
 }
 
 void ExtensionServiceTestBase::SetUpTestSuite() {
@@ -459,9 +441,7 @@ content::BrowserContext* ExtensionServiceTestBase::browser_context() {
 
 sync_preferences::TestingPrefServiceSyncable*
 ExtensionServiceTestBase::testing_pref_service() {
-  // TODO(mshin): Enable the below code after support TestExtensionBrowserContext;
-  // return profile_->GetTestingPrefService();
-  return nullptr;
+  return env_->GetTestingPrefService();
 }
 
 void ExtensionServiceTestBase::CreateExtensionService(

@@ -11,6 +11,7 @@
 #include "base/functional/bind.h"
 #include "base/values.h"
 #include "build/build_config.h"
+#include "components/extensions/browser/chrome_extensions_browser_client.h"
 #include "content/public/browser/browser_task_traits.h"
 #include "content/public/browser/browser_thread.h"
 #include "extensions/browser/event_router.h"
@@ -71,12 +72,37 @@ void EventRouterForwarder::HandleEvent(
     return;
   }
 
-  // Only support a single profile
-  CallEventRouter(
-      browser_context, extension_id, histogram_value, event_name,
-      std::move(event_args),
-      use_profile_to_restrict_events ? browser_context : nullptr,
+  std::set<content::BrowserContext*> browser_contexts_to_dispatch_to;
+  if (browser_context) {
+    browser_contexts_to_dispatch_to.insert(browser_context);
+  } else {
+    auto contexts = static_cast<ChromeExtensionsBrowserClient*>(
+                        extensions::ExtensionsBrowserClient::Get())
+                        ->GetAllBrowserContexts();
+
+    for (auto* context : contexts) {
+      if (context->IsOffTheRecord() && !dispatch_to_off_the_record_profiles) {
+        continue;
+      }
+      browser_contexts_to_dispatch_to.insert(context);
+    }
+  }
+
+  // There should always be at least one profile when running as Chromium.
+  // However, some Chromium embedders are known to run without profiles, in
+  // which case there's nothing to dispatch to.
+  if (browser_contexts_to_dispatch_to.size() == 0u)
+    return;
+
+  for (auto* browser_context_to_dispatch_to : browser_contexts_to_dispatch_to) {
+    CallEventRouter(
+      browser_context_to_dispatch_to, extension_id, histogram_value, event_name,
+      browser_context_to_dispatch_to != *std::prev(browser_contexts_to_dispatch_to.end())
+          ? event_args.Clone()
+          : std::move(event_args),
+      use_profile_to_restrict_events ? browser_context_to_dispatch_to : nullptr,
       event_url);
+  }
 }
 
 void EventRouterForwarder::CallEventRouter(

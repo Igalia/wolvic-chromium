@@ -6,6 +6,7 @@
 
 #include "components/extensions/browser/extension_action_runner.h"
 #include "components/extensions/browser/extension_util.h"
+#include "components/extensions/browser/scripting_permissions_modifier.h"
 #include "components/sessions/content/session_tab_helper.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/web_contents.h"
@@ -96,51 +97,50 @@ void SitePermissionsHelper::UpdateSiteAccess(
     return;
   }
 
-  // TODO(mshin): Enable the below code after migrating ScriptingPermissionsModifier
-  // ScriptingPermissionsModifier modifier(browser_context_, &extension);
-  // CHECK(permissions_manager->CanAffectExtension(extension));
+  ScriptingPermissionsModifier modifier(browser_context_, &extension);
+  CHECK(permissions_manager->CanAffectExtension(extension));
 
-  // auto current_url = web_contents->GetLastCommittedURL();
-  // CHECK(permissions_manager->CanUserSelectSiteAccess(extension, current_url,
-  //                                                    new_access));
+  auto current_url = web_contents->GetLastCommittedURL();
+  CHECK(permissions_manager->CanUserSelectSiteAccess(extension, current_url,
+                                                     new_access));
 
-  // if (current_access == PermissionsManager::UserSiteAccess::kOnAllSites) {
-  //   permissions_manager->AddExtensionToPreviousBroadSiteAccessSet(
-  //       extension.id());
-  // } else {
-  //   permissions_manager->RemoveExtensionFromPreviousBroadSiteAccessSet(
-  //       extension.id());
-  // }
+  if (current_access == PermissionsManager::UserSiteAccess::kOnAllSites) {
+    permissions_manager->AddExtensionToPreviousBroadSiteAccessSet(
+        extension.id());
+  } else {
+    permissions_manager->RemoveExtensionFromPreviousBroadSiteAccessSet(
+        extension.id());
+  }
 
-  // switch (new_access) {
-  //   case PermissionsManager::UserSiteAccess::kOnClick:
-  //     if (permissions_manager->HasBroadGrantedHostPermissions(extension)) {
-  //       modifier.RemoveBroadGrantedHostPermissions();
-  //     }
-  //     // Note: SetWithholdHostPermissions() is a no-op if host permissions are
-  //     // already being withheld.
-  //     modifier.SetWithholdHostPermissions(true);
-  //     if (permissions_manager->HasGrantedHostPermission(extension,
-  //                                                       current_url)) {
-  //       modifier.RemoveGrantedHostPermission(current_url);
-  //     }
-  //     break;
-  //   case PermissionsManager::UserSiteAccess::kOnSite:
-  //     if (permissions_manager->HasBroadGrantedHostPermissions(extension)) {
-  //       modifier.RemoveBroadGrantedHostPermissions();
-  //     }
-  //     // Note: SetWithholdHostPermissions() is a no-op if host permissions are
-  //     // already being withheld.
-  //     modifier.SetWithholdHostPermissions(true);
-  //     if (!permissions_manager->HasGrantedHostPermission(extension,
-  //                                                        current_url)) {
-  //       modifier.GrantHostPermission(current_url);
-  //     }
-  //     break;
-  //   case PermissionsManager::UserSiteAccess::kOnAllSites:
-  //     modifier.SetWithholdHostPermissions(false);
-  //     break;
-  // }
+  switch (new_access) {
+    case PermissionsManager::UserSiteAccess::kOnClick:
+      if (permissions_manager->HasBroadGrantedHostPermissions(extension)) {
+        modifier.RemoveBroadGrantedHostPermissions();
+      }
+      // Note: SetWithholdHostPermissions() is a no-op if host permissions are
+      // already being withheld.
+      modifier.SetWithholdHostPermissions(true);
+      if (permissions_manager->HasGrantedHostPermission(extension,
+                                                        current_url)) {
+        modifier.RemoveGrantedHostPermission(current_url);
+      }
+      break;
+    case PermissionsManager::UserSiteAccess::kOnSite:
+      if (permissions_manager->HasBroadGrantedHostPermissions(extension)) {
+        modifier.RemoveBroadGrantedHostPermissions();
+      }
+      // Note: SetWithholdHostPermissions() is a no-op if host permissions are
+      // already being withheld.
+      modifier.SetWithholdHostPermissions(true);
+      if (!permissions_manager->HasGrantedHostPermission(extension,
+                                                         current_url)) {
+        modifier.GrantHostPermission(current_url);
+      }
+      break;
+    case PermissionsManager::UserSiteAccess::kOnAllSites:
+      modifier.SetWithholdHostPermissions(false);
+      break;
+  }
 
   ExtensionActionRunner* runner =
       ExtensionActionRunner::GetForWebContents(web_contents);

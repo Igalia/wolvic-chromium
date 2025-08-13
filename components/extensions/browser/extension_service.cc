@@ -245,9 +245,8 @@ bool ExtensionService::OnExternalExtensionUpdateUrlFound(
         info.extension_id);
   }
 
-  // TODO(mshin): Enable the below code after migrating InstallStageTracker
-  // InstallStageTracker* install_stage_tracker =
-  //     InstallStageTracker::Get(browser_context_);
+  InstallStageTracker* install_stage_tracker =
+      InstallStageTracker::Get(browser_context_);
 
   const Extension* extension = registry_->GetExtensionById(
       info.extension_id, ExtensionRegistry::EVERYTHING);
@@ -260,9 +259,9 @@ bool ExtensionService::OnExternalExtensionUpdateUrlFound(
             info.extension_id) &&
         current == Manifest::GetHigherPriorityLocation(
                        current, info.download_location)) {
-      // install_stage_tracker->ReportFailure(
-      //     info.extension_id,
-      //     InstallStageTracker::FailureReason::ALREADY_INSTALLED);
+      install_stage_tracker->ReportFailure(
+          info.extension_id,
+          InstallStageTracker::FailureReason::ALREADY_INSTALLED);
       return false;
     }
     // If the installation is requested from a higher priority source, update
@@ -324,9 +323,9 @@ bool ExtensionService::OnExternalExtensionUpdateUrlFound(
   // be added, then there is already a pending record from a higher-priority
   // install source.  In this case, signal that this extension will not be
   // installed by returning false.
-  // TODO(mshin): Enable the below code after migrating InstallStageTracker
-  // install_stage_tracker->ReportInstallationStage(
-  //     info.extension_id, InstallStageTracker::Stage::PENDING);
+  install_stage_tracker->ReportInstallationStage(
+      info.extension_id, InstallStageTracker::Stage::PENDING);
+  // TODO(mshin): Enable the below code after migrating PendingExtensionManager
   // if (!pending_extension_manager()->AddFromExternalUpdateUrl(
   //         info.extension_id, info.install_parameter, info.update_url,
   //         info.download_location, info.creation_flags,
@@ -424,9 +423,8 @@ ExtensionService::ExtensionService(
       ready_(ready),
       shared_module_service_(new SharedModuleService(browser_context_)),
       extension_registrar_(browser_context_, this),
-      // TODO(mshin): Enable the below code after migrating ForceInstalledTracker
-      // force_installed_tracker_(registry_, browser_context_),
-      // force_installed_metrics_(registry_, browser_context_, &force_installed_tracker_),
+      force_installed_tracker_(registry_, browser_context_),
+      force_installed_metrics_(registry_, browser_context_, &force_installed_tracker_),
       corrupted_extension_reinstaller_(browser_context_)
 {
   CHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));

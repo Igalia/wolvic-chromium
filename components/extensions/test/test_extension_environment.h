@@ -13,6 +13,7 @@
 #include "build/build_config.h"
 #include "content/public/test/test_browser_context.h"
 #include "components/prefs/pref_service.h"
+#include "components/sync_preferences/pref_service_syncable.h"
 #include "extensions/common/extension.h"
 
 #if BUILDFLAG(IS_WIN)
@@ -32,6 +33,10 @@ namespace extensions {
 class Extension;
 class ExtensionPrefs;
 }
+
+namespace sync_preferences {
+class TestingPrefServiceSyncable;
+}  // namespace sync_preferences
 
 namespace components_extensions {
 
@@ -63,7 +68,9 @@ class TestExtensionEnvironment {
 
   static TestExtensionEnvironment* GetInstance();
 
-  explicit TestExtensionEnvironment(content::TestBrowserContext* browser_context);
+  explicit TestExtensionEnvironment(
+      content::TestBrowserContext* browser_context,
+      std::unique_ptr<sync_preferences::PrefServiceSyncable> prefs);
   explicit TestExtensionEnvironment(
       Type type = Type::kWithTaskEnvironment,
       ProfileCreationType profile_creation_type = ProfileCreationType::kCreate
@@ -77,6 +84,14 @@ class TestExtensionEnvironment {
   void SetBrowserContext(content::TestBrowserContext* browser_context);
 
   content::TestBrowserContext* browser_context() const;
+
+  void AddBrowserContext(content::BrowserContext* context);
+  std::vector<content::BrowserContext*> GetAllBrowserContexts() const;
+
+  sync_preferences::TestingPrefServiceSyncable* GetTestingPrefService();
+
+  void SetShuttingDown(bool is_shutting_down);
+  bool IsShuttingDown() const;
 
   // Returns the TestExtensionSystem created by the TestBrowserContext.
   TestExtensionSystem* GetExtensionSystem();
@@ -115,10 +130,6 @@ class TestExtensionEnvironment {
 
   PrefService* GetPrefService() const { return user_pref_service_.get(); }
 
-  void SetPrefService(std::unique_ptr<PrefService> pref_service) {
-    user_pref_service_ = std::move(pref_service);
-  }
-
  private:
   void Initialize();
 
@@ -141,6 +152,11 @@ class TestExtensionEnvironment {
 
   std::unique_ptr<PrefService> local_state_;
   std::unique_ptr<PrefService> user_pref_service_;
+  // ref only for right type, lifecycle is managed by user_pref_service_
+  raw_ptr<sync_preferences::TestingPrefServiceSyncable> testing_prefs_ =
+      nullptr;
+
+  bool is_shutting_down_ = false;
 
   raw_ptr<ExtensionService, DanglingUntriaged> extension_service_ = nullptr;
 };

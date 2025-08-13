@@ -24,6 +24,7 @@
 #include "base/version.h"
 #include "components/extensions/browser/extension_management_constants.h"
 #include "components/extensions/browser/extension_management_internal.h"
+#include "components/extensions/browser/forced_extensions/install_stage_tracker_factory.h"
 #include "components/extensions/browser/standard_management_policy_provider.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/crx_file/id_util.h"
@@ -61,38 +62,37 @@ using extensions::URLPatternSet;
 namespace components_extensions {
 
 ExtensionManagement::ExtensionManagement(content::BrowserContext* context)
-    : browser_context_(context)/*, pref_service_(browser_context_->GetPrefs())*/ {
+    : browser_context_(context)
+    , pref_service_(ExtensionsBrowserClient::Get()->GetPrefServiceForContext(context)) {
   TRACE_EVENT0("browser,startup",
                "ExtensionManagement::ExtensionManagement::ctor");
-  // TODO(mshin): Support Preference
-  // pref_change_registrar_.Init(pref_service_);
-  // base::RepeatingClosure pref_change_callback = base::BindRepeating(
-  //     &ExtensionManagement::OnExtensionPrefChanged, base::Unretained(this));
-  // pref_change_registrar_.Add(extensions::pref_names::kInstallAllowList,
-  //                            pref_change_callback);
-  // pref_change_registrar_.Add(extensions::pref_names::kInstallDenyList,
-  //                            pref_change_callback);
-  // pref_change_registrar_.Add(extensions::pref_names::kInstallForceList,
-  //                            pref_change_callback);
-  // pref_change_registrar_.Add(extensions::pref_names::kAllowedInstallSites,
-  //                            pref_change_callback);
-  // pref_change_registrar_.Add(extensions::pref_names::kAllowedTypes, pref_change_callback);
-  // pref_change_registrar_.Add(extensions::pref_names::kExtensionManagement,
-  //                            pref_change_callback);
-  // pref_change_registrar_.Add(extensions::pref_names::kManifestV2Availability,
-  //                            pref_change_callback);
-  // pref_change_registrar_.Add(extensions::pref_names::kExtensionUnpublishedAvailability,
-  //                            pref_change_callback);
+  pref_change_registrar_.Init(pref_service_);
+  base::RepeatingClosure pref_change_callback = base::BindRepeating(
+      &ExtensionManagement::OnExtensionPrefChanged, base::Unretained(this));
+  pref_change_registrar_.Add(extensions::pref_names::kInstallAllowList,
+                             pref_change_callback);
+  pref_change_registrar_.Add(extensions::pref_names::kInstallDenyList,
+                             pref_change_callback);
+  pref_change_registrar_.Add(extensions::pref_names::kInstallForceList,
+                             pref_change_callback);
+  pref_change_registrar_.Add(extensions::pref_names::kAllowedInstallSites,
+                             pref_change_callback);
+  pref_change_registrar_.Add(extensions::pref_names::kAllowedTypes, pref_change_callback);
+  pref_change_registrar_.Add(extensions::pref_names::kExtensionManagement,
+                             pref_change_callback);
+  pref_change_registrar_.Add(extensions::pref_names::kManifestV2Availability,
+                             pref_change_callback);
+  pref_change_registrar_.Add(extensions::pref_names::kExtensionUnpublishedAvailability,
+                             pref_change_callback);
   // Note that both |global_settings_| and |default_settings_| will be null
   // before first call to Refresh(), so in order to resolve this, Refresh() must
   // be called in the initialization of ExtensionManagement.
   Refresh();
-  // TODO(mshin): Enable the below code after migrating InstallStageTracker
-  // ReportExtensionManagementInstallCreationStage(
-  //     InstallStageTracker::InstallCreationStage::
-  //         NOTIFIED_FROM_MANAGEMENT_INITIAL_CREATION_FORCED,
-  //     InstallStageTracker::InstallCreationStage::
-  //         NOTIFIED_FROM_MANAGEMENT_INITIAL_CREATION_NOT_FORCED);
+  ReportExtensionManagementInstallCreationStage(
+      InstallStageTracker::InstallCreationStage::
+          NOTIFIED_FROM_MANAGEMENT_INITIAL_CREATION_FORCED,
+      InstallStageTracker::InstallCreationStage::
+          NOTIFIED_FROM_MANAGEMENT_INITIAL_CREATION_NOT_FORCED);
   providers_.push_back(
       std::make_unique<StandardManagementPolicyProvider>(this, browser_context_.get()));
   // TODO(mshin): Enable the below code after migrating PermissionsBasedManagementPolicyProvider
@@ -104,8 +104,7 @@ ExtensionManagement::~ExtensionManagement() = default;
 
 void ExtensionManagement::Shutdown() {
   pref_change_registrar_.RemoveAll();
-  // TODO(mshin): Support Preference
-  // pref_service_ = nullptr;
+  pref_service_ = nullptr;
 }
 
 void ExtensionManagement::AddObserver(Observer* observer) {
@@ -644,10 +643,9 @@ void ExtensionManagement::Refresh() {
           if (included_in_forcelist &&
               by_id->installation_mode !=
                   InstallationMode::INSTALLATION_FORCED) {
-            // TODO(mshin): Enable the below code after migrating InstallStageTracker
-            // InstallStageTracker::Get(browser_context_)->ReportFailure(
-            //     extension_id,
-            //     InstallStageTracker::FailureReason::OVERRIDDEN_BY_SETTINGS);
+            InstallStageTracker::Get(browser_context_)->ReportFailure(
+                extension_id,
+                InstallStageTracker::FailureReason::OVERRIDDEN_BY_SETTINGS);
           }
         }
       }
@@ -662,10 +660,9 @@ bool ExtensionManagement::ParseById(const std::string& extension_id,
     return true;
 
   settings_by_id_.erase(extension_id);
-  // TODO(mshin): Enable the below code after migrating InstallStageTracker
-  // InstallStageTracker::Get(browser_context_)->ReportFailure(
-  //     extension_id,
-  //     InstallStageTracker::FailureReason::MALFORMED_EXTENSION_SETTINGS);
+  InstallStageTracker::Get(browser_context_)->ReportFailure(
+      extension_id,
+      InstallStageTracker::FailureReason::MALFORMED_EXTENSION_SETTINGS);
   SYSLOG(WARNING) << "Malformed Extension Management settings for "
                   << extension_id << ".";
   return false;
@@ -719,17 +716,16 @@ const base::Value* ExtensionManagement::LoadPreference(
     const char* pref_name,
     bool force_managed,
     base::Value::Type expected_type) const {
-  // TODO(mshin): Support Preference
-  // if (!pref_service_)
-  //   return nullptr;
-  // const PrefService::Preference* pref =
-  //     pref_service_->FindPreference(pref_name);
-  // if (pref && !pref->IsDefaultValue() &&
-  //     (!force_managed || pref->IsManaged())) {
-  //   const base::Value* value = pref->GetValue();
-  //   if (value && value->type() == expected_type)
-  //     return value;
-  // }
+  if (!pref_service_)
+    return nullptr;
+  const PrefService::Preference* pref =
+      pref_service_->FindPreference(pref_name);
+  if (pref && !pref->IsDefaultValue() &&
+      (!force_managed || pref->IsManaged())) {
+    const base::Value* value = pref->GetValue();
+    if (value && value->type() == expected_type)
+      return value;
+  }
   return nullptr;
 }
 
@@ -755,31 +751,29 @@ void ExtensionManagement::OnExtensionPrefChanged() {
 }
 
 void ExtensionManagement::NotifyExtensionManagementPrefChanged() {
-  // TODO(mshin): Enable the below code after migrating InstallStageTracker
-  // ReportExtensionManagementInstallCreationStage(
-  //     InstallStageTracker::InstallCreationStage::NOTIFIED_FROM_MANAGEMENT,
-  //     InstallStageTracker::InstallCreationStage::
-  //         NOTIFIED_FROM_MANAGEMENT_NOT_FORCED);
+  ReportExtensionManagementInstallCreationStage(
+      InstallStageTracker::InstallCreationStage::NOTIFIED_FROM_MANAGEMENT,
+      InstallStageTracker::InstallCreationStage::
+          NOTIFIED_FROM_MANAGEMENT_NOT_FORCED);
   for (auto& observer : observer_list_)
     observer.OnExtensionManagementSettingsChanged();
 }
 
-// TODO(mshin): Enable the below code after migrating InstallStageTracker
-// void ExtensionManagement::ReportExtensionManagementInstallCreationStage(
-//     InstallStageTracker::InstallCreationStage forced_stage,
-//     InstallStageTracker::InstallCreationStage other_stage) {
-//   InstallStageTracker* install_stage_tracker =
-//       InstallStageTracker::Get(browser_context_);
-//   for (const auto& entry : settings_by_id_) {
-//     if (entry.second->installation_mode == INSTALLATION_FORCED) {
-//       install_stage_tracker->ReportInstallCreationStage(entry.first,
-//                                                         forced_stage);
-//     } else {
-//       install_stage_tracker->ReportInstallCreationStage(entry.first,
-//                                                         other_stage);
-//     }
-//   }
-// }
+void ExtensionManagement::ReportExtensionManagementInstallCreationStage(
+    InstallStageTracker::InstallCreationStage forced_stage,
+    InstallStageTracker::InstallCreationStage other_stage) {
+  InstallStageTracker* install_stage_tracker =
+      InstallStageTracker::Get(browser_context_);
+  for (const auto& entry : settings_by_id_) {
+    if (entry.second->installation_mode == INSTALLATION_FORCED) {
+      install_stage_tracker->ReportInstallCreationStage(entry.first,
+                                                        forced_stage);
+    } else {
+      install_stage_tracker->ReportInstallCreationStage(entry.first,
+                                                        other_stage);
+    }
+  }
+}
 
 base::Value::Dict ExtensionManagement::GetInstallListByMode(
     InstallationMode installation_mode) const {
@@ -804,37 +798,37 @@ void ExtensionManagement::UpdateForcedExtensions(
   if (!extension_dict)
     return;
 
-  // TODO(mshin): Enable the below code after migrating InstallStageTracker
-  // InstallStageTracker* install_stage_tracker =
-  //     InstallStageTracker::Get(browser_context_);
-  // for (auto it : *extension_dict) {
-  //   if (!crx_file::id_util::IdIsValid(it.first)) {
-  //     install_stage_tracker->ReportFailure(
-  //         it.first, InstallStageTracker::FailureReason::INVALID_ID);
-  //     continue;
-  //   }
-  //   const base::Value::Dict* dict_value = it.second.GetIfDict();
-  //   if (!dict_value) {
-  //     install_stage_tracker->ReportFailure(
-  //         it.first, InstallStageTracker::FailureReason::NO_UPDATE_URL);
-  //     continue;
-  //   }
-  //   const std::string* update_url =
-  //       dict_value->FindString(ExternalProviderImpl::kExternalUpdateUrl);
-  //   if (!update_url) {
-  //     install_stage_tracker->ReportFailure(
-  //         it.first, InstallStageTracker::FailureReason::NO_UPDATE_URL);
-  //     continue;
-  //   }
-  //   internal::IndividualSettings* by_id = AccessById(it.first);
-  //   by_id->installation_mode = INSTALLATION_FORCED;
-  //   by_id->update_url = *update_url;
-  //   install_stage_tracker->ReportInstallationStage(
-  //       it.first, InstallStageTracker::Stage::CREATED);
-  //   install_stage_tracker->ReportInstallCreationStage(
-  //       it.first,
-  //       InstallStageTracker::InstallCreationStage::CREATION_INITIATED);
-  // }
+  InstallStageTracker* install_stage_tracker =
+      InstallStageTracker::Get(browser_context_);
+  for (auto it : *extension_dict) {
+    if (!crx_file::id_util::IdIsValid(it.first)) {
+      install_stage_tracker->ReportFailure(
+          it.first, InstallStageTracker::FailureReason::INVALID_ID);
+      continue;
+    }
+    const base::Value::Dict* dict_value = it.second.GetIfDict();
+    if (!dict_value) {
+      install_stage_tracker->ReportFailure(
+          it.first, InstallStageTracker::FailureReason::NO_UPDATE_URL);
+      continue;
+    }
+    // TODO(mshin): Enable the below code after migrating ExternalProviderImpl
+    const std::string* update_url =
+        dict_value->FindString("external_update_url"/*ExternalProviderImpl::kExternalUpdateUrl*/);
+    if (!update_url) {
+      install_stage_tracker->ReportFailure(
+          it.first, InstallStageTracker::FailureReason::NO_UPDATE_URL);
+      continue;
+    }
+    internal::IndividualSettings* by_id = AccessById(it.first);
+    by_id->installation_mode = INSTALLATION_FORCED;
+    by_id->update_url = *update_url;
+    install_stage_tracker->ReportInstallationStage(
+        it.first, InstallStageTracker::Stage::CREATED);
+    install_stage_tracker->ReportInstallCreationStage(
+        it.first,
+        InstallStageTracker::InstallCreationStage::CREATION_INITIATED);
+  }
 }
 
 internal::IndividualSettings* ExtensionManagement::AccessById(
@@ -877,8 +871,7 @@ ExtensionManagementFactory::ExtensionManagementFactory()
     : BrowserContextKeyedServiceFactory(
           "ExtensionManagement",
           BrowserContextDependencyManager::GetInstance()) {
-  // TODO(mshin): Enable the below code after migrating InstallStageTracker
-  // DependsOn(InstallStageTrackerFactory::GetInstance());
+  DependsOn(InstallStageTrackerFactory::GetInstance());
 }
 
 ExtensionManagementFactory::~ExtensionManagementFactory() {}

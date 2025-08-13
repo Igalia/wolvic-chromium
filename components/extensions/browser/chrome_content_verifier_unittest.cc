@@ -109,9 +109,7 @@ class ChromeContentVerifierTest : public ExtensionServiceTestWithInstall {
       VerifierObserver* verifier_observer) {
     EXPECT_TRUE(
         ExtensionRegistry::Get(browser_context())->AddEnabled(extension));
-    // mshin: Block the below code not to notify OnExtensionLoaded  since it's
-    // already notifed when extension app is installed.
-    // ExtensionRegistry::Get(browser_context())->TriggerOnLoaded(extension.get());
+    ExtensionRegistry::Get(browser_context())->TriggerOnLoaded(extension.get());
     verifier_observer->EnsureFetchCompleted(extension->id());
   }
 

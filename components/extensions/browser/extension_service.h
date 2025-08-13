@@ -22,6 +22,8 @@
 #include "base/scoped_observation.h"
 #include "components/extensions/browser/corrupted_extension_reinstaller.h"
 #include "components/extensions/browser/extension_management.h"
+#include "components/extensions/browser/forced_extensions/force_installed_metrics.h"
+#include "components/extensions/browser/forced_extensions/force_installed_tracker.h"
 #include "components/extensions/browser/install_gate.h"
 #include "components/extensions/common/buildflags.h"
 #include "components/sync/model/string_ordinal.h"
@@ -450,10 +452,9 @@ class ExtensionService : public ExtensionServiceInterface,
   //   return external_install_manager_.get();
   // }
 
-  // TODO(mshin): Enable the below code after migrating ForceInstalledTracker
-  // ForceInstalledTracker* force_installed_tracker() {
-  //   return &force_installed_tracker_;
-  // }
+  ForceInstalledTracker* force_installed_tracker() {
+    return &force_installed_tracker_;
+  }
 
   // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
   // ExtensionAllowlist* allowlist() { return &allowlist_; }
@@ -766,11 +767,10 @@ class ExtensionService : public ExtensionServiceInterface,
   extensions::ExtensionRegistrar extension_registrar_;
 
   // Tracker of enterprise policy forced installation.
-  // TODO(mshin): Enable the below code after migrating ForceInstalledTracker
-  // ForceInstalledTracker force_installed_tracker_;
+  ForceInstalledTracker force_installed_tracker_;
 
   // Reports force-installed extension metrics to UMA.
-  // ForceInstalledMetrics force_installed_metrics_;
+  ForceInstalledMetrics force_installed_metrics_;
 
   // Schedules downloads/reinstalls of the corrupted extensions.
   CorruptedExtensionReinstaller corrupted_extension_reinstaller_;
