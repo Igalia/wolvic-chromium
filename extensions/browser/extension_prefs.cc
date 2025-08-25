@@ -1400,7 +1400,8 @@ void ExtensionPrefs::OnExtensionInstalled(
 void ExtensionPrefs::OnExtensionUninstalled(const ExtensionId& extension_id,
                                             const ManifestLocation location,
                                             bool external_uninstall) {
-  app_sorting()->ClearOrdinals(extension_id);
+  // TODO(mshin): Enable the below code after migrating AppSorting
+  // app_sorting()->ClearOrdinals(extension_id);
 
   // For external extensions, we save a preference reminding ourself not to try
   // and install the extension anymore (except when |external_uninstall| is

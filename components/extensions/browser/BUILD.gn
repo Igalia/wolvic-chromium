@@ -260,6 +260,7 @@ component("browser") {
     "user_script_listener.h",
   ]
   deps = [
+    "//components/embedder_support:browser_util",
     "//components/javascript_dialogs",
     "//components/reading_list/core",
     "//components/resources",

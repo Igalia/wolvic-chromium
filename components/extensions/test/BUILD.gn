@@ -11,12 +11,16 @@ static_library("test_support") {
   testonly = true
 
   sources = [
+    "../browser/browsertest_util.cc",
+    "../browser/browsertest_util.h",
     "../browser/chrome_extension_test_notification_observer.cc",
     "../browser/chrome_extension_test_notification_observer.h",
     "../browser/chrome_test_extension_loader.cc",
     "../browser/chrome_test_extension_loader.h",
     "../browser/extension_api_unittest.cc",
     "../browser/extension_api_unittest.h",
+    "../browser/extension_browsertest.cc",
+    "../browser/extension_browsertest.h",
     "../browser/extension_management_test_util.cc",
     "../browser/extension_management_test_util.h",
     "../browser/extension_service_test_base.cc",
@@ -41,6 +45,8 @@ static_library("test_support") {
     "../common/extension_test_util.h",
     "../common/manifest_tests/chrome_manifest_test.cc",
     "../common/manifest_tests/chrome_manifest_test.h",
+    "test_extension_paths.cc",
+    "test_extension_paths.h",
   ]
 
   deps = [
@@ -165,6 +171,27 @@ source_set("unit_tests") {
   public_deps = [ "//base/test:test_support" ]
 }
 
+source_set("browser_tests") {
+  testonly = true
+  defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
+  sources = [
+    "../browser/extension_browsertest_browsertest.cc",
+  ]
+
+  deps = [
+    ":test_support",
+    "//base",
+    "//testing/gmock",
+    "//testing/gtest",
+  ]
+
+  public_deps = [
+    "//components/extensions/browser/api",
+    "//components/extensions/browser/api:api_registration",
+    "//components/strings:components_strings",
+  ]
+}
+
 repack("extensions_tests_pak") {
   testonly = true
   sources = [
@@ -208,8 +235,6 @@ test("extensions_in_components_unittests") {
     "run_all_unittests.cc",
     "test_extension_environment.cc",
     "test_extension_environment.h",
-    "test_extension_paths.cc",
-    "test_extension_paths.h",
   ]
 
   data = [

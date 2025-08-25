@@ -5,6 +5,7 @@
 import("//base/debug/debug.gni")
 import("//build/config/chrome_build.gni")
 import("//build/config/chromeos/ui_mode.gni")
+import("//build/config/compontents_extensions_build.gni")
 import("//build/config/features.gni")
 import("//build/config/ui.gni")
 import("//components/compose/features.gni")
@@ -1050,6 +1051,17 @@ if (use_blink) {
       ]
     }
 
+    if (enable_extensions_in_components) {
+      deps += [
+        "//components/extensions/test:browser_tests",
+      ]
+      data += [
+        "//chrome/test/data/extensions/",
+        "//extensions/test/data/",
+        "//third_party/blink/web_tests/http/tests/wasm/resources/large.wasm",
+      ]
+    }
+
     if (is_android) {
       sources += [
         "browser_ui/client_certificate/android/ssl_client_certificate_request_browsertest.cc",
@@ -1113,7 +1125,7 @@ if (use_blink) {
     # dependency. On other platforms, no components should depend on Chrome.
     # Since //chrome depends on //extensions, we also only assert_no_deps on
     # extensions targets for non-lacros builds.
-    if (!is_chromeos_lacros) {
+    if (!is_chromeos_lacros && !enable_extensions_in_components) {
       assert_no_deps = [ "//chrome/*" ]
       assert_no_deps += disallowed_extension_deps_
     }
