@@ -58,6 +58,7 @@
 #include "wolvic/browser/autocomplete/wolvic_password_store_backend.h"
 #include "wolvic/browser/downloads/wolvic_download_manager_delegate.h"
 #include "wolvic/jni_headers/WolvicBrowserContext_jni.h"
+#include "wolvic/wolvic_content_browser_client.h"
 #include "wolvic/wolvic_permission_manager.h"
 
 #include "components/extensions/common/buildflags.h"
@@ -207,6 +208,8 @@ void WolvicBrowserContext::RegisterPrefs(
   password_manager::PasswordManager::RegisterProfilePrefs(registry);
   signin::IdentityManager::RegisterProfilePrefs(registry);
   safe_browsing::RegisterProfilePrefs(registry);
+
+  WolvicContentBrowserClient::RegisterProfilePrefs(registry);
 
 #if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
   // ExtensionWebUI::RegisterProfilePrefs(registry);

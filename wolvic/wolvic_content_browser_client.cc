@@ -43,6 +43,10 @@
 #include "content/public/common/url_constants.h"
 #include "components/extensions/browser/chrome_extension_web_contents_observer.h"
 #include "components/extensions/common/extension_constants.h"
+#include "components/extensions/common/pref_names.h"
+#include "components/prefs/pref_registry_simple.h"
+#include "components/prefs/pref_service.h"
+#include "components/pref_registry/pref_registry_syncable.h"
 #include "extensions/browser/api/web_request/web_request_api.h"
 #include "extensions/browser/api/web_request/web_request_proxying_webtransport.h"
 #include "extensions/browser/extension_navigation_throttle.h"
@@ -62,6 +66,7 @@
 #include "extensions/common/switches.h"
 #include "extensions/browser/browser_frame_context_data.h"
 #include "services/network/public/cpp/self_deleting_url_loader_factory.h"
+#include "third_party/blink/public/common/peerconnection/webrtc_ip_handling_policy.h"
 #include "third_party/blink/public/mojom/webpreferences/web_preferences.mojom.h"
 
 using blink::web_pref::WebPreferences;
@@ -284,6 +289,25 @@ void AttachUniversalWebContentsObservers(content::WebContents* web_contents) {
 #endif
 
 }  // namespace
+
+// static
+void WolvicContentBrowserClient::RegisterLocalStatePrefs(
+    PrefRegistrySimple* registry) {
+}
+
+// static
+void WolvicContentBrowserClient::RegisterProfilePrefs(
+    user_prefs::PrefRegistrySyncable* registry) {
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  // We might want to have the below configuration regardless Extensions
+  registry->RegisterBooleanPref(prefs::kSearchSuggestEnabled, true);
+  registry->RegisterBooleanPref(prefs::kEnableReferrers, true);
+  registry->RegisterBooleanPref(prefs::kEnableHyperlinkAuditing, true);
+  registry->RegisterStringPref(prefs::kWebRTCIPHandlingPolicy,
+                               blink::kWebRTCIPHandlingDefault);
+  registry->RegisterStringPref(prefs::kWebRTCUDPPortRange, std::string());
+#endif
+}
 
 WolvicContentBrowserClient::WolvicContentBrowserClient()
     : browser_main_parts_(nullptr) {

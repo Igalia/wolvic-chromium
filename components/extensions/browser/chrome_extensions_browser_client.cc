@@ -30,6 +30,7 @@
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/extension_system_factory.h"
 #include "components/extensions/browser/extension_util.h"
+#include "components/extensions/browser/pref_mapping.h"
 #include "components/extensions/browser/user_script_listener.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/content_settings/core/common/pref_names.h"
@@ -148,16 +149,13 @@ bool ShouldLogExtensionAction(content::BrowserContext* browser_context,
 // }
 
 bool RegisterTransformers() {
-  // TODO(mshin): Enable the below code after migrating PrefMapping
+  // TODO(mshin): Enable each pref after migrating
   // PrefMapping* pref_mapping = PrefMapping::GetInstance();
   // pref_mapping->RegisterPrefTransformer(
   //     prefs::kCookieControlsMode,
   //     std::make_unique<CookieControlsModeTransformer>());
   // pref_mapping->RegisterPrefTransformer(
   //     proxy_config::prefs::kProxy, std::make_unique<ProxyPrefTransformer>());
-  // pref_mapping->RegisterPrefTransformer(
-  //     prefetch::prefs::kNetworkPredictionOptions,
-  //     std::make_unique<NetworkPredictionTransformer>());
   // pref_mapping->RegisterPrefTransformer(
   //     prefs::kProtectedContentDefault,
   //     std::make_unique<ProtectedContentEnabledTransformer>());

@@ -39,6 +39,7 @@ component("common") {
     "permissions/chrome_permission_message_provider.h",
     "permissions/chrome_permission_message_rules.cc",
     "permissions/chrome_permission_message_rules.h",
+    "pref_names.h",
   ]
   deps = [
     "//base",

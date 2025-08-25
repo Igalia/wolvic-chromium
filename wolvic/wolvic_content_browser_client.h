@@ -18,10 +18,17 @@
 #include "components/extensions/browser/chrome_content_browser_client_extensions_part.h"
 #endif
 
+class PrefRegistrySimple;
+
 namespace content {
 class BrowserContext;
 class WebContents;
 }
+
+namespace user_prefs {
+class PrefRegistrySyncable;
+}  // namespace user_prefs
+
 namespace wolvic {
 
 class WolvicMainParts;
@@ -35,6 +42,9 @@ class WolvicContentBrowserClient : public content::ContentBrowserClient {
       delete;
 
   ~WolvicContentBrowserClient() override;
+
+  static void RegisterLocalStatePrefs(PrefRegistrySimple* registry);
+  static void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry);
 
   // Returns the single instance.
   static WolvicContentBrowserClient* Get();
