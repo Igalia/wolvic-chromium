@@ -21,6 +21,7 @@
 #include "base/scoped_multi_source_observation.h"
 #include "base/scoped_observation.h"
 #include "components/extensions/browser/corrupted_extension_reinstaller.h"
+#include "components/extensions/browser/cws_info_service.h"
 #include "components/extensions/browser/extension_management.h"
 #include "components/extensions/browser/forced_extensions/force_installed_metrics.h"
 #include "components/extensions/browser/forced_extensions/force_installed_tracker.h"
@@ -166,8 +167,7 @@ class ExtensionService : public ExtensionServiceInterface,
                          public content::RenderProcessHostObserver,
                          // TODO(mshin): Enable the below code after migrating Blocklist
                          // public Blocklist::Observer,
-                         // TODO(mshin): Enable the below code after migrating CWSInfoService
-                         // public CWSInfoService::Observer,
+                         public CWSInfoService::Observer,
                          public ExtensionManagement::Observer,
                          // TODO(mshin): Enable the below code after migrating UpgradeObserver
                          // public UpgradeObserver,
@@ -526,8 +526,7 @@ class ExtensionService : public ExtensionServiceInterface,
   // void OnBlocklistUpdated() override;
 
   // CWSInfoService::Observer implementation.
-  // TODO(mshin): Enable the below code after migrating CWSInfoService
-  // void OnCWSInfoChanged() override;
+  void OnCWSInfoChanged() override;
 
   // UpgradeObserver implementation.
   // TODO(mshin): Enable the below code after migrating UpgradeObserver
@@ -779,9 +778,8 @@ class ExtensionService : public ExtensionServiceInterface,
                           extensions::ExtensionHostRegistry::Observer>
       host_registry_observation_{this};
 
-  // TODO(mshin): Enable the below code after migrating CWSInfoService
-  // base::ScopedObservation<CWSInfoService, CWSInfoService::Observer>
-  //     cws_info_service_observation_{this};
+  base::ScopedObservation<CWSInfoService, CWSInfoService::Observer>
+      cws_info_service_observation_{this};
 
   using InstallGateRegistry =
       std::map<extensions::ExtensionPrefs::DelayReason, InstallGate*>;

@@ -10,6 +10,8 @@
 #include "base/command_line.h"
 #include "base/memory/ptr_util.h"
 #include "components/extensions/browser/crx_installer.h"
+#include "components/extensions/browser/cws_info_service.h"
+#include "components/extensions/browser/cws_info_service_factory.h"
 #include "components/extensions/browser/extension_management.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/shared_module_service.h"
@@ -51,41 +53,40 @@ namespace {
 // A fake CWSInfoService for tests that utilize the test extension system and
 // service infrastructure but do not depend on the actual functionality of the
 // service.
-// TODO(mshin): Enable the below code after migrating CWSInfoService
-// class FakeCWSInfoService : public CWSInfoService {
-//  public:
-//   explicit FakeCWSInfoService(BrowserContext* browser_context) {}
+class FakeCWSInfoService : public CWSInfoService {
+ public:
+  explicit FakeCWSInfoService(BrowserContext* browser_context) {}
 
-//   explicit FakeCWSInfoService(const CWSInfoService&) = delete;
-//   FakeCWSInfoService& operator=(const CWSInfoService&) = delete;
-//   ~FakeCWSInfoService() override = default;
+  explicit FakeCWSInfoService(const CWSInfoService&) = delete;
+  FakeCWSInfoService& operator=(const CWSInfoService&) = delete;
+  ~FakeCWSInfoService() override = default;
 
-//   // CWSInfoServiceInterface:
-//   std::optional<bool> IsLiveInCWS(const Extension& extension) const override;
-//   std::optional<CWSInfo> GetCWSInfo(const Extension& extension) const override;
-//   void CheckAndMaybeFetchInfo() override {}
-//   void AddObserver(Observer* observer) override {}
-//   void RemoveObserver(Observer* observer) override {}
+  // CWSInfoServiceInterface:
+  std::optional<bool> IsLiveInCWS(const Extension& extension) const override;
+  std::optional<CWSInfo> GetCWSInfo(const Extension& extension) const override;
+  void CheckAndMaybeFetchInfo() override {}
+  void AddObserver(Observer* observer) override {}
+  void RemoveObserver(Observer* observer) override {}
 
-//   // KeyedService:
-//   // Ensure that the keyed service shutdown is a no-op.
-//   void Shutdown() override {}
-// };
+  // KeyedService:
+  // Ensure that the keyed service shutdown is a no-op.
+  void Shutdown() override {}
+};
 
-// std::optional<bool> FakeCWSInfoService::IsLiveInCWS(
-//     const Extension& extension) const {
-//   return true;
-// }
+std::optional<bool> FakeCWSInfoService::IsLiveInCWS(
+    const Extension& extension) const {
+  return true;
+}
 
-// std::optional<CWSInfoServiceInterface::CWSInfo> FakeCWSInfoService::GetCWSInfo(
-//     const Extension& extension) const {
-//   return CWSInfoServiceInterface::CWSInfo();
-// }
+std::optional<CWSInfoServiceInterface::CWSInfo> FakeCWSInfoService::GetCWSInfo(
+    const Extension& extension) const {
+  return CWSInfoServiceInterface::CWSInfo();
+}
 
-// std::unique_ptr<KeyedService> BuildFakeCWSService(
-//     content::BrowserContext* context) {
-//   return std::make_unique<FakeCWSInfoService>(context);
-// }
+std::unique_ptr<KeyedService> BuildFakeCWSService(
+    content::BrowserContext* context) {
+  return std::make_unique<FakeCWSInfoService>(context);
+}
 
 }  // namespace
 
@@ -125,12 +126,11 @@ ExtensionService* TestExtensionSystem::CreateExtensionService(
     const base::FilePath& unpacked_install_directory,
     bool autoupdate_enabled,
     bool extensions_enabled) {
-  // TODO(mshin): Enable the below code after migrating CWSInfoServiceFactory
-  // if (CWSInfoService::Get(browser_context_) == nullptr) {
-  //   // Associate a dummy CWSInfoService with this browser context if necessary.
-  //   CWSInfoServiceFactory::GetInstance()->SetTestingFactory(
-  //       browser_context_, base::BindRepeating(&BuildFakeCWSService));
-  // }
+  if (CWSInfoService::Get(browser_context_) == nullptr) {
+    // Associate a dummy CWSInfoService with this browser context if necessary.
+    CWSInfoServiceFactory::GetInstance()->SetTestingFactory(
+        browser_context_, base::BindRepeating(&BuildFakeCWSService));
+  }
   management_policy_ = std::make_unique<ManagementPolicy>();
   management_policy_->RegisterProviders(
       ExtensionManagementFactory::GetForBrowserContext(browser_context_)

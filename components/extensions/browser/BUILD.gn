@@ -2,6 +2,7 @@ import("//build/config/features.gni")
 import("//build/config/compontents_extensions_build.gni")
 import("//build/config/ui.gni")
 import("//testing/test.gni")
+import("//third_party/protobuf/proto_library.gni")
 
 assert(enable_extensions_in_components)
 
@@ -180,6 +181,10 @@ component("browser") {
     "corrupted_extension_reinstaller.h",
     "crx_installer.cc",
     "crx_installer.h",
+    "cws_info_service.cc",
+    "cws_info_service.h",
+    "cws_info_service_factory.cc",
+    "cws_info_service_factory.h",
     "error_console/error_console.cc",
     "error_console/error_console.h",
     "error_console/error_console_factory.cc",
@@ -263,6 +268,7 @@ component("browser") {
     "user_script_listener.h",
   ]
   deps = [
+    "//components/extensions/browser:cws_item_service_proto",
     "//components/embedder_support:browser_util",
     "//components/javascript_dialogs",
     "//components/reading_list/core",
@@ -279,4 +285,8 @@ component("browser") {
   ]
 
   defines = [ "IS_EXETENSIONS_IMPL" ]
+}
+
+proto_library("cws_item_service_proto") {
+  sources = [ "cws_item_service.proto" ]
 }

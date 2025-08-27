@@ -4,10 +4,12 @@
 
 #include "components/extensions/browser/chrome_browser_context_keyed_service_factories.h"
 
+#include "components/extensions/browser/cws_info_service_factory.h"
 #include "components/extensions/browser/extension_management.h"
 #include "components/extensions/browser/extension_system_factory.h"
 #include "components/extensions/browser/install_tracker_factory.h"
 #include "components/extensions/browser/install_verifier_factory.h"
+#include "components/extensions/browser/permissions_updater.h"
 
 namespace components_extensions {
 
@@ -17,7 +19,7 @@ void EnsureChromeBrowserContextKeyedServiceFactoriesBuilt() {
 //   extensions::BookmarksApiWatcher::EnsureFactoryBuilt();
 //   extensions::ChromeAppIconServiceFactory::GetInstance();
 //   extensions::ChromeExtensionCookiesFactory::GetInstance();
-//   extensions::CWSInfoServiceFactory::GetInstance();
+  CWSInfoServiceFactory::GetInstance();
 //   extensions::ExtensionGarbageCollectorFactory::GetInstance();
 //   extensions::ExtensionGCMAppHandler::GetFactoryInstance();
   ExtensionManagementFactory::GetInstance();
@@ -28,7 +30,7 @@ void EnsureChromeBrowserContextKeyedServiceFactoriesBuilt() {
   InstallTrackerFactory::GetInstance();
   InstallVerifierFactory::GetInstance();
 //   extensions::MenuManagerFactory::GetInstance();
-//   extensions::PermissionsUpdater::EnsureAssociatedFactoryBuilt();
+  PermissionsUpdater::EnsureAssociatedFactoryBuilt();
 // #if BUILDFLAG(ENABLE_PLUGINS)
 //   extensions::PluginManager::GetFactoryInstance();
 // #endif

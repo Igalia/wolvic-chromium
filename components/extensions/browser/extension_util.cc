@@ -14,6 +14,7 @@
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/permissions_updater.h"
 #include "components/extensions/browser/shared_module_service.h"
+#include "components/extensions/common/pref_names.h"
 #include "components/prefs/pref_service.h"
 #include "components/variations/variations_associated_data.h"
 #include "content/public/browser/content_browser_client.h"
@@ -27,6 +28,7 @@
 #include "extensions/browser/extension_registry.h"
 #include "extensions/browser/extension_system.h"
 #include "extensions/browser/extension_util.h"
+#include "extensions/browser/extensions_browser_client.h"
 #include "extensions/browser/pref_names.h"
 #include "extensions/browser/process_manager.h"
 #include "extensions/browser/renderer_startup_helper.h"
@@ -41,6 +43,7 @@
 #include "url/gurl.h"
 
 using extensions::Extension;
+using extensions::ExtensionsBrowserClient;
 using extensions::ExtensionHost;
 using extensions::ExtensionId;
 using extensions::ExtensionPrefs;
@@ -291,9 +294,10 @@ std::vector<content::BrowserContext*> GetAllRelatedProfiles(
 }
 
 void SetDeveloperModeForProfile(content::BrowserContext* context, bool in_developer_mode) {
-  // TODO(mshin): Enable the below code after supporting preference.
-  // context->GetPrefs()->SetBoolean(prefs::kExtensionsUIDeveloperMode,
-  //                                 in_developer_mode);
+  PrefService* prefs =
+      ExtensionsBrowserClient::Get()->GetPrefServiceForContext(context);
+  DCHECK(prefs);
+  prefs->SetBoolean(prefs::kExtensionsUIDeveloperMode, in_developer_mode);
   extensions::SetCurrentDeveloperMode(
       extensions::util::GetBrowserContextId(context), in_developer_mode);
   RendererStartupHelperFactory::GetForBrowserContext(context)

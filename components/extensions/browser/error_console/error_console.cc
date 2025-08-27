@@ -14,9 +14,11 @@
 #include "base/observer_list.h"
 #include "base/strings/utf_string_conversions.h"
 #include "components/extensions/browser/error_console/error_console_factory.h"
+#include "components/extensions/common/pref_names.h"
 #include "components/crx_file/id_util.h"
 #include "components/prefs/pref_service.h"
 #include "components/version_info/version_info.h"
+#include "extensions/browser/extensions_browser_client.h"
 #include "extensions/browser/extension_prefs.h"
 #include "extensions/browser/extension_system.h"
 #include "extensions/common/extension.h"
@@ -28,6 +30,7 @@
 using extensions::ErrorList;
 using extensions::ErrorMap;
 using extensions::Extension;
+using extensions::ExtensionsBrowserClient;
 using extensions::ExtensionError;
 using extensions::ExtensionPrefs;
 using extensions::ExtensionRegistry;
@@ -39,7 +42,7 @@ using extensions::InstallWarning;
 namespace components_extensions {
 
 namespace mojom = extensions::mojom;
-  
+
 namespace {
 
 // The key into the Extension prefs for an Extension's specific reporting
@@ -70,11 +73,13 @@ ErrorConsole::ErrorConsole(content::BrowserContext* context)
       default_mask_(kDefaultMask),
       browser_context_(context),
       prefs_(nullptr) {
-  // TODO(mshin): Enable below code after migrating Pref
-  // pref_registrar_.Init(browser_context_->GetPrefs());
-  // pref_registrar_.Add(prefs::kExtensionsUIDeveloperMode,
-  //                     base::BindRepeating(&ErrorConsole::OnPrefChanged,
-  //                                         base::Unretained(this)));
+  PrefService* prefs =
+      ExtensionsBrowserClient::Get()->GetPrefServiceForContext(context);
+  DCHECK(prefs);
+  pref_registrar_.Init(prefs);
+  pref_registrar_.Add(prefs::kExtensionsUIDeveloperMode,
+                      base::BindRepeating(&ErrorConsole::OnPrefChanged,
+                                          base::Unretained(this)));
 
   registry_observation_.Observe(ExtensionRegistry::Get(browser_context_));
 
@@ -183,9 +188,10 @@ void ErrorConsole::RemoveObserver(Observer* observer) {
 }
 
 bool ErrorConsole::IsEnabledForChromeExtensionsPage() const {
-  // TODO(mshin): Enable below code after migrating Pref
-  // return browser_context_->GetPrefs()->GetBoolean(prefs::kExtensionsUIDeveloperMode);
-  return true;
+  PrefService* prefs =
+      ExtensionsBrowserClient::Get()->GetPrefServiceForContext(browser_context_);
+  DCHECK(prefs);
+  return prefs->GetBoolean(prefs::kExtensionsUIDeveloperMode);
 }
 
 bool ErrorConsole::IsEnabledForAppsDeveloperTools() const {

@@ -13,7 +13,12 @@
 #include "components/extensions/browser/extension_system_factory.h"
 #include "components/extensions/browser/test_extension_system.h"
 #include "components/extensions/common/extension_constants.h"
+#include "components/extensions/common/pref_names.h"
 #include "components/sessions/content/session_tab_helper.h"
+#include "components/keyed_service/content/browser_context_dependency_manager.h"
+#include "components/keyed_service/core/simple_dependency_manager.h"
+#include "components/keyed_service/core/simple_keyed_service_factory.h"
+#include "components/safe_browsing/core/common/safe_browsing_prefs.h"
 #include "components/sync_preferences/pref_service_syncable.h"
 #include "components/sync_preferences/testing_pref_service_syncable.h"
 #include "components/user_prefs/user_prefs.h"
@@ -32,6 +37,7 @@
 #include "extensions/common/extension_builder.h"
 #include "extensions/shell/browser/shell_prefs.h"
 #include "testing/gtest/include/gtest/gtest.h"
+#include "third_party/blink/public/common/peerconnection/webrtc_ip_handling_policy.h"
 
 namespace components_extensions {
 
@@ -75,8 +81,14 @@ base::Value::Dict MakePackagedAppManifest() {
                    "scripts", base::Value::List().Append("background.js"))));
 }
 
+}  // namespace
+
 // Register prefs applicable to all profiles.
-void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
+// static
+void TestExtensionEnvironment::RegisterProfilePrefs(
+    user_prefs::PrefRegistrySyncable* registry) {
+  safe_browsing::RegisterProfilePrefs(registry);
+
   // ActivityLog::RegisterProfilePrefs(registry);
   AudioAPI::RegisterUserPrefs(registry);
   ExtensionPrefs::RegisterProfilePrefs(registry);
@@ -85,9 +97,16 @@ void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry) {
   RuntimeAPI::RegisterPrefs(registry);
   // RegisterSettingsOverriddenUiPrefs(registry);
   // update_client::RegisterProfilePrefs(registry);
-}
 
-}  // namespace
+  registry->RegisterBooleanPref(prefs::kSearchSuggestEnabled, true);
+  registry->RegisterBooleanPref(prefs::kEnableReferrers, true);
+  registry->RegisterBooleanPref(prefs::kEnableHyperlinkAuditing, true);
+  registry->RegisterStringPref(prefs::kWebRTCIPHandlingPolicy,
+                               blink::kWebRTCIPHandlingDefault);
+  registry->RegisterStringPref(prefs::kWebRTCUDPPortRange, std::string());
+  registry->RegisterBooleanPref(prefs::kExtensionsUIDeveloperMode, false);
+  registry->RegisterBooleanPref(prefs::kDisableExtensions, false);
+}
 
 // static
 ExtensionService* TestExtensionEnvironment::CreateExtensionServiceForBrowserContext(
@@ -100,7 +119,6 @@ ExtensionService* TestExtensionEnvironment::CreateExtensionServiceForBrowserCont
 
 // static
 TestExtensionEnvironment* TestExtensionEnvironment::GetInstance() {
-  DCHECK(g_test_extensions_environment);
   return g_test_extensions_environment;
 }
 
@@ -139,6 +157,9 @@ void TestExtensionEnvironment::Initialize() {
       user_prefs::UserPrefs::Set(browser_context_ptr_.get(), user_pref_service_.get());
 
       RegisterProfilePrefs(testing_prefs_->registry());
+
+      BrowserContextDependencyManager::GetInstance()
+          ->RegisterProfilePrefsForServices(testing_prefs_->registry());
     }
 
     bool extensions_disabled =
@@ -157,11 +178,16 @@ void TestExtensionEnvironment::Initialize() {
     ExtensionSystemFactory::GetInstance()->SetTestingFactory(
         browser_context_ptr_.get(), base::BindRepeating(&TestExtensionSystem::Build));
     ExtensionSystem::Get(browser_context_ptr_.get())->InitForRegularProfile(true);
+
+    BrowserContextDependencyManager::GetInstance()->CreateBrowserContextServicesForTest(
+        browser_context_ptr_.get());
   }
 }
 
 TestExtensionEnvironment::~TestExtensionEnvironment()  {
   g_test_extensions_environment = nullptr;
+  BrowserContextDependencyManager::GetInstance()
+      ->DestroyBrowserContextServices(browser_context_ptr_.get());
 }
 
 void TestExtensionEnvironment::SetBrowserContext(TestBrowserContext* browser_context) {

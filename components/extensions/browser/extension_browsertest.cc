@@ -94,6 +94,7 @@ namespace service_worker_test_utils = extensions::service_worker_test_utils;
 namespace shell_prefs = extensions::shell_prefs;
 
 using content::BrowserContext;
+using content::WebContents;
 using extensions::service_worker_test_utils::TestRegistrationObserver;
 using extensions::BackgroundInfo;
 using extensions::CrxInstallError;

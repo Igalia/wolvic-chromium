@@ -48,6 +48,8 @@ namespace Search = api::history::Search;
 namespace {
 
 const char kInvalidUrlError[] = "Url is invalid.";
+const char kDeleteProhibitedError[] = "Browsing history is not allowed to be "
+                                      "deleted.";
 
 HistoryItem GetHistoryItem(const history::URLRow& row) {
   HistoryItem history_item;
@@ -214,12 +216,14 @@ bool HistoryFunction::ValidateUrl(const std::string& url_string,
 }
 
 bool HistoryFunction::VerifyDeleteAllowed(std::string* error) {
-  // TODO(mshin): Enable the below code after supporting Preference
-  // PrefService* prefs = GetProfile()->GetPrefs();
-  // if (!prefs->GetBoolean(prefs::kAllowDeletingBrowserHistory)) {
-  //   *error = kDeleteProhibitedError;
-  //   return false;
-  // }
+  PrefService* prefs =
+      ExtensionsBrowserClient::Get()->GetPrefServiceForContext(
+          browser_context());
+  DCHECK(prefs);
+  if (!prefs->GetBoolean(prefs::kAllowDeletingBrowserHistory)) {
+    *error = kDeleteProhibitedError;
+    return false;
+  }
   return true;
 }
 

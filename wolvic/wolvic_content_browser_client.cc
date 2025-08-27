@@ -45,7 +45,6 @@
 #include "components/extensions/common/extension_constants.h"
 #include "components/extensions/common/pref_names.h"
 #include "components/prefs/pref_registry_simple.h"
-#include "components/prefs/pref_service.h"
 #include "components/pref_registry/pref_registry_syncable.h"
 #include "extensions/browser/api/web_request/web_request_api.h"
 #include "extensions/browser/api/web_request/web_request_proxying_webtransport.h"
@@ -89,6 +88,10 @@ namespace wolvic {
 namespace {
 
 WolvicContentBrowserClient* g_instance = nullptr;
+
+constexpr char kAnimationPolicyAllowed[] = "allowed";
+constexpr char kAnimationPolicyOnce[] = "once";
+constexpr char kAnimationPolicyNone[] = "none";
 
 void CreateOriginId(cdm::MediaDrmStorageImpl::OriginIdObtainedCB callback) {
   std::move(callback).Run(true, base::UnguessableToken::Create());
@@ -306,6 +309,14 @@ void WolvicContentBrowserClient::RegisterProfilePrefs(
   registry->RegisterStringPref(prefs::kWebRTCIPHandlingPolicy,
                                blink::kWebRTCIPHandlingDefault);
   registry->RegisterStringPref(prefs::kWebRTCUDPPortRange, std::string());
+
+  registry->RegisterBooleanPref(prefs::kExtensionsUIDeveloperMode, false);
+
+  registry->RegisterBooleanPref(prefs::kDisableExtensions, false);
+
+  // Accessibility
+  registry->RegisterStringPref(prefs::kAnimationPolicy,
+                               kAnimationPolicyAllowed);
 #endif
 }
 
@@ -659,8 +670,23 @@ void WolvicContentBrowserClient::OverrideWebkitPrefs(
     content::WebContents* web_contents,
     WebPreferences* web_prefs) {
 #if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
-  web_prefs->animation_policy =
-      blink::mojom::ImageAnimationPolicy::kImageAnimationPolicyAllowed;
+  auto* wolvic_browser_context = static_cast<WolvicBrowserContext*>(
+      web_contents->GetBrowserContext());
+  PrefService* prefs = wolvic_browser_context->GetPrefService();
+  DCHECK(prefs);
+
+  std::string image_animation_policy =
+      prefs->GetString(prefs::kAnimationPolicy);
+  if (image_animation_policy == kAnimationPolicyOnce) {
+    web_prefs->animation_policy =
+        blink::mojom::ImageAnimationPolicy::kImageAnimationPolicyAnimateOnce;
+  } else if (image_animation_policy == kAnimationPolicyNone) {
+    web_prefs->animation_policy =
+        blink::mojom::ImageAnimationPolicy::kImageAnimationPolicyNoAnimation;
+  } else {
+    web_prefs->animation_policy =
+        blink::mojom::ImageAnimationPolicy::kImageAnimationPolicyAllowed;
+  }
 
   extensions_part_->OverrideWebkitPrefs(web_contents, web_prefs);
 #endif

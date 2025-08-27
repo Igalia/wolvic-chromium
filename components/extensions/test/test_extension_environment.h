@@ -81,6 +81,8 @@ class TestExtensionEnvironment {
 
   ~TestExtensionEnvironment();
 
+  static void RegisterProfilePrefs(user_prefs::PrefRegistrySyncable* registry);
+
   void SetBrowserContext(content::TestBrowserContext* browser_context);
 
   content::TestBrowserContext* browser_context() const;

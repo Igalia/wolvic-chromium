@@ -59,7 +59,8 @@ class ExtensionsUnitTestSuiteInitializer
   }
 
   bool IsShuttingDown() override {
-    return TestExtensionEnvironment::GetInstance()->IsShuttingDown();
+    return !TestExtensionEnvironment::GetInstance() ||
+           TestExtensionEnvironment::GetInstance()->IsShuttingDown();
   }
 
   std::string GetApplicationLocale() override { return "en-US"; }
@@ -90,9 +91,8 @@ class ExtensionsUnitTestSuiteInitializer
   }
 
   void OnTestEnd(const testing::TestInfo& test_info) override {
-    // TestingBrowserProcess::TearDownAndDeleteInstance();
-    extensions_browser_client_.reset();
     ExtensionsBrowserClient::Set(nullptr);
+    extensions_browser_client_.reset();
   }
 
  private:

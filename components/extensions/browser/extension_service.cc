@@ -47,6 +47,7 @@
 #include "components/extensions/browser/shared_module_service.h"
 #include "components/extensions/browser/unpacked_installer.h"
 #include "components/extensions/common/extension_constants.h"
+#include "components/extensions/common/pref_names.h"
 #include "components/favicon_base/favicon_url_parser.h"
 #include "components/policy/core/common/policy_pref_names.h"
 #include "components/safe_browsing/core/common/safe_browsing_prefs.h"
@@ -143,12 +144,10 @@ const char* const kObsoleteComponentExtensionIds[] = {
     "jcgeabjmjgoblfofpppfkcoakmfobdko",  // Video Player
 };
 
-// TODO(mshin): Enable the below code after supporing Preference
-// const char kBlockLoadCommandline[] = "command_line";
+const char kBlockLoadCommandline[] = "command_line";
 
 // ExtensionUnpublishedAvailability policy default value.
-// TODO(mshin): Enable the below code after migrating CWSInfoService
-// constexpr int kAllowUnpublishedExtensions = 0;
+constexpr int kAllowUnpublishedExtensions = 0;
 
 // When uninstalling an extension determine if the extension's directory
 // should be deleted when uninstalling. Returns `true` iff extension is
@@ -167,17 +166,21 @@ bool SkipDeleteExtensionDir(const Extension& extension,
 }
 
 bool ShouldBlockCommandLineExtension(content::BrowserContext& context) {
-  // TODO(mshin): Enable the below code after supporing Preference
-  // const base::Value::List& list =
-  //     context.GetPrefs()->GetList(extensions::pref_names::kExtensionInstallTypeBlocklist);
-  // for (const auto& val : list) {
-  //   if (val.is_string() && val.GetString() == kBlockLoadCommandline) {
-  //     return true;
-  //   }
-  // }
+  auto* prefs =
+      ExtensionsBrowserClient::Get()->GetPrefServiceForContext(&context);
+  DCHECK(prefs);
+
+  const base::Value::List& list =
+      prefs->GetList(extensions::pref_names::kExtensionInstallTypeBlocklist);
+  for (const auto& val : list) {
+    if (val.is_string() && val.GetString() == kBlockLoadCommandline) {
+      return true;
+    }
+  }
 
   return false;
 }
+
 }  // namespace
 
 // ExtensionService.
@@ -445,18 +448,20 @@ ExtensionService::ExtensionService(
   // TODO(mshin): Enable the below code after migrating UpgradeDetector
   // UpgradeDetector::GetInstance()->AddObserver(this);
 
-  // TODO(mshin): Enable the below code after migrating CWSInfoService
-  // if (base::FeatureList::IsEnabled(kCWSInfoService)) {
-  //   cws_info_service_observation_.Observe(CWSInfoService::Get(browser_context_));
-  // }
+  if (base::FeatureList::IsEnabled(kCWSInfoService)) {
+    cws_info_service_observation_.Observe(CWSInfoService::Get(browser_context_));
+  }
 
   ExtensionManagementFactory::GetForBrowserContext(browser_context_)->AddObserver(this);
 
   // Set up the ExtensionUpdater.
   if (autoupdate_enabled) {
     // TODO(mshin): Enable the below code after migrating ExtensionUpdater
+    // PrefService* prefs =
+    //     ExtensionsBrowserClient::Get()->GetPrefServiceForContext(context);
+    // DCHECK(prefs);
     // updater_ = std::make_unique<ExtensionUpdater>(
-    //     this, extension_prefs, context->GetPrefs(), context,
+    //     this, extension_prefs, prefs, context,
     //     kDefaultUpdateFrequencySeconds,
     //     ExtensionsBrowserClient::Get()->GetExtensionCache(),
     //     base::BindRepeating(ChromeExtensionDownloaderFactory::CreateForProfile,
@@ -484,10 +489,12 @@ ExtensionService::ExtensionService(
   extension_action_storage_manager_ =
       std::make_unique<ExtensionActionStorageManager>(browser_context_);
 
-  // TODO(mshin): Enable the below code after supporting Preference
-  // SetCurrentDeveloperMode(
-  //     extensions::util::GetBrowserContextId(context),
-  //     context->GetPrefs()->GetBoolean(prefs::kExtensionsUIDeveloperMode));
+  auto* prefs =
+      ExtensionsBrowserClient::Get()->GetPrefServiceForContext(context);
+  DCHECK(prefs);
+  extensions::SetCurrentDeveloperMode(
+      extensions::util::GetBrowserContextId(context),
+      prefs->GetBoolean(prefs::kExtensionsUIDeveloperMode));
 }
 
 PendingExtensionManager* ExtensionService::pending_extension_manager() {
@@ -516,10 +523,9 @@ ExtensionService::~ExtensionService() {
 }
 
 void ExtensionService::Shutdown() {
-  // TODO(mshin): Enable the below code after migrating CWSInfoService
-  // if (base::FeatureList::IsEnabled(kCWSInfoService)) {
-  //   cws_info_service_observation_.Reset();
-  // }
+  if (base::FeatureList::IsEnabled(kCWSInfoService)) {
+    cws_info_service_observation_.Reset();
+  }
   ExtensionManagementFactory::GetForBrowserContext(GetBrowserContext())->RemoveObserver(
       this);
   // TODO(mshin): Enable the below code after migrating ExternalInstallManager
@@ -547,11 +553,13 @@ void ExtensionService::Init() {
 
   LoadExtensionsFromCommandLineFlag(::switches::kDisableExtensionsExcept);
   if (load_command_line_extensions) {
-    // TODO(mshin): Enable the below code after supporting safe_browsing
-    /*if (safe_browsing::IsEnhancedProtectionEnabled(*browser_context_->GetPrefs())) {
+    PrefService* prefs =
+        ExtensionsBrowserClient::Get()->GetPrefServiceForContext(browser_context_);
+    DCHECK(prefs);
+    if (safe_browsing::IsEnhancedProtectionEnabled(*prefs)) {
       VLOG(1) << "--load-extension is not allowed for users opted into "
               << "Enhanced Safe Browsing, ignoring.";
-    } else*/ if (ShouldBlockCommandLineExtension(*browser_context_)) {
+    } else if (ShouldBlockCommandLineExtension(*browser_context_)) {
       VLOG(1)
           << "--load-extension is not allowed for users that have the policy "
           << "have the policy ExtensionInstallTypeBlocklist::command_line, "
@@ -1876,14 +1884,16 @@ void ExtensionService::OnExtensionManagementSettingsChanged() {
   // unpublished extensions should not be enabled. This update allows
   // unpublished extensions to be disabled sooner rather than waiting till the
   // next regularly scheduled fetch.
-  // TODO(mshin): Enable the below code after migrating CWSInfoService
-  // if (base::FeatureList::IsEnabled(kCWSInfoService)) {
-  //   if (browser_context_->GetPrefs()->GetInteger(
-  //           extensions::pref_names::kExtensionUnpublishedAvailability) !=
-  //       kAllowUnpublishedExtensions) {
-  //     CWSInfoService::Get(browser_context_)->CheckAndMaybeFetchInfo();
-  //   }
-  // }
+  if (base::FeatureList::IsEnabled(kCWSInfoService)) {
+    PrefService* prefs =
+        ExtensionsBrowserClient::Get()->GetPrefServiceForContext(browser_context_);
+    DCHECK(prefs);
+    if (prefs->GetInteger(
+            extensions::pref_names::kExtensionUnpublishedAvailability) !=
+        kAllowUnpublishedExtensions) {
+      CWSInfoService::Get(browser_context_)->CheckAndMaybeFetchInfo();
+    }
+  }
 }
 
 void ExtensionService::AddNewOrUpdatedExtension(
@@ -2248,10 +2258,9 @@ void ExtensionService::MaybeFinishDelayedInstallations() {
 //                      AsExtensionServiceWeakPtr()));
 // }
 
-// TODO(mshin): Enable the below code after migrating CWSInfoService
-// void ExtensionService::OnCWSInfoChanged() {
-//   CheckManagementPolicy();
-// }
+void ExtensionService::OnCWSInfoChanged() {
+  CheckManagementPolicy();
+}
 
 // TODO(mshin): Enable the below code after migrating UpgradeObserver
 // void ExtensionService::OnUpgradeRecommended() {

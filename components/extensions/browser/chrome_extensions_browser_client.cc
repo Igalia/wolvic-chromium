@@ -33,6 +33,7 @@
 #include "components/extensions/browser/pref_mapping.h"
 #include "components/extensions/browser/user_script_listener.h"
 #include "components/extensions/common/extension_constants.h"
+#include "components/extensions/common/pref_names.h"
 #include "components/content_settings/core/common/pref_names.h"
 #include "components/embedder_support/user_agent_utils.h"
 #include "components/privacy_sandbox/privacy_sandbox_prefs.h"
@@ -215,17 +216,14 @@ ChromeExtensionsBrowserClient::GetAllBrowserContexts() {
 bool ChromeExtensionsBrowserClient::AreExtensionsDisabled(
     const base::CommandLine& command_line,
     content::BrowserContext* context) {
-  // TODO(mshin): Enable the below code after migrating preference
-  // Profile* profile = static_cast<Profile*>(context);
-  // return ExtensionsDisabled(command_line) ||
-  //        profile->GetPrefs()->GetBoolean(prefs::kDisableExtensions);
-  return ExtensionsDisabled(command_line);
+  auto* prefs = GetPrefServiceForContext(context);
+  DCHECK(prefs);
+  return ExtensionsDisabled(command_line) ||
+         prefs->GetBoolean(prefs::kDisableExtensions);
 }
 
 bool ChromeExtensionsBrowserClient::IsValidContext(void* context) {
-  DCHECK(context);
-  // TODO(mshin): Support Profile for Embedder
-  return true;
+  return context && !IsShuttingDown();
 }
 
 bool ChromeExtensionsBrowserClient::IsSameContext(

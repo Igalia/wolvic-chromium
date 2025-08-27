@@ -25,6 +25,7 @@
 #include "components/extensions/browser/extension_util.h"
 #include "components/extensions/browser/load_error_reporter.h"
 #include "components/extensions/common/extension_constants.h"
+#include "components/extensions/common/pref_names.h"
 // #include "components/extensions/common/chrome_manifest_url_handlers.h"
 // #include "components/extensions/common/manifest_handlers/settings_overrides_handler.h"
 #include "components/safe_browsing/core/common/safe_browsing_prefs.h"
@@ -32,6 +33,7 @@
 #include "content/public/common/url_constants.h"
 #include "extensions/browser/allowlist_state.h"
 #include "extensions/browser/event_router.h"
+#include "extensions/browser/extensions_browser_client.h"
 #include "extensions/browser/extension_prefs.h"
 #include "extensions/browser/extension_registry.h"
 #include "extensions/browser/extension_system.h"
@@ -56,6 +58,7 @@ using content::BrowserThread;
 using extensions::BackgroundInfo;
 using extensions::EventRouter;
 using extensions::Extension;
+using extensions::ExtensionsBrowserClient;
 using extensions::ExtensionInfo;
 using extensions::ExtensionPrefs;
 using extensions::ExtensionRegistry;
@@ -520,13 +523,11 @@ void InstalledLoader::RecordExtensionsMetrics(content::BrowserContext* context,
   ManifestVersion2And3Counts policy_manifest_version_counts;
   ManifestVersion2And3Counts component_manifest_version_counts;
   ManifestVersion2And3Counts unpacked_manifest_version_counts;
-
   bool should_record_incremented_metrics = is_user_profile;
   bool should_record_offstore_developer_mode_metrics =
-      // TODO(mshin): Enable the below code after supporting preference.
-      false;
-      // !context->GetPrefs()->GetBoolean(prefs::kExtensionsUIDeveloperMode) &&
-      // is_user_profile;
+      !ExtensionsBrowserClient::Get()->
+          GetPrefServiceForContext(context)->GetBoolean(
+              prefs::kExtensionsUIDeveloperMode);
 
   const ExtensionSet& extensions = extension_registry_->enabled_extensions();
   for (ExtensionSet::const_iterator iter = extensions.begin();
@@ -1139,20 +1140,23 @@ void InstalledLoader::RecordExtensionsMetrics(content::BrowserContext* context,
     base::UmaHistogramCounts100("Extensions.NotAllowlistedDisabled2",
                                 disabled_not_allowlisted_count);
   }
-  // TODO(mshin): Enable the below code after supporting safe_browsing
-  // if (safe_browsing::IsEnhancedProtectionEnabled(*context->GetPrefs())) {
-  //   base::UmaHistogramCounts100("Extensions.NotAllowlistedEnabledAndEsbUser",
-  //                               enabled_not_allowlisted_count);
-  //   base::UmaHistogramCounts100("Extensions.NotAllowlistedDisabledAndEsbUser",
-  //                               disabled_not_allowlisted_count);
-  //   if (should_record_incremented_metrics) {
-  //     base::UmaHistogramCounts100("Extensions.NotAllowlistedEnabledAndEsbUser2",
-  //                                 enabled_not_allowlisted_count);
-  //     base::UmaHistogramCounts100(
-  //         "Extensions.NotAllowlistedDisabledAndEsbUser2",
-  //         disabled_not_allowlisted_count);
-  //   }
-  // }
+
+  PrefService* prefs =
+      ExtensionsBrowserClient::Get()->GetPrefServiceForContext(context);
+  DCHECK(prefs);
+  if (safe_browsing::IsEnhancedProtectionEnabled(*prefs)) {
+    base::UmaHistogramCounts100("Extensions.NotAllowlistedEnabledAndEsbUser",
+                                enabled_not_allowlisted_count);
+    base::UmaHistogramCounts100("Extensions.NotAllowlistedDisabledAndEsbUser",
+                                disabled_not_allowlisted_count);
+    if (should_record_incremented_metrics) {
+      base::UmaHistogramCounts100("Extensions.NotAllowlistedEnabledAndEsbUser2",
+                                  enabled_not_allowlisted_count);
+      base::UmaHistogramCounts100(
+          "Extensions.NotAllowlistedDisabledAndEsbUser2",
+          disabled_not_allowlisted_count);
+    }
+  }
 }
 
 int InstalledLoader::GetCreationFlags(const ExtensionInfo* info) {

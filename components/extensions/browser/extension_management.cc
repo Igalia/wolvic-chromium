@@ -22,6 +22,7 @@
 #include "base/trace_event/trace_event.h"
 #include "base/values.h"
 #include "base/version.h"
+#include "components/extensions/browser/cws_info_service.h"
 #include "components/extensions/browser/extension_management_constants.h"
 #include "components/extensions/browser/extension_management_internal.h"
 #include "components/extensions/browser/forced_extensions/install_stage_tracker_factory.h"
@@ -313,10 +314,9 @@ bool ExtensionManagement::IsAllowedManifestVersion(const Extension* extension) {
 bool ExtensionManagement::IsAllowedByUnpublishedAvailabilityPolicy(
     const Extension* extension) {
   // Check the kill switch before applying policy check.
-  // TODO(mshin): Enable the below code after migrating CWSInfoService
-  // if (!base::FeatureList::IsEnabled(kCWSInfoService)) {
-  //   return true;
-  // }
+  if (!base::FeatureList::IsEnabled(kCWSInfoService)) {
+    return true;
+  }
   // This policy only applies to extensions that update from CWS.
   if (!UpdatesFromWebstore(*extension)) {
     return true;
@@ -325,10 +325,9 @@ bool ExtensionManagement::IsAllowedByUnpublishedAvailabilityPolicy(
       internal::GlobalSettings::UnpublishedAvailability::kAllowUnpublished) {
     return true;
   }
-  // TODO(mshin): Enable the below code after migrating CWSInfoServiceInterface
-  // if (!cws_info_service_) {
-  //   cws_info_service_ = CWSInfoService::Get(browser_context_);
-  // }
+  if (!cws_info_service_) {
+    cws_info_service_ = CWSInfoService::Get(browser_context_);
+  }
   // Return the current published status of the extension in CWS if available.
   // Otherwise assume the extension is currently published and return true.
   // Ignore extensions taken down for malware as they are blocklisted and
@@ -336,13 +335,13 @@ bool ExtensionManagement::IsAllowedByUnpublishedAvailabilityPolicy(
   // Current publish status may not available if the policy setting just changed
   // to |kDisableUnpublished|. The actual publish status will be retrieved
   // by CWSInfoService separately and will trigger this same policy check.
-  // std::optional<CWSInfoServiceInterface::CWSInfo> cws_info =
-  //     cws_info_service_->GetCWSInfo(*extension);
-  // if (cws_info.has_value() && cws_info->is_present &&
-  //     cws_info->violation_type !=
-  //         CWSInfoServiceInterface::CWSViolationType::kMalware) {
-  //   return cws_info->is_live;
-  // }
+  std::optional<CWSInfoServiceInterface::CWSInfo> cws_info =
+      cws_info_service_->GetCWSInfo(*extension);
+  if (cws_info.has_value() && cws_info->is_present &&
+      cws_info->violation_type !=
+          CWSInfoServiceInterface::CWSViolationType::kMalware) {
+    return cws_info->is_live;
+  }
   return true;
 }
 

@@ -52,6 +52,7 @@ void WolvicBrowserProcess::Init(WolvicBrowserContext* context, WolvicBrowserCont
 
 void WolvicBrowserProcess::StartTearDown() {
   tearing_down_ = true;
+  extensions::ExtensionsBrowserClient::Set(nullptr);
   DCHECK(IsShuttingDown());
 }
 

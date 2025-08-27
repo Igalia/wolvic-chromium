@@ -60,8 +60,7 @@ class TestExtensionService : public ExtensionServiceInterface {
   base::WeakPtr<ExtensionServiceInterface> AsWeakPtr() override;
 
  private:
-  // TODO(mshin): Enable the below code after migrating CWSInfoServiceInterface
-  // std::unique_ptr<CWSInfoServiceInterface> cws_info_service_;
+  std::unique_ptr<CWSInfoServiceInterface> cws_info_service_;
   base::WeakPtrFactory<TestExtensionService> weak_ptr_factory_{this};
 };
 

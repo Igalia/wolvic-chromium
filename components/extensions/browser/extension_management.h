@@ -24,8 +24,7 @@
 #include "extensions/common/manifest.h"
 
 class GURL;
-// TODO(mshin): Support Preference
-// class PrefService;
+class PrefService;
 
 namespace content {
 class BrowserContext;
@@ -33,12 +32,12 @@ class BrowserContext;
 
 namespace extensions {
 class APIPermissionSet;
-class CWSInfoServiceInterface;
 class Extension;
 class PermissionSet;
 }  // namespace extensions
 
 namespace components_extensions {
+class CWSInfoServiceInterface;
 
 namespace internal {
 
@@ -344,8 +343,7 @@ class ExtensionManagement : public KeyedService {
   // Unowned pointer to the CWSInfoService keyed-service instance for this
   // profile. The service provides information about CWS publish status for
   // extensions.
-  // TODO(mshin): Enable the below code after migrating CWSInfoServiceInterface
-  // raw_ptr<CWSInfoServiceInterface> cws_info_service_ = nullptr;
+  raw_ptr<CWSInfoServiceInterface> cws_info_service_ = nullptr;
 };
 
 class ExtensionManagementFactory : public BrowserContextKeyedServiceFactory {

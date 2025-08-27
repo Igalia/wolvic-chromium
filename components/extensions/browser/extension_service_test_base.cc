@@ -191,9 +191,7 @@ BuildTestingBrowserContext(
 
     prefs = factory.CreateSyncable(registry.get());
 
-    AudioAPI::RegisterUserPrefs(registry.get());
-    ExtensionPrefs::RegisterProfilePrefs(registry.get());
-    PermissionsManager::RegisterProfilePrefs(registry.get());
+    TestExtensionEnvironment::RegisterProfilePrefs(registry.get());
   }
 
   auto browser_context = std::make_unique<TestBrowserContext>(profile_dir);
@@ -418,9 +416,6 @@ void ExtensionServiceTestBase::TearDown() {
     }
   }
   policy_provider_.Shutdown();
-
-  // TODO(mshin): Consider to use DependencyManager instead of the below code
-  extensions::ProcessManager::Get(browser_context_.get())->Shutdown();
   env_ = nullptr;
   browser_context_ = nullptr;
 

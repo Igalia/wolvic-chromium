@@ -38,8 +38,9 @@ void AddStringsForIdentity(base::Value::Dict* dict) {
 #if BUILDFLAG(ENABLE_PDF)
 bool IsPdfAnnotationsEnabled(content::BrowserContext* context) {
 #if BUILDFLAG(IS_CHROMEOS_ASH)
-  PrefService* prefs =
-      context ? Profile::FromBrowserContext(context)->GetPrefs() : nullptr;
+  PrefService* prefs = context ?
+      ExtensionsBrowserClient::Get()->GetPrefServiceForContext(context) :
+      nullptr;
   if (prefs && prefs->IsManagedPreference(prefs::kPdfAnnotationsEnabled) &&
       !prefs->GetBoolean(prefs::kPdfAnnotationsEnabled)) {
     return false;
