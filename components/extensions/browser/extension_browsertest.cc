@@ -528,6 +528,12 @@ std::vector<BrowserContext*> ExtensionBrowserTest::GetAllBrowserContexts() {
   return { browser_context_.get() };
 }
 
+scoped_refptr<network::SharedURLLoaderFactory>
+ExtensionBrowserTest::GetSharedUrlLoaderFactory() {
+    return browser_context_->GetDefaultStoragePartition()
+                 ->GetURLLoaderFactoryForBrowserProcess();
+}
+
 BrowserContext*
 ExtensionBrowserTest::GetOriginalBrowserContext(BrowserContext* context) {
   return context;

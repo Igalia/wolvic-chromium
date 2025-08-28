@@ -147,8 +147,7 @@ void ExtensionSystemImpl::Shared::Init(bool extensions_enabled) {
       browser_context_, base::CommandLine::ForCurrentProcess(),
       browser_context_->GetPath().AppendASCII(extensions::kInstallDirectoryName),
       browser_context_->GetPath().AppendASCII(extensions::kUnpackedInstallDirectoryName),
-      // TODO(mshin): Enable the below code after migrating Blocklist
-      ExtensionPrefs::Get(browser_context_), /*Blocklist::Get(browser_context_),*/
+      ExtensionPrefs::Get(browser_context_), Blocklist::Get(browser_context_),
       autoupdate_enabled, extensions_enabled, &ready_);
 
   uninstall_ping_sender_ = std::make_unique<UninstallPingSender>(

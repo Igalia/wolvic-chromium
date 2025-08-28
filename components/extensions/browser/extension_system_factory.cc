@@ -4,6 +4,7 @@
 
 #include "components/extensions/browser/extension_system_factory.h"
 
+#include "components/extensions/browser/blocklist_factory.h"
 #include "components/extensions/browser/forced_extensions/install_stage_tracker_factory.h"
 #include "components/extensions/browser/extension_management.h"
 #include "components/extensions/browser/install_verifier_factory.h"
@@ -58,8 +59,7 @@ ExtensionSystemSharedFactory::ExtensionSystemSharedFactory()
   DependsOn(InstallVerifierFactory::GetInstance());
   DependsOn(ProcessManagerFactory::GetInstance());
   DependsOn(RendererStartupHelperFactory::GetInstance());
-  // TODO(mshin): Enable the below code after migrating BlocklistFactory
-  // DependsOn(BlocklistFactory::GetInstance());
+  DependsOn(BlocklistFactory::GetInstance());
   DependsOn(EventRouterFactory::GetInstance());
   // This depends on ExtensionDownloader, which depends on
   // IdentityManager for webstore authentication.

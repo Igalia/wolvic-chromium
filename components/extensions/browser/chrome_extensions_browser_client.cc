@@ -66,6 +66,7 @@
 #include "extensions/common/permissions/permission_set.h"
 #include "net/http/http_response_headers.h"
 #include "ipc/ipc_message.h"
+#include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "url/gurl.h"
 
 using extensions::ComponentExtensionResourceManager;
@@ -206,6 +207,11 @@ void ChromeExtensionsBrowserClient::StartTearDown() {
 
 bool ChromeExtensionsBrowserClient::IsShuttingDown() {
   return delegate_->IsShuttingDown();
+}
+
+scoped_refptr<network::SharedURLLoaderFactory>
+ChromeExtensionsBrowserClient::GetSharedUrlLoaderFactory() {
+  return delegate_->GetSharedUrlLoaderFactory();
 }
 
 std::vector<content::BrowserContext*>

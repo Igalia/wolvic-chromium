@@ -20,6 +20,7 @@
 #include "base/observer_list.h"
 #include "base/scoped_multi_source_observation.h"
 #include "base/scoped_observation.h"
+#include "components/extensions/browser/blocklist.h"
 #include "components/extensions/browser/corrupted_extension_reinstaller.h"
 #include "components/extensions/browser/cws_info_service.h"
 #include "components/extensions/browser/extension_management.h"
@@ -165,8 +166,7 @@ class ExtensionService : public ExtensionServiceInterface,
                          public extensions::ExternalProviderInterface::VisitorInterface,
                          public content::RenderProcessHostCreationObserver,
                          public content::RenderProcessHostObserver,
-                         // TODO(mshin): Enable the below code after migrating Blocklist
-                         // public Blocklist::Observer,
+                         public Blocklist::Observer,
                          public CWSInfoService::Observer,
                          public ExtensionManagement::Observer,
                          // TODO(mshin): Enable the below code after migrating UpgradeObserver
@@ -181,8 +181,7 @@ class ExtensionService : public ExtensionServiceInterface,
                    const base::FilePath& install_directory,
                    const base::FilePath& unpacked_install_directory,
                    extensions::ExtensionPrefs* extension_prefs,
-                   // TODO(mshin): Enable the below code after migrating Blocklist
-                   // Blocklist* blocklist,
+                   Blocklist* blocklist,
                    bool autoupdate_enabled,
                    bool extensions_enabled,
                    base::OneShotEvent* ready);
@@ -312,9 +311,8 @@ class ExtensionService : public ExtensionServiceInterface,
 
   // Performs action based on verdicts received from the Extension Telemetry
   // server. Currently, these verdicts are limited to off-store extensions.
-  // TODO(mshin): Enable the below code after migrating Blocklist
-  // void PerformActionBasedOnExtensionTelemetryServiceVerdicts(
-  //     const Blocklist::BlocklistStateMap& blocklist_state_map);
+  void PerformActionBasedOnExtensionTelemetryServiceVerdicts(
+      const Blocklist::BlocklistStateMap& blocklist_state_map);
 
   // Disables the extension. If the extension is already disabled, just adds
   // the |disable_reasons| (a bitmask of disable_reason::DisableReason - there
@@ -522,8 +520,7 @@ class ExtensionService : public ExtensionServiceInterface,
   void RenderProcessHostDestroyed(content::RenderProcessHost* host) override;
 
   // Blocklist::Observer implementation.
-  // TODO(mshin): Enable the below code after migrating Blocklist
-  // void OnBlocklistUpdated() override;
+  void OnBlocklistUpdated() override;
 
   // CWSInfoService::Observer implementation.
   void OnCWSInfoChanged() override;
@@ -615,8 +612,7 @@ class ExtensionService : public ExtensionServiceInterface,
 
   // Manages the blocklisted extensions, intended as callback from
   // Blocklist::GetBlocklistedIDs.
-  // TODO(mshin): Enable the below code after migrating Blocklist
-  // void ManageBlocklist(const Blocklist::BlocklistStateMap& blocklisted_ids);
+  void ManageBlocklist(const Blocklist::BlocklistStateMap& blocklisted_ids);
 
   // Used only by test code.
   void UnloadAllExtensionsInternal();
@@ -656,8 +652,7 @@ class ExtensionService : public ExtensionServiceInterface,
   raw_ptr<extensions::ExtensionPrefs, DanglingUntriaged> extension_prefs_ = nullptr;
 
   // Blocklist for the owning profile.
-  // TODO(mshin): Enable the below code after migrating Blocklist
-  // raw_ptr<Blocklist, DanglingUntriaged> blocklist_ = nullptr;
+  raw_ptr<Blocklist, DanglingUntriaged> blocklist_ = nullptr;
 
   // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
   // ExtensionAllowlist allowlist_;

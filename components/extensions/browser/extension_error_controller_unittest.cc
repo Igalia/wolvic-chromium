@@ -20,6 +20,7 @@
 
 namespace components_extensions {
 
+namespace blocklist_prefs = extensions::blocklist_prefs;
 namespace pref_names = extensions::pref_names;
 
 using extensions::BitMapBlocklistState;
@@ -101,15 +102,14 @@ ExtensionErrorUI* CreateMockUI(ExtensionErrorUI::Delegate* delegate) {
 }
 
 // Builds and returns a simple extension.
-// TODO(mshin): Enable the below tests after migrating Blocklist
-// scoped_refptr<const Extension> BuildExtension() {
-//   return ExtensionBuilder()
-//       .SetManifest(base::Value::Dict()
-//                        .Set("name", "My Wonderful Extension")
-//                        .Set("version", "0.1.1.0")
-//                        .Set("manifest_version", 2))
-//       .Build();
-// }
+scoped_refptr<const Extension> BuildExtension() {
+  return ExtensionBuilder()
+      .SetManifest(base::Value::Dict()
+                       .Set("name", "My Wonderful Extension")
+                       .Set("version", "0.1.1.0")
+                       .Set("manifest_version", 2))
+      .Build();
+}
 
 }  // namespace
 
@@ -143,17 +143,16 @@ void ExtensionErrorControllerUnitTest::SetUp() {
 testing::AssertionResult
 ExtensionErrorControllerUnitTest::AddBlocklistedExtension(
     const Extension* extension) {
-  // TODO(mshin): Enable the below code after migrating Blocklist
-  // blocklist_prefs::SetSafeBrowsingExtensionBlocklistState(
-  //     extension->id(), BitMapBlocklistState::BLOCKLISTED_MALWARE, GetPrefs());
-  // service_->AddExtension(extension);
+  blocklist_prefs::SetSafeBrowsingExtensionBlocklistState(
+      extension->id(), BitMapBlocklistState::BLOCKLISTED_MALWARE, GetPrefs());
+  service_->AddExtension(extension);
 
-  // // Make sure the extension is added to the blocklisted set.
-  // if (!ExtensionRegistry::Get(browser_context())->blocklisted_extensions().Contains(
-  //         extension->id())) {
-  //   return testing::AssertionFailure()
-  //          << "Failed to add blocklisted extension.";
-  // }
+  // Make sure the extension is added to the blocklisted set.
+  if (!ExtensionRegistry::Get(browser_context())->blocklisted_extensions().Contains(
+          extension->id())) {
+    return testing::AssertionFailure()
+           << "Failed to add blocklisted extension.";
+  }
 
   return testing::AssertionSuccess();
 }
@@ -173,113 +172,112 @@ ExtensionPrefs* ExtensionErrorControllerUnitTest::GetPrefs() {
   return ExtensionPrefs::Get(browser_context());
 }
 
-// TODO(mshin): Enable the below tests after migrating Blocklist
 // Test that closing the extension alert for blocklisted extensions counts
 // as acknowledging them in the prefs.
-// TEST_F(ExtensionErrorControllerUnitTest, ClosingAcknowledgesBlocklisted) {
-//   // Add a blocklisted extension.
-//   scoped_refptr<const Extension> extension = BuildExtension();
-//   ASSERT_TRUE(AddBlocklistedExtension(extension.get()));
+TEST_F(ExtensionErrorControllerUnitTest, ClosingAcknowledgesBlocklisted) {
+  // Add a blocklisted extension.
+  scoped_refptr<const Extension> extension = BuildExtension();
+  ASSERT_TRUE(AddBlocklistedExtension(extension.get()));
 
-//   service_->Init();
+  service_->Init();
 
-//   // Make sure that we created an error "ui" to warn about the blocklisted
-//   // extension.
-//   ASSERT_TRUE(g_error_ui);
-//   ExtensionErrorUI::Delegate* delegate = g_error_ui->delegate();
-//   ASSERT_TRUE(delegate);
+  // Make sure that we created an error "ui" to warn about the blocklisted
+  // extension.
+  ASSERT_TRUE(g_error_ui);
+  ExtensionErrorUI::Delegate* delegate = g_error_ui->delegate();
+  ASSERT_TRUE(delegate);
 
-//   // Make sure that the blocklisted extension is reported (and that no other
-//   // extensions are).
-//   const ExtensionSet& delegate_blocklisted_extensions =
-//       delegate->GetBlocklistedExtensions();
-//   EXPECT_EQ(1u, delegate_blocklisted_extensions.size());
-//   EXPECT_TRUE(delegate_blocklisted_extensions.Contains(extension->id()));
+  // Make sure that the blocklisted extension is reported (and that no other
+  // extensions are).
+  const ExtensionSet& delegate_blocklisted_extensions =
+      delegate->GetBlocklistedExtensions();
+  EXPECT_EQ(1u, delegate_blocklisted_extensions.size());
+  EXPECT_TRUE(delegate_blocklisted_extensions.Contains(extension->id()));
 
-//   // Close, and verify that the extension ids now acknowledged.
-//   g_error_ui->CloseUI();
-//   EXPECT_TRUE(GetPrefs()->IsBlocklistedExtensionAcknowledged(extension->id()));
-//   // Verify we cleaned up after ourselves.
-//   EXPECT_FALSE(g_error_ui);
-// }
+  // Close, and verify that the extension ids now acknowledged.
+  g_error_ui->CloseUI();
+  EXPECT_TRUE(GetPrefs()->IsBlocklistedExtensionAcknowledged(extension->id()));
+  // Verify we cleaned up after ourselves.
+  EXPECT_FALSE(g_error_ui);
+}
 
-// // Test that clicking "accept" on the extension alert counts as acknowledging
-// // blocklisted extensions.
-// TEST_F(ExtensionErrorControllerUnitTest, AcceptingAcknowledgesBlocklisted) {
-//   // Add a blocklisted extension.
-//   scoped_refptr<const Extension> extension = BuildExtension();
-//   ASSERT_TRUE(AddBlocklistedExtension(extension.get()));
+// Test that clicking "accept" on the extension alert counts as acknowledging
+// blocklisted extensions.
+TEST_F(ExtensionErrorControllerUnitTest, AcceptingAcknowledgesBlocklisted) {
+  // Add a blocklisted extension.
+  scoped_refptr<const Extension> extension = BuildExtension();
+  ASSERT_TRUE(AddBlocklistedExtension(extension.get()));
 
-//   service_->Init();
+  service_->Init();
 
-//   // Make sure that we created an error "ui" to warn about the blocklisted
-//   // extension.
-//   ASSERT_TRUE(g_error_ui);
+  // Make sure that we created an error "ui" to warn about the blocklisted
+  // extension.
+  ASSERT_TRUE(g_error_ui);
 
-//   // Accept, and verify that the extension ids now acknowledged.
-//   g_error_ui->Accept();
-//   EXPECT_TRUE(GetPrefs()->IsBlocklistedExtensionAcknowledged(extension->id()));
-//   // Verify we cleaned up after ourselves.
-//   EXPECT_FALSE(g_error_ui);
-// }
+  // Accept, and verify that the extension ids now acknowledged.
+  g_error_ui->Accept();
+  EXPECT_TRUE(GetPrefs()->IsBlocklistedExtensionAcknowledged(extension->id()));
+  // Verify we cleaned up after ourselves.
+  EXPECT_FALSE(g_error_ui);
+}
 
-// // Test that we don't warn for extensions which are blocklisted, but have
-// // already been acknowledged.
-// TEST_F(ExtensionErrorControllerUnitTest, DontWarnForAcknowledgedBlocklisted) {
-//   scoped_refptr<const Extension> extension = BuildExtension();
-//   ASSERT_TRUE(AddBlocklistedExtension(extension.get()));
+// Test that we don't warn for extensions which are blocklisted, but have
+// already been acknowledged.
+TEST_F(ExtensionErrorControllerUnitTest, DontWarnForAcknowledgedBlocklisted) {
+  scoped_refptr<const Extension> extension = BuildExtension();
+  ASSERT_TRUE(AddBlocklistedExtension(extension.get()));
 
-//   GetPrefs()->AcknowledgeBlocklistedExtension(extension->id());
+  GetPrefs()->AcknowledgeBlocklistedExtension(extension->id());
 
-//   service_->Init();
+  service_->Init();
 
-//   // We should never have made an alert, because the extension should already
-//   // be acknowledged.
-//   ASSERT_FALSE(g_error_ui);
-// }
+  // We should never have made an alert, because the extension should already
+  // be acknowledged.
+  ASSERT_FALSE(g_error_ui);
+}
 
-// // Test there is no error ui if no extension is blocked by policy.
-// TEST_F(ExtensionErrorControllerUnitTest,
-//        ExtensionIsNotBlockedByEnterprisePolicy) {
-//   scoped_refptr<const Extension> extension = BuildExtension();
-//   service_->Init();
-//   service_->AddExtension(extension.get());
+// Test there is no error ui if no extension is blocked by policy.
+TEST_F(ExtensionErrorControllerUnitTest,
+       ExtensionIsNotBlockedByEnterprisePolicy) {
+  scoped_refptr<const Extension> extension = BuildExtension();
+  service_->Init();
+  service_->AddExtension(extension.get());
 
-//   EXPECT_FALSE(g_error_ui);
-// }
+  EXPECT_FALSE(g_error_ui);
+}
 
-// // Test error ui is presented and acknowledged whe an extension is blocked by
-// // policy.
-// TEST_F(ExtensionErrorControllerUnitTest, ExtensionIsBlockedByEnterprisePolicy) {
-//   scoped_refptr<const Extension> extension = BuildExtension();
-//   service_->Init();
-//   service_->AddExtension(extension.get());
-//   SetBlockExtensionPolicy(extension.get());
+// Test error ui is presented and acknowledged whe an extension is blocked by
+// policy.
+TEST_F(ExtensionErrorControllerUnitTest, ExtensionIsBlockedByEnterprisePolicy) {
+  scoped_refptr<const Extension> extension = BuildExtension();
+  service_->Init();
+  service_->AddExtension(extension.get());
+  SetBlockExtensionPolicy(extension.get());
 
-//   ASSERT_TRUE(g_error_ui);
+  ASSERT_TRUE(g_error_ui);
 
-//   g_error_ui->Accept();
-//   EXPECT_TRUE(GetPrefs()->IsBlocklistedExtensionAcknowledged(extension->id()));
-//   EXPECT_FALSE(g_error_ui);
-// }
+  g_error_ui->Accept();
+  EXPECT_TRUE(GetPrefs()->IsBlocklistedExtensionAcknowledged(extension->id()));
+  EXPECT_FALSE(g_error_ui);
+}
 
-// // Test the case that the error UI is accepted when we no longer need to show
-// // error for a blocked extension. It includes the case that the policy is
-// // updated or the extension is moved to the disabled list.
-// TEST_F(ExtensionErrorControllerUnitTest, ExtensionIsUnblockedBeforeUIAccepted) {
-//   scoped_refptr<const Extension> extension = BuildExtension();
-//   service_->Init();
-//   service_->AddExtension(extension.get());
-//   SetBlockExtensionPolicy(extension.get());
+// Test the case that the error UI is accepted when we no longer need to show
+// error for a blocked extension. It includes the case that the policy is
+// updated or the extension is moved to the disabled list.
+TEST_F(ExtensionErrorControllerUnitTest, ExtensionIsUnblockedBeforeUIAccepted) {
+  scoped_refptr<const Extension> extension = BuildExtension();
+  service_->Init();
+  service_->AddExtension(extension.get());
+  SetBlockExtensionPolicy(extension.get());
 
-//   ASSERT_TRUE(g_error_ui);
+  ASSERT_TRUE(g_error_ui);
 
-//   // Reset extension policy
-//   SetBlockExtensionPolicy(nullptr);
+  // Reset extension policy
+  SetBlockExtensionPolicy(nullptr);
 
-//   g_error_ui->Accept();
-//   EXPECT_TRUE(GetPrefs()->IsBlocklistedExtensionAcknowledged(extension->id()));
-//   EXPECT_FALSE(g_error_ui);
-// }
+  g_error_ui->Accept();
+  EXPECT_TRUE(GetPrefs()->IsBlocklistedExtensionAcknowledged(extension->id()));
+  EXPECT_FALSE(g_error_ui);
+}
 
 }  // namespace components_extensions

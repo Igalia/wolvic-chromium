@@ -136,8 +136,7 @@ ExtensionService* TestExtensionSystem::CreateExtensionService(
           ->GetProviders());
   extension_service_ = std::make_unique<ExtensionService>(
       browser_context_, command_line, install_directory, unpacked_install_directory,
-      // TODO(mshin): Enable the below code after migrating Blocklist
-      ExtensionPrefs::Get(browser_context_), /*Blocklist::Get(browser_context_),*/
+      ExtensionPrefs::Get(browser_context_), Blocklist::Get(browser_context_),
       autoupdate_enabled, extensions_enabled, &ready_);
 
   unzip::SetUnzipperLaunchOverrideForTesting(

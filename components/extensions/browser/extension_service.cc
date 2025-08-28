@@ -390,18 +390,16 @@ ExtensionService::ExtensionService(
     const base::FilePath& install_directory,
     const base::FilePath& unpacked_install_directory,
     ExtensionPrefs* extension_prefs,
-    // TODO(mshin): Enable the below code after migrating Blocklist
-    // Blocklist* blocklist,
+    Blocklist* blocklist,
     bool autoupdate_enabled,
     bool extensions_enabled,
     base::OneShotEvent* ready)
-    : /*Blocklist::Observer(blocklist),*/
+    : Blocklist::Observer(blocklist),
       command_line_(command_line),
       browser_context_(context),
       system_(ExtensionSystem::Get(context)),
       extension_prefs_(extension_prefs),
-      // TODO(mshin): Enable the below code after migrating Blocklist
-      // blocklist_(blocklist),
+      blocklist_(blocklist),
       // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
       // allowlist_(browser_context_, extension_prefs, this),
       // TODO(mshin): Support Safe browsing
@@ -946,15 +944,14 @@ void ExtensionService::PerformActionBasedOnOmahaAttributes(
   error_controller_->ShowErrorIfNeeded();
 }
 
-// TODO(mshin): Enable the below code after migrating Blocklist
-// void ExtensionService::PerformActionBasedOnExtensionTelemetryServiceVerdicts(
-//     const Blocklist::BlocklistStateMap& blocklist_state_map) {
-//   DCHECK_CURRENTLY_ON(BrowserThread::UI);
-//   // TODO(mshin): Enable the below code after migrating ExtensionTelemetryServiceVerdictHandler
-//   extension_telemetry_service_verdict_handler_.PerformActionBasedOnVerdicts(
-//       blocklist_state_map);
-//   error_controller_->ShowErrorIfNeeded();
-// }
+void ExtensionService::PerformActionBasedOnExtensionTelemetryServiceVerdicts(
+    const Blocklist::BlocklistStateMap& blocklist_state_map) {
+  DCHECK_CURRENTLY_ON(BrowserThread::UI);
+  // TODO(mshin): Enable the below code after migrating ExtensionTelemetryServiceVerdictHandler
+  // extension_telemetry_service_verdict_handler_.PerformActionBasedOnVerdicts(
+  //     blocklist_state_map);
+  error_controller_->ShowErrorIfNeeded();
+}
 
 void ExtensionService::OnGreylistStateRemoved(const std::string& extension_id) {
   bool is_on_sb_list = (extensions::blocklist_prefs::GetSafeBrowsingExtensionBlocklistState(
@@ -2250,13 +2247,12 @@ void ExtensionService::MaybeFinishDelayedInstallations() {
   }
 }
 
-// TODO(mshin): Enable the below code after migrating Blocklist
-// void ExtensionService::OnBlocklistUpdated() {
-//   blocklist_->GetBlocklistedIDs(
-//       registry_->GenerateInstalledExtensionsSet().GetIDs(),
-//       base::BindOnce(&ExtensionService::ManageBlocklist,
-//                      AsExtensionServiceWeakPtr()));
-// }
+void ExtensionService::OnBlocklistUpdated() {
+  blocklist_->GetBlocklistedIDs(
+      registry_->GenerateInstalledExtensionsSet().GetIDs(),
+      base::BindOnce(&ExtensionService::ManageBlocklist,
+                     AsExtensionServiceWeakPtr()));
+}
 
 void ExtensionService::OnCWSInfoChanged() {
   CheckManagementPolicy();
@@ -2321,15 +2317,14 @@ bool ExtensionService::ShouldBlockExtension(const Extension* extension) {
   return !extension || CanBlockExtension(extension);
 }
 
-// TODO(mshin): Enable the below code after migrating Blocklist
-// void ExtensionService::ManageBlocklist(
-//     const Blocklist::BlocklistStateMap& state_map) {
-//   DCHECK_CURRENTLY_ON(BrowserThread::UI);
+void ExtensionService::ManageBlocklist(
+    const Blocklist::BlocklistStateMap& state_map) {
+  DCHECK_CURRENTLY_ON(BrowserThread::UI);
 
-//   // TODO(mshin): Support Safe browsing
-//   // safe_browsing_verdict_handler_.ManageBlocklist(state_map);
-//   error_controller_->ShowErrorIfNeeded();
-// }
+  // TODO(mshin): Support Safe browsing
+  // safe_browsing_verdict_handler_.ManageBlocklist(state_map);
+  error_controller_->ShowErrorIfNeeded();
+}
 
 void ExtensionService::AddUpdateObserver(UpdateObserver* observer) {
   update_observers_.AddObserver(observer);
@@ -2400,20 +2395,18 @@ void ExtensionService::OnInstalledExtensionsLoaded() {
   // Check installed extensions against the blocklist if and only if the
   // database is ready; otherwise, the database is effectively empty and we'll
   // re-enable all blocked extensions.
-
-  // TODO(mshin): Enable the below code after migrating Blocklist
-  // blocklist_->IsDatabaseReady(base::BindOnce(
-  //     [](base::WeakPtr<ExtensionService> service, bool is_ready) {
-  //       DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
-  //       if (!service || !is_ready) {
-  //         // Either the service was torn down or the database isn't
-  //         // ready yet (and is effectively empty). Either way, no need
-  //         // to update the blocklisted extensions.
-  //         return;
-  //       }
-  //       service->OnBlocklistUpdated();
-  //     },
-  //     AsExtensionServiceWeakPtr()));
+  blocklist_->IsDatabaseReady(base::BindOnce(
+      [](base::WeakPtr<ExtensionService> service, bool is_ready) {
+        DCHECK(BrowserThread::CurrentlyOn(BrowserThread::UI));
+        if (!service || !is_ready) {
+          // Either the service was torn down or the database isn't
+          // ready yet (and is effectively empty). Either way, no need
+          // to update the blocklisted extensions.
+          return;
+        }
+        service->OnBlocklistUpdated();
+      },
+      AsExtensionServiceWeakPtr()));
 }
 
 void ExtensionService::UninstallMigratedExtensions() {

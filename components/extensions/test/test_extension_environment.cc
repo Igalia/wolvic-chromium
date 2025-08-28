@@ -22,6 +22,7 @@
 #include "components/sync_preferences/pref_service_syncable.h"
 #include "components/sync_preferences/testing_pref_service_syncable.h"
 #include "components/user_prefs/user_prefs.h"
+#include "content/public/browser/storage_partition.h"
 #include "content/public/test/browser_task_environment.h"
 #include "content/public/test/test_utils.h"
 #include "content/public/test/web_contents_tester.h"
@@ -185,6 +186,7 @@ void TestExtensionEnvironment::Initialize() {
 }
 
 TestExtensionEnvironment::~TestExtensionEnvironment()  {
+  g_browser_contexts.clear();
   g_test_extensions_environment = nullptr;
   BrowserContextDependencyManager::GetInstance()
       ->DestroyBrowserContextServices(browser_context_ptr_.get());
@@ -207,6 +209,12 @@ std::vector<BrowserContext*> TestExtensionEnvironment::GetAllBrowserContexts() c
   for (const auto& context : g_browser_contexts)
     result.push_back(context);
   return result;
+}
+
+scoped_refptr<network::SharedURLLoaderFactory>
+TestExtensionEnvironment::GetSharedUrlLoaderFactory() {
+  return browser_context()->GetDefaultStoragePartition()
+                          ->GetURLLoaderFactoryForBrowserProcess();
 }
 
 sync_preferences::TestingPrefServiceSyncable*

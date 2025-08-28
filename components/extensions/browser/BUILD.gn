@@ -144,6 +144,14 @@ component("browser") {
     "api/webrtc_logging_private/webrtc_logging_private_api.h",
     "api/webstore_private/webstore_private_api.cc",
     "api/webstore_private/webstore_private_api.h",
+    "blocklist.cc",
+    "blocklist.h",
+    "blocklist_check.cc",
+    "blocklist_check.h",
+    "blocklist_factory.cc",
+    "blocklist_factory.h",
+    "blocklist_state_fetcher.cc",
+    "blocklist_state_fetcher.h",
     "browser_context_keyed_service_factories.cc",
     "browser_context_keyed_service_factories.h",
     "chrome_app_sorting.cc",
@@ -271,6 +279,7 @@ component("browser") {
   ]
   deps = [
     "//components/extensions/browser:cws_item_service_proto",
+    "//components/extensions/browser:crx_info_proto",
     "//components/embedder_support:browser_util",
     "//components/javascript_dialogs",
     "//components/reading_list/core",
@@ -291,4 +300,9 @@ component("browser") {
 
 proto_library("cws_item_service_proto") {
   sources = [ "cws_item_service.proto" ]
+}
+
+# mshin: from //chrome/common
+proto_library("crx_info_proto") {
+  sources = [ "safe_browsing/crx_info.proto" ]
 }

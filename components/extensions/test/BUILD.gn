@@ -1,6 +1,7 @@
 import("//build/config/features.gni")
 import("//build/config/compontents_extensions_build.gni")
 import("//build/config/ui.gni")
+import("//components/safe_browsing/buildflags.gni")
 import("//testing/test.gni")
 import("//tools/grit/repack.gni")
 
@@ -31,12 +32,20 @@ static_library("test_support") {
     "../browser/extension_service_user_test_base.h",
     "../browser/fake_crx_installer.cc",
     "../browser/fake_crx_installer.h",
+    "../browser/fake_safe_browsing_database_manager.cc",
+    "../browser/fake_safe_browsing_database_manager.h",
     "../browser/load_error_waiter.cc",
     "../browser/load_error_waiter.h",
     "../browser/mock_crx_installer.cc",
     "../browser/mock_crx_installer.h",
     "../browser/permissions_test_util.cc",
     "../browser/permissions_test_util.h",
+    "../browser/scoped_database_manager_for_test.cc",
+    "../browser/scoped_database_manager_for_test.h",    
+    "../browser/test_blocklist.cc",
+    "../browser/test_blocklist.h",
+    "../browser/test_blocklist_state_fetcher.cc",
+    "../browser/test_blocklist_state_fetcher.h",
     "../browser/test_extension_service.cc",
     "../browser/test_extension_service.h",
     "../browser/test_extension_system.cc",
@@ -52,6 +61,7 @@ static_library("test_support") {
   deps = [
     "//base",
     "//components/crx_file",
+    "//components/enterprise/common/proto:connectors_proto",
     "//components/extensions/browser",
     "//components/extensions/common",
     "//components/extensions/common:test_features",
@@ -59,6 +69,7 @@ static_library("test_support") {
     "//components/policy/core/common:test_support",
     "//components/safe_browsing/core/browser/db:database_manager",
     "//components/safe_browsing/core/browser/db:v4_test_util",
+    "//components/safe_browsing/core/browser/db:test_database_manager",
     "//components/services/unzip:in_process",
     "//components/services/unzip/content",
     "//components/sessions",
@@ -83,6 +94,10 @@ source_set("unit_tests") {
     "../browser/api/chrome_extensions_api_client_unittest.cc",
     "../browser/api/device_permissions_manager_unittest.cc",
     "../browser/api/runtime/chrome_runtime_api_delegate_unittest.cc",
+    "../browser/blocklist_check_unittest.cc",
+    "../browser/blocklist_extension_prefs_unittest.cc",
+    "../browser/blocklist_state_fetcher_unittest.cc",
+    "../browser/blocklist_states_interaction_unittest.cc",
     "../browser/chrome_app_sorting_unittest.cc",
     "../browser/chrome_content_verifier_unittest.cc",
     "../browser/chrome_extension_function_unittest.cc",
@@ -160,6 +175,8 @@ source_set("unit_tests") {
     "../renderer/custom_types_unittest.cc",
     "../renderer/renderer_permissions_policy_delegate_unittest.cc",
   ]
+
+  sources += [ "../browser/blocklist_unittest.cc" ]
 
   data = [
     "//base/test/data/",

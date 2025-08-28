@@ -20,6 +20,7 @@
 #include "base/threading/thread_restrictions.h"
 #include "base/time/time.h"
 #include "base/version.h"
+#include "components/extensions/browser/blocklist_check.h"
 #include "components/extensions/browser/convert_user_script.h"
 #include "components/extensions/browser/extension_assets_manager.h"
 #include "components/extensions/browser/extension_service.h"
@@ -667,14 +668,12 @@ void CrxInstaller::CheckInstall() {
 
   policy_check_ = std::make_unique<PolicyCheck>(browser_context_, extension());
   requirements_check_ = std::make_unique<RequirementsChecker>(extension());
-  // TODO(mshin): Enable the below code after migrating BlocklistCheck
-  // blocklist_check_ =
-  //     std::make_unique<BlocklistCheck>(Blocklist::Get(browser_context_), extension_);
+  blocklist_check_ =
+      std::make_unique<BlocklistCheck>(Blocklist::Get(browser_context_), extension_);
 
   check_group_->AddCheck(policy_check_.get());
   check_group_->AddCheck(requirements_check_.get());
-  // TODO(mshin): Enable the below code after migrating BlocklistCheck
-  // check_group_->AddCheck(blocklist_check_.get());
+  check_group_->AddCheck(blocklist_check_.get());
 
   check_group_->Start(
       base::BindOnce(&CrxInstaller::OnInstallChecksComplete, this));

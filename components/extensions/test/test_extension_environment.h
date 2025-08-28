@@ -34,6 +34,10 @@ class Extension;
 class ExtensionPrefs;
 }
 
+namespace network {
+class SharedURLLoaderFactory;
+}  // namespace network
+
 namespace sync_preferences {
 class TestingPrefServiceSyncable;
 }  // namespace sync_preferences
@@ -89,6 +93,7 @@ class TestExtensionEnvironment {
 
   void AddBrowserContext(content::BrowserContext* context);
   std::vector<content::BrowserContext*> GetAllBrowserContexts() const;
+  scoped_refptr<network::SharedURLLoaderFactory> GetSharedUrlLoaderFactory();
 
   sync_preferences::TestingPrefServiceSyncable* GetTestingPrefService();
 

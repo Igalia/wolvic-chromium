@@ -37,6 +37,10 @@ namespace extensions {
 class ScopedExtensionUpdaterKeepAlive;
 }
 
+namespace network {
+class SharedURLLoaderFactory;
+}
+
 namespace components_extensions {
 
 class ChromeComponentExtensionResourceManager;
@@ -60,6 +64,7 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
     virtual bool IsShuttingDown() = 0;
     virtual std::string GetApplicationLocale() = 0;
     virtual std::vector<content::BrowserContext*> GetAllBrowserContexts() = 0;
+    virtual scoped_refptr<network::SharedURLLoaderFactory> GetSharedUrlLoaderFactory() = 0;
     virtual content::BrowserContext*
     GetOriginalBrowserContext(content::BrowserContext* context) = 0;
     virtual PrefService*
@@ -83,6 +88,7 @@ class ChromeExtensionsBrowserClient : public extensions::ExtensionsBrowserClient
   void StartTearDown();
 
   std::vector<content::BrowserContext*> GetAllBrowserContexts();
+  scoped_refptr<network::SharedURLLoaderFactory> GetSharedUrlLoaderFactory();
 
   // ExtensionsBrowserClient overrides:
   bool IsShuttingDown() override;

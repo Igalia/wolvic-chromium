@@ -69,6 +69,10 @@ class ExtensionsUnitTestSuiteInitializer
     return TestExtensionEnvironment::GetInstance()->GetAllBrowserContexts();
   }
 
+  scoped_refptr<network::SharedURLLoaderFactory> GetSharedUrlLoaderFactory() override {
+    return TestExtensionEnvironment::GetInstance()->GetSharedUrlLoaderFactory();
+  }
+
   content::BrowserContext*
   GetOriginalBrowserContext(content::BrowserContext* context) override {
     return context;

@@ -178,6 +178,7 @@ class ExtensionBrowserTest : public content::ContentBrowserTest,
   bool IsShuttingDown() override;
   std::string GetApplicationLocale() override;
   std::vector<content::BrowserContext*> GetAllBrowserContexts() override;
+  scoped_refptr<network::SharedURLLoaderFactory> GetSharedUrlLoaderFactory() override;
   content::BrowserContext*
   GetOriginalBrowserContext(content::BrowserContext* context) override;
   PrefService*

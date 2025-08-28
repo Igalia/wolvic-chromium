@@ -67,7 +67,6 @@ network::mojom::NetworkContext* WolvicBrowserProcess::GetNetworkContext() {
   return context_->GetDefaultStoragePartition()->GetNetworkContext();
 }
 
-
 bool WolvicBrowserProcess::IsShuttingDown() {
   return tearing_down_;
 }
@@ -86,6 +85,14 @@ std::vector<content::BrowserContext*> WolvicBrowserProcess::GetAllBrowserContext
   }
   return result;
 }
+
+scoped_refptr<network::SharedURLLoaderFactory>
+WolvicBrowserProcess::GetSharedUrlLoaderFactory() {
+  DCHECK(context_);
+  return context_->GetDefaultStoragePartition()
+                 ->GetURLLoaderFactoryForBrowserProcess();
+}
+
 
 content::BrowserContext*
 WolvicBrowserProcess::GetOriginalBrowserContext(content::BrowserContext* context) {
