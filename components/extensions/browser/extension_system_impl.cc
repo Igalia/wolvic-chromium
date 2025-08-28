@@ -16,6 +16,7 @@
 #include "base/strings/string_tokenizer.h"
 #include "base/time/time.h"
 #include "base/trace_event/trace_event.h"
+#include "components/extensions/browser/chrome_app_sorting.h"
 #include "components/extensions/browser/chrome_content_verifier_delegate.h"
 #include "components/extensions/browser/component_loader.h"
 #include "components/extensions/browser/crx_installer.h"
@@ -175,7 +176,7 @@ void ExtensionSystemImpl::Shared::Init(bool extensions_enabled) {
   extension_service_->component_loader()->AddDefaultComponentExtensions(
       skip_session_extensions);
 
-  // app_sorting_ = std::make_unique<ChromeAppSorting>(browser_context_);
+  app_sorting_ = std::make_unique<ChromeAppSorting>(browser_context_);
 
   InitInstallGates();
 

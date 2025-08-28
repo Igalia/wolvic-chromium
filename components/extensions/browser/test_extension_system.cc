@@ -9,6 +9,7 @@
 
 #include "base/command_line.h"
 #include "base/memory/ptr_util.h"
+#include "components/extensions/browser/chrome_app_sorting.h"
 #include "components/extensions/browser/crx_installer.h"
 #include "components/extensions/browser/cws_info_service.h"
 #include "components/extensions/browser/cws_info_service_factory.h"
@@ -97,10 +98,8 @@ TestExtensionSystem::TestExtensionSystem(BrowserContext* browser_context)
                                   store_factory_,
                                   StateStore::BackendType::RULES,
                                   false)),
-      quota_service_(new QuotaService())
-      // TODO(mshin): Enable the below code after migrating ChromeAppSorting
-      /*,
-      app_sorting_(new ChromeAppSorting(browser_context_))*/ {}
+      quota_service_(new QuotaService()),
+      app_sorting_(new ChromeAppSorting(browser_context_)) {}
 
 TestExtensionSystem::~TestExtensionSystem() = default;
 
@@ -196,9 +195,7 @@ QuotaService* TestExtensionSystem::quota_service() {
 }
 
 AppSorting* TestExtensionSystem::app_sorting() {
-  // TODO(mshin): Enable the below code after migrating ChromeAppSorting
-  // return app_sorting_.get();
-  return nullptr;
+  return app_sorting_.get();
 }
 
 const base::OneShotEvent& TestExtensionSystem::ready() const {
@@ -253,8 +250,7 @@ std::unique_ptr<KeyedService> TestExtensionSystem::Build(
 }
 
 void TestExtensionSystem::RecreateAppSorting() {
-  // TODO(mshin): Enable the below code after migrating ChromeAppSorting
-  // app_sorting_ = std::make_unique<ChromeAppSorting>(browser_context_);
+  app_sorting_ = std::make_unique<ChromeAppSorting>(browser_context_);
 }
 
 }  // namespace components_extensions

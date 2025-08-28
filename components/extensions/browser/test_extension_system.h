@@ -116,8 +116,7 @@ class TestExtensionSystem : public extensions::ExtensionSystem {
   std::unique_ptr<extensions::ManagementPolicy> management_policy_;
   std::unique_ptr<ExtensionService> extension_service_;
   std::unique_ptr<extensions::QuotaService> quota_service_;
-  // TODO(mshin): Enable the below code after migrating ChromeAppSorting
-  // std::unique_ptr<extensions::AppSorting> app_sorting_;
+  std::unique_ptr<extensions::AppSorting> app_sorting_;
   std::unique_ptr<extensions::UserScriptManager> user_script_manager_;
   base::OneShotEvent ready_;
 

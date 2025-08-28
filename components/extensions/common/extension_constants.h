@@ -7,6 +7,7 @@
 
 #include <stdint.h>
 
+#include "base/files/file_path.h"
 #include "build/build_config.h"
 #include "build/chromeos_buildflags.h"
 
@@ -328,6 +329,8 @@ inline constexpr char kChromeUIWebUITestHost[] = "webui-test";
 inline constexpr char kChromeUIUntrustedWebUITestURL[] = "chrome-untrusted://webui-test/";
 inline constexpr char kChromeSearchScheme[] = "chrome-search";
 
+// from //chrome/common/chrome_contants.cc
+inline constexpr base::FilePath::CharType kPreferencesFilename[] = FILE_PATH_LITERAL("Preferences");
 }
 
 namespace switches {

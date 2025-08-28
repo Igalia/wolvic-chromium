@@ -25,6 +25,7 @@
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/shared_module_service.h"
 #include "components/extensions/browser/test_extension_system.h"
+#include "components/extensions/common/extension_constants.h"
 #include "components/extensions/test/test_extension_environment.h"
 #include "components/extensions/test/test_extension_paths.h"
 #include "components/crx_file/crx_verifier.h"
@@ -61,8 +62,6 @@ using extensions::ExtensionSystem;
 using extensions::PermissionsManager;
 
 namespace {
-
-static constexpr char kPreferencesFilename[] = "Preferences";
 
 // Create a testing browser context according to |params|.
 
