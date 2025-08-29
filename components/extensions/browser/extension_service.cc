@@ -400,21 +400,17 @@ ExtensionService::ExtensionService(
       system_(ExtensionSystem::Get(context)),
       extension_prefs_(extension_prefs),
       blocklist_(blocklist),
-      // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
-      // allowlist_(browser_context_, extension_prefs, this),
-      // TODO(mshin): Support Safe browsing
-      // safe_browsing_verdict_handler_(extension_prefs,
-      //                                ExtensionRegistry::Get(context),
-      //                                this),
-      // TODO(mshin): Enable the below code after migrating OmahaAttributesHandler
-      // omaha_attributes_handler_(extension_prefs,
-      //                           ExtensionRegistry::Get(context),
-      //                           this),
-      // TODO(mshin): Enable the below code after migrating ExtensionTelemetryServiceVerdictHandler
-      // extension_telemetry_service_verdict_handler_(
-      //     extension_prefs,
-      //     ExtensionRegistry::Get(context),
-      //     this),
+      allowlist_(browser_context_, extension_prefs, this),
+      safe_browsing_verdict_handler_(extension_prefs,
+                                     ExtensionRegistry::Get(context),
+                                     this),
+      omaha_attributes_handler_(extension_prefs,
+                                ExtensionRegistry::Get(context),
+                                this),
+      extension_telemetry_service_verdict_handler_(
+          extension_prefs,
+          ExtensionRegistry::Get(context),
+          this),
       registry_(ExtensionRegistry::Get(context)),
       // TODO(mshin): Enable the below code after migrating PendingExtensionManager
       // pending_extension_manager_(context),
@@ -576,12 +572,10 @@ void ExtensionService::Init() {
   // rather than running immediately at startup.
   CheckForExternalUpdates();
 
-  // TODO(mshin): Support Safe browsing
-  // safe_browsing_verdict_handler_.Init();
+  safe_browsing_verdict_handler_.Init();
 
   // Must be called after extensions are loaded.
-  // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
-  // allowlist_.Init();
+  allowlist_.Init();
 
   // Check for updates especially for corrupted user installed extension from
   // the webstore. This will do nothing if an extension update check was
@@ -935,11 +929,9 @@ void ExtensionService::PerformActionBasedOnOmahaAttributes(
     const std::string& extension_id,
     const base::Value::Dict& attributes) {
   DCHECK_CURRENTLY_ON(BrowserThread::UI);
-  // TODO(mshin): Enable the below code after migrating OmahaAttributesHandler
-  // omaha_attributes_handler_.PerformActionBasedOnOmahaAttributes(extension_id,
-  //                                                               attributes);
-  // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
-  // allowlist_.PerformActionBasedOnOmahaAttributes(extension_id, attributes);
+  omaha_attributes_handler_.PerformActionBasedOnOmahaAttributes(extension_id,
+                                                                attributes);
+  allowlist_.PerformActionBasedOnOmahaAttributes(extension_id, attributes);
   // Show an error for the newly blocklisted extension.
   error_controller_->ShowErrorIfNeeded();
 }
@@ -947,9 +939,8 @@ void ExtensionService::PerformActionBasedOnOmahaAttributes(
 void ExtensionService::PerformActionBasedOnExtensionTelemetryServiceVerdicts(
     const Blocklist::BlocklistStateMap& blocklist_state_map) {
   DCHECK_CURRENTLY_ON(BrowserThread::UI);
-  // TODO(mshin): Enable the below code after migrating ExtensionTelemetryServiceVerdictHandler
-  // extension_telemetry_service_verdict_handler_.PerformActionBasedOnVerdicts(
-  //     blocklist_state_map);
+  extension_telemetry_service_verdict_handler_.PerformActionBasedOnVerdicts(
+      blocklist_state_map);
   error_controller_->ShowErrorIfNeeded();
 }
 
@@ -1818,8 +1809,7 @@ void ExtensionService::OnExtensionInstalled(
   else
     extension_prefs_->SetExtensionDisabled(id, disable_reasons);
 
-  // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
-  // allowlist()->OnExtensionInstalled(id, install_flags);
+  allowlist()->OnExtensionInstalled(id, install_flags);
 
   ExtensionPrefs::DelayReason delay_reason;
   InstallGate::Action action = ShouldDelayExtensionInstall(
@@ -2321,8 +2311,7 @@ void ExtensionService::ManageBlocklist(
     const Blocklist::BlocklistStateMap& state_map) {
   DCHECK_CURRENTLY_ON(BrowserThread::UI);
 
-  // TODO(mshin): Support Safe browsing
-  // safe_browsing_verdict_handler_.ManageBlocklist(state_map);
+  safe_browsing_verdict_handler_.ManageBlocklist(state_map);
   error_controller_->ShowErrorIfNeeded();
 }
 

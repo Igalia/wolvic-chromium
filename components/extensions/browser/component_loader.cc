@@ -20,6 +20,7 @@
 #include "base/trace_event/trace_event.h"
 #include "base/values.h"
 #include "build/build_config.h"
+#include "components/extensions/browser/component_extensions_allowlist/allowlist.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/grit/components_resources.h"
@@ -154,11 +155,10 @@ std::optional<base::Value::Dict> ComponentLoader::ParseManifest(
 
 ExtensionId ComponentLoader::Add(int manifest_resource_id,
                                  const base::FilePath& root_directory) {
-  // TODO(mshin): Enable the below code after migrating allow_list
-  // if (!ignore_allowlist_for_testing_ &&
-  //     !IsComponentExtensionAllowlisted(manifest_resource_id)) {
-  //   return std::string();
-  // }
+  if (!ignore_allowlist_for_testing_ &&
+      !IsComponentExtensionAllowlisted(manifest_resource_id)) {
+    return std::string();
+  }
 
   base::StringPiece manifest_contents =
       ui::ResourceBundle::GetSharedInstance().GetRawDataResource(
@@ -192,11 +192,10 @@ ExtensionId ComponentLoader::Add(base::Value::Dict parsed_manifest,
                                  const base::FilePath& root_directory,
                                  bool skip_allowlist) {
   ComponentExtensionInfo info(std::move(parsed_manifest), root_directory);
-  // TODO(mshin): Enable the below code after migrating allow_list
-  // if (!ignore_allowlist_for_testing_ && !skip_allowlist &&
-  //     !IsComponentExtensionAllowlisted(info.extension_id)) {
-  //   return std::string();
-  // }
+  if (!ignore_allowlist_for_testing_ && !skip_allowlist &&
+      !IsComponentExtensionAllowlisted(info.extension_id)) {
+    return std::string();
+  }
 
   component_extensions_.push_back(std::move(info));
   ComponentExtensionInfo& added_info = component_extensions_.back();
@@ -295,11 +294,10 @@ void ComponentLoader::AddWithNameAndDescription(
     const base::FilePath& root_directory,
     const std::string& name_string,
     const std::string& description_string) {
-  // TODO(mshin): Enable the below code after migrating allow_list
-  // if (!ignore_allowlist_for_testing_ &&
-  //     !IsComponentExtensionAllowlisted(manifest_resource_id)) {
-  //   return;
-  // }
+  if (!ignore_allowlist_for_testing_ &&
+      !IsComponentExtensionAllowlisted(manifest_resource_id)) {
+    return;
+  }
 
   base::StringPiece manifest_contents =
       ui::ResourceBundle::GetSharedInstance().GetRawDataResource(

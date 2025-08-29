@@ -12,6 +12,8 @@
   </outputs>
   <release seq="1">
     <includes>
+      <include name="IDR_WEBSTORE_MANIFEST" file="extensions/webstore_app/manifest.json" type="BINDATA" />
+      <include name="IDR_NETWORK_SPEECH_SYNTHESIS_MANIFEST" file="extensions/network_speech_synthesis/manifest.json" type="BINDATA" />
       <include name="IDR_NETWORK_SPEECH_SYNTHESIS_JS" file="extensions/network_speech_synthesis/tts_extension.js" type="BINDATA" />
       <include name="IDS_READING_MODE_DEFAULT_PNG" file="extensions/side_panel/read_anything/images/read_anything_default.png" type="BINDATA" />
       <include name="IDS_READING_MODE_LIGHT_PNG" file="extensions/side_panel/read_anything/images/read_anything_light.png" type="BINDATA" />

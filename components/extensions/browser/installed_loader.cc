@@ -872,12 +872,11 @@ void InstalledLoader::RecordExtensionsMetrics(content::BrowserContext* context,
 
     LogHostPermissionsAccess(*extension, should_record_incremented_metrics);
 
-    // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
-    // if (extension_service_->allowlist()->GetExtensionAllowlistState(
-    //         extension->id()) == extensions::ALLOWLIST_NOT_ALLOWLISTED) {
-    //   // Record the number of not allowlisted enabled extensions.
-    //   ++enabled_not_allowlisted_count;
-    // }
+    if (extension_service_->allowlist()->GetExtensionAllowlistState(
+            extension->id()) == extensions::ALLOWLIST_NOT_ALLOWLISTED) {
+      // Record the number of not allowlisted enabled extensions.
+      ++enabled_not_allowlisted_count;
+    }
   }
 
   const ExtensionSet& disabled_extensions =
@@ -928,12 +927,11 @@ void InstalledLoader::RecordExtensionsMetrics(content::BrowserContext* context,
           location);
     }
 
-    // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
-    // if (extension_service_->allowlist()->GetExtensionAllowlistState(
-    //         disabled_extension->id()) == extensions::ALLOWLIST_NOT_ALLOWLISTED) {
-    //   // Record the number of not allowlisted disabled extensions.
-    //   ++disabled_not_allowlisted_count;
-    // }
+    if (extension_service_->allowlist()->GetExtensionAllowlistState(
+            disabled_extension->id()) == extensions::ALLOWLIST_NOT_ALLOWLISTED) {
+      // Record the number of not allowlisted disabled extensions.
+      ++disabled_not_allowlisted_count;
+    }
   }
 
   if (is_user_profile) {

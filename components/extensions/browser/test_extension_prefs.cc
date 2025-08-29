@@ -97,7 +97,7 @@ TestExtensionPrefs::TestExtensionPrefs(
   ExtensionSystemFactory::GetInstance()->SetTestingFactory(
       &browser_context_, base::BindRepeating(&TestExtensionSystem::Build));
 
-   ResetPrefRegistry();
+  ResetPrefRegistry();
   RecreateExtensionPrefs();
 }
 

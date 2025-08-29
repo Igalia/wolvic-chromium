@@ -23,10 +23,14 @@
 #include "components/extensions/browser/blocklist.h"
 #include "components/extensions/browser/corrupted_extension_reinstaller.h"
 #include "components/extensions/browser/cws_info_service.h"
+#include "components/extensions/browser/extension_allowlist.h"
 #include "components/extensions/browser/extension_management.h"
+#include "components/extensions/browser/extension_telemetry_service_verdict_handler.h"
 #include "components/extensions/browser/forced_extensions/force_installed_metrics.h"
 #include "components/extensions/browser/forced_extensions/force_installed_tracker.h"
 #include "components/extensions/browser/install_gate.h"
+#include "components/extensions/browser/omaha_attributes_handler.h"
+#include "components/extensions/browser/safe_browsing_verdict_handler.h"
 #include "components/extensions/common/buildflags.h"
 #include "components/sync/model/string_ordinal.h"
 #include "content/public/browser/render_process_host.h"
@@ -454,8 +458,7 @@ class ExtensionService : public ExtensionServiceInterface,
     return &force_installed_tracker_;
   }
 
-  // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
-  // ExtensionAllowlist* allowlist() { return &allowlist_; }
+  ExtensionAllowlist* allowlist() { return &allowlist_; }
 
   //////////////////////////////////////////////////////////////////////////////
   // For Testing
@@ -654,18 +657,14 @@ class ExtensionService : public ExtensionServiceInterface,
   // Blocklist for the owning profile.
   raw_ptr<Blocklist, DanglingUntriaged> blocklist_ = nullptr;
 
-  // TODO(mshin): Enable the below code after migrating ExtensionAllowlist
-  // ExtensionAllowlist allowlist_;
+  ExtensionAllowlist allowlist_;
 
-  // TODO(mshin): Support Safe browsing
-  // SafeBrowsingVerdictHandler safe_browsing_verdict_handler_;
+  SafeBrowsingVerdictHandler safe_browsing_verdict_handler_;
 
-  // TODO(mshin): Enable the below code after migrating OmahaAttributesHandler
-  // OmahaAttributesHandler omaha_attributes_handler_;
+  OmahaAttributesHandler omaha_attributes_handler_;
 
-  // TODO(mshin): Enable the below code after migrating ExtensionTelemetryServiceVerdictHandler
-  // ExtensionTelemetryServiceVerdictHandler
-  //    extension_telemetry_service_verdict_handler_;
+  ExtensionTelemetryServiceVerdictHandler
+     extension_telemetry_service_verdict_handler_;
 
   // Sets of enabled/disabled/terminated/blocklisted extensions. Not owned.
   raw_ptr<extensions::ExtensionRegistry, DanglingUntriaged> registry_ = nullptr;

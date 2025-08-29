@@ -852,8 +852,7 @@ TEST(ExtensionAPITest, DefaultConfigurationFeatures) {
     const SimpleFeature* feature = test_data[i].feature;
     ASSERT_TRUE(feature) << i;
 
-    // TODO(mshin): Enable the below code after migrating AllowList
-    // EXPECT_TRUE(feature->allowlist().empty());
+    EXPECT_TRUE(feature->allowlist().empty());
     EXPECT_TRUE(feature->extension_types().empty());
 
     EXPECT_FALSE(feature->location());

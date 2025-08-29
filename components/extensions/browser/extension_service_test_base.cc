@@ -83,6 +83,30 @@ BuildTestingBrowserContext(
     return {nullptr, nullptr};
   }
 
+  // If pref_file is empty, TestingPrefServiceSyncable is automatically created
+  // in TestExtensionEnvironment.
+  std::unique_ptr<sync_preferences::PrefServiceSyncable> prefs;
+  if (params.prefs_content.has_value()) {
+    base::FilePath prefs_path =
+        profile_dir.Append(kPreferencesFilename);
+    if (!base::WriteFile(prefs_path, params.prefs_content.value())) {
+      LOG(ERROR) << "Failed to write a prefs file";
+      return {nullptr, nullptr};
+    }
+
+    // Create a PrefService that only contains user defined preference values
+    // and policies.
+    sync_preferences::PrefServiceMockFactory factory;
+    factory.SetUserPrefsFile(
+        prefs_path, base::SingleThreadTaskRunner::GetCurrentDefault().get());
+    scoped_refptr<user_prefs::PrefRegistrySyncable> registry(
+        new user_prefs::PrefRegistrySyncable);
+
+    prefs = factory.CreateSyncable(registry.get());
+
+    TestExtensionEnvironment::RegisterProfilePrefs(registry.get());
+  }
+
   base::FilePath extensions_install_dir =
       profile_dir.AppendASCII(extensions::kInstallDirectoryName);
   if (!base::DeletePathRecursively(extensions_install_dir)) {
@@ -102,33 +126,6 @@ BuildTestingBrowserContext(
       return {nullptr, nullptr};
     }
   }
-
-  // Only perform cleanup and copying of unpacked extensions if the path exists
-  // for the test since this is less common than for packed extensions.
-  if (base::PathExists(params.unpacked_extensions_dir)) {
-    base::FilePath unpacked_extensions_install_dir =
-        profile_dir.AppendASCII(extensions::kUnpackedInstallDirectoryName);
-    if (!base::DeletePathRecursively(unpacked_extensions_install_dir)) {
-      LOG(ERROR) << "Failed to clean unpacked extensions directory";
-      return {nullptr, nullptr};
-    }
-    if (params.unpacked_extensions_dir.empty()) {
-      if (base::File::Error error = base::File::FILE_OK;
-          !base::CreateDirectoryAndGetError(unpacked_extensions_install_dir,
-                                            &error)) {
-        LOG(ERROR) << "Failed to create unpacked extensions directory: "
-                   << error;
-        return {nullptr, nullptr};
-      }
-    } else {
-      if (!base::CopyDirectory(params.unpacked_extensions_dir,
-                               unpacked_extensions_install_dir, true)) {
-        LOG(ERROR) << "Failed to copy unpacked extensions directory";
-        return {nullptr, nullptr};
-      }
-    }
-  }
-
 // TODO(mshin): Support the multiple profiles
 //   if (params.profile_is_supervised) {
 // #if BUILDFLAG(ENABLE_SUPERVISED_USERS)
@@ -169,28 +166,30 @@ BuildTestingBrowserContext(
 //  profile_builder.SetPath(profile_dir);
 //  return profile_builder.Build();
 
-  // If pref_file is empty, TestingPrefServiceSyncable is automatically created
-  // in TestExtensionEnvironment.
-  std::unique_ptr<sync_preferences::PrefServiceSyncable> prefs;
-  if (params.prefs_content.has_value()) {
-    base::FilePath prefs_path =
-        profile_dir.Append(kPreferencesFilename);
-    if (!base::WriteFile(prefs_path, params.prefs_content.value())) {
-      LOG(ERROR) << "Failed to write a prefs file";
+  // Only perform cleanup and copying of unpacked extensions if the path exists
+  // for the test since this is less common than for packed extensions.
+  if (base::PathExists(params.unpacked_extensions_dir)) {
+    base::FilePath unpacked_extensions_install_dir =
+        profile_dir.AppendASCII(extensions::kUnpackedInstallDirectoryName);
+    if (!base::DeletePathRecursively(unpacked_extensions_install_dir)) {
+      LOG(ERROR) << "Failed to clean unpacked extensions directory";
       return {nullptr, nullptr};
     }
-
-    // Create a PrefService that only contains user defined preference values
-    // and policies.
-    sync_preferences::PrefServiceMockFactory factory;
-    factory.SetUserPrefsFile(
-        prefs_path, base::SingleThreadTaskRunner::GetCurrentDefault().get());
-    scoped_refptr<user_prefs::PrefRegistrySyncable> registry(
-        new user_prefs::PrefRegistrySyncable);
-
-    prefs = factory.CreateSyncable(registry.get());
-
-    TestExtensionEnvironment::RegisterProfilePrefs(registry.get());
+    if (params.unpacked_extensions_dir.empty()) {
+      if (base::File::Error error = base::File::FILE_OK;
+          !base::CreateDirectoryAndGetError(unpacked_extensions_install_dir,
+                                            &error)) {
+        LOG(ERROR) << "Failed to create unpacked extensions directory: "
+                   << error;
+        return {nullptr, nullptr};
+      }
+    } else {
+      if (!base::CopyDirectory(params.unpacked_extensions_dir,
+                               unpacked_extensions_install_dir, true)) {
+        LOG(ERROR) << "Failed to copy unpacked extensions directory";
+        return {nullptr, nullptr};
+      }
+    }
   }
 
   auto browser_context = std::make_unique<TestBrowserContext>(profile_dir);
