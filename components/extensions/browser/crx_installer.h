@@ -19,6 +19,7 @@
 #include "base/version.h"
 #include "components/extensions/browser/extension_install_prompt.h"
 #include "components/extensions/browser/extension_service.h"
+#include "components/extensions/browser/webstore_installer.h"
 #include "components/extensions/common/extension_constants.h"
 #include "components/sync/model/string_ordinal.h"
 #include "extensions/browser/api/declarative_net_request/ruleset_install_pref.h"
@@ -47,24 +48,6 @@ namespace components_extensions {
 class ExtensionService;
 class ExtensionUpdaterTest;
 class MockCrxInstaller;
-
-
-// TODO(mshin): Remove the below code after migrating WebstoreInstaller
-class WebstoreInstaller {
- public:
-  class Approval {};
-  enum ManifestCheckLevel {
-    // Do not check for any manifest equality.
-    MANIFEST_CHECK_LEVEL_NONE,
-
-    // Only check that the expected and actual permissions have the same
-    // effective permissions.
-    MANIFEST_CHECK_LEVEL_LOOSE,
-
-    // All data in the expected and actual manifests must match.
-    MANIFEST_CHECK_LEVEL_STRICT,
-  };
-};
 
 // This class installs a crx file into a profile.
 //

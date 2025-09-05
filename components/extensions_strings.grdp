@@ -1488,4 +1488,12 @@ Keep your key file in a safe place. You will need it to create new versions of y
   <message name="IDS_EXTENSIONS_ACCESS_REQUESTS_LEARN_MORE" desc="Text read by screen readers for a link labeled 'Learn more' that links to a Help article about Extensions' access requests.">
     Learn more about access requests.
   </message>
+
+  <!-- Webstore strings -->
+  <message name="IDS_WEBSTORE_NAME_STORE" desc="Name for the WebStore app in the app launcher.">
+    Web Store
+  </message>
+  <message name="IDS_WEBSTORE_APP_DESCRIPTION" desc="Description for the WebStore app.">
+    Discover great apps, games, extensions and themes for Chromium.
+  </message>
 </grit-part>

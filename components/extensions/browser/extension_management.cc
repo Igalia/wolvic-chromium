@@ -28,6 +28,7 @@
 #include "components/extensions/browser/forced_extensions/install_stage_tracker_factory.h"
 #include "components/extensions/browser/standard_management_policy_provider.h"
 #include "components/extensions/common/extension_constants.h"
+#include "components/extensions/common/pref_names.h"
 #include "components/crx_file/id_util.h"
 #include "components/keyed_service/content/browser_context_dependency_manager.h"
 #include "components/pref_registry/pref_registry_syncable.h"
@@ -80,6 +81,8 @@ ExtensionManagement::ExtensionManagement(content::BrowserContext* context)
                              pref_change_callback);
   pref_change_registrar_.Add(extensions::pref_names::kAllowedTypes, pref_change_callback);
   pref_change_registrar_.Add(extensions::pref_names::kExtensionManagement,
+                             pref_change_callback);
+  pref_change_registrar_.Add(prefs::kCloudExtensionRequestEnabled,
                              pref_change_callback);
   pref_change_registrar_.Add(extensions::pref_names::kManifestV2Availability,
                              pref_change_callback);
@@ -265,8 +268,8 @@ bool ExtensionManagement::IsAllowedManifestType(
     Manifest::Type manifest_type,
     const std::string& extension_id) const {
   // TODO(mshin): Currently, theme extension installations are not allowed.
-  if (manifest_type == Manifest::Type::TYPE_THEME)
-    return false;
+  // if (manifest_type == Manifest::Type::TYPE_THEME)
+  //   return false;
 
   if (!global_settings_->allowed_types.has_value())
     return true;
@@ -493,6 +496,9 @@ void ExtensionManagement::Refresh() {
       LoadListPreference(extensions::pref_names::kAllowedTypes, true);
   const base::Value::Dict* dict_pref =
       LoadDictPreference(extensions::pref_names::kExtensionManagement, true);
+  const base::Value* extension_request_pref = LoadPreference(
+      prefs::kCloudExtensionRequestEnabled, false, base::Value::Type::BOOLEAN);
+
   const base::Value* manifest_v2_pref =
       LoadPreference(extensions::pref_names::kManifestV2Availability,
                      /*force_managed=*/true, base::Value::Type::INTEGER);
@@ -508,7 +514,8 @@ void ExtensionManagement::Refresh() {
 
   // Parse default settings.
   const base::Value wildcard("*");
-  if (denied_list_pref && base::Contains(*denied_list_pref, wildcard)) {
+  if ((denied_list_pref && base::Contains(*denied_list_pref, wildcard)) ||
+      (extension_request_pref && extension_request_pref->GetBool())) {
     default_settings_->installation_mode = INSTALLATION_BLOCKED;
   }
 

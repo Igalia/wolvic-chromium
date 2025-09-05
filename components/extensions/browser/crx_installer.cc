@@ -138,35 +138,34 @@ CrxInstaller::CrxInstaller(base::WeakPtr<ExtensionService> service_weak,
       shared_file_task_runner_(extensions::GetExtensionFileTaskRunner()),
       update_from_settings_page_(false),
       install_flags_(extensions::kInstallFlagNone) {
-  // TODO(mshin): Enable the below code after migrating WebstoreInstaller
-  // if (!approval)
-  //   return;
+  if (!approval)
+    return;
 
-  // if (client_) {
-  //   client_->install_ui()->SetUseAppInstalledBubble(
-  //       approval->use_app_installed_bubble);
-  //   client_->install_ui()->SetSkipPostInstallUI(approval->skip_post_install_ui);
-  // }
+  if (client_) {
+    client_->install_ui()->SetUseAppInstalledBubble(
+        approval->use_app_installed_bubble);
+    client_->install_ui()->SetSkipPostInstallUI(approval->skip_post_install_ui);
+  }
 
-  // if (approval->skip_install_dialog) {
-  //   // Mark the extension as approved, but save the expected manifest and ID
-  //   // so we can check that they match the CRX's.
-  //   approved_ = true;
-  //   expected_manifest_check_level_ = approval->manifest_check_level;
-  //   if (expected_manifest_check_level_ !=
-  //       WebstoreInstaller::MANIFEST_CHECK_LEVEL_NONE) {
-  //     expected_manifest_ = std::make_unique<base::Value::Dict>(
-  //         approval->manifest->value()->Clone());
-  //   }
-  //   expected_id_ = approval->extension_id;
-  // }
-  // if (approval->minimum_version.get())
-  //   minimum_version_ = base::Version(*approval->minimum_version);
+  if (approval->skip_install_dialog) {
+    // Mark the extension as approved, but save the expected manifest and ID
+    // so we can check that they match the CRX's.
+    approved_ = true;
+    expected_manifest_check_level_ = approval->manifest_check_level;
+    if (expected_manifest_check_level_ !=
+        WebstoreInstaller::MANIFEST_CHECK_LEVEL_NONE) {
+      expected_manifest_ = std::make_unique<base::Value::Dict>(
+          approval->manifest->value()->Clone());
+    }
+    expected_id_ = approval->extension_id;
+  }
+  if (approval->minimum_version.get())
+    minimum_version_ = base::Version(*approval->minimum_version);
 
-  // if (approval->bypassed_safebrowsing_friction)
-  //   install_flags_ = kInstallFlagBypassedSafeBrowsingFriction;
+  if (approval->bypassed_safebrowsing_friction)
+    install_flags_ = extensions::kInstallFlagBypassedSafeBrowsingFriction;
 
-  // show_dialog_callback_ = approval->show_dialog_callback;
+  show_dialog_callback_ = approval->show_dialog_callback;
 }
 
 CrxInstaller::~CrxInstaller() {
@@ -729,9 +728,8 @@ void CrxInstaller::OnInstallChecksComplete(const PreloadCheck::Errors& errors) {
     // We don't want to show the error infobar for installs from the WebStore,
     // because the WebStore already shows an error dialog itself.
     // Note: |client_| can be NULL in unit_tests!
-    // TODO(mshin): Enable the below code after migrating WebstoreInstaller
-    // if (extension()->from_webstore() && client_)
-    //   client_->install_ui()->SetSkipPostInstallUI(true);
+    if (extension()->from_webstore() && client_)
+      client_->install_ui()->SetSkipPostInstallUI(true);
 
     ReportFailureFromUIThread(
         CrxInstallError(CrxInstallErrorType::DECLINED,

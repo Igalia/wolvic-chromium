@@ -94,6 +94,8 @@ source_set("unit_tests") {
     "../browser/api/chrome_extensions_api_client_unittest.cc",
     "../browser/api/device_permissions_manager_unittest.cc",
     "../browser/api/runtime/chrome_runtime_api_delegate_unittest.cc",
+    "../browser/api/webstore_private/extension_install_status_unittest.cc",
+    "../browser/api/webstore_private/webstore_private_unittest.cc",
     "../browser/blocklist_check_unittest.cc",
     "../browser/blocklist_extension_prefs_unittest.cc",
     "../browser/blocklist_state_fetcher_unittest.cc",
@@ -289,6 +291,7 @@ test("extensions_in_components_unittests") {
     deps += [
       "//base:base_unittest_support_java",
       "//content/public/android:content_java",
+      "//services/data_decoder/public/cpp/android:safe_json_java",
       "//ui/android:ui_java",
     ]
   }

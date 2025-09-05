@@ -89,6 +89,9 @@ class ExtensionApiUnittest : public testing::Test {
   void RunFunction(scoped_refptr<ExtensionFunction> function,
                    const std::string& args);
 
+  content::TestBrowserContext* browser_context() { return browser_context_.get(); }
+  TestExtensionEnvironment* env() { return env_.get(); }
+
  protected:
    // The template constructor has to be in the header but it delegates to this
   // constructor to initialize all other members out-of-line.

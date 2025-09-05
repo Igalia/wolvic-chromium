@@ -314,6 +314,9 @@ void WolvicContentBrowserClient::RegisterProfilePrefs(
 
   registry->RegisterBooleanPref(prefs::kDisableExtensions, false);
 
+  registry->RegisterBooleanPref(prefs::kCloudExtensionRequestEnabled, false);
+  registry->RegisterDictionaryPref(prefs::kCloudExtensionRequestIds);
+
   // Accessibility
   registry->RegisterStringPref(prefs::kAnimationPolicy,
                                kAnimationPolicyAllowed);

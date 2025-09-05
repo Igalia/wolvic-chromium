@@ -40,6 +40,8 @@ component("common") {
     "permissions/chrome_permission_message_rules.cc",
     "permissions/chrome_permission_message_rules.h",
     "pref_names.h",
+    "webstore_install_result.cc",
+    "webstore_install_result.h",
   ]
   deps = [
     "//base",

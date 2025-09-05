@@ -20,12 +20,14 @@
 #include "base/trace_event/trace_event.h"
 #include "base/values.h"
 #include "build/build_config.h"
+#include "components/crx_file/id_util.h"
 #include "components/extensions/browser/component_extensions_allowlist/allowlist.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/common/extension_constants.h"
+#include "components/grit/component_extension_resources.h"
 #include "components/grit/components_resources.h"
-#include "components/crx_file/id_util.h"
 #include "components/nacl/common/buildflags.h"
+#include "components/strings/grit/components_strings.h"
 #include "components/version_info/version_info.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/common/content_switches.h"
@@ -315,11 +317,10 @@ void ComponentLoader::AddWithNameAndDescription(
 }
 
 void ComponentLoader::AddWebStoreApp() {
-  // TODO(mshin): Enable the below code after migrating WebStore
-  // AddWithNameAndDescription(
-  //     IDR_WEBSTORE_MANIFEST, base::FilePath(FILE_PATH_LITERAL("web_store")),
-  //     l10n_util::GetStringUTF8(IDS_WEBSTORE_NAME_STORE),
-  //     l10n_util::GetStringUTF8(IDS_WEBSTORE_APP_DESCRIPTION));
+  AddWithNameAndDescription(
+      IDR_WEBSTORE_MANIFEST, base::FilePath(FILE_PATH_LITERAL("web_store")),
+      l10n_util::GetStringUTF8(IDS_WEBSTORE_NAME_STORE),
+      l10n_util::GetStringUTF8(IDS_WEBSTORE_APP_DESCRIPTION));
 }
 
 scoped_refptr<const Extension> ComponentLoader::CreateExtension(

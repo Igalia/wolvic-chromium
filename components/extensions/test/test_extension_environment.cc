@@ -9,6 +9,7 @@
 #include "base/command_line.h"
 #include "base/json/json_writer.h"
 #include "base/values.h"
+#include "components/extensions/browser/browser_context_keyed_service_factories.h"
 #include "components/extensions/browser/extension_service.h"
 #include "components/extensions/browser/extension_system_factory.h"
 #include "components/extensions/browser/test_extension_system.h"
@@ -28,6 +29,7 @@
 #include "content/public/test/web_contents_tester.h"
 #include "extensions/browser/api/audio/audio_api.h"
 #include "extensions/browser/api/runtime/runtime_api.h"
+#include "extensions/browser/browser_context_keyed_service_factories.h"
 #include "extensions/browser/extensions_browser_client.h"
 #include "extensions/browser/extension_prefs.h"
 #include "extensions/browser/extension_prefs_factory.h"
@@ -82,6 +84,11 @@ base::Value::Dict MakePackagedAppManifest() {
                    "scripts", base::Value::List().Append("background.js"))));
 }
 
+void EnsureBrowserContextKeyedServiceFactoriesBuiltForTesting() {
+  components_extensions::EnsureBrowserContextKeyedServiceFactoriesBuilt();
+  extensions::EnsureBrowserContextKeyedServiceFactoriesBuilt();
+}
+
 }  // namespace
 
 // Register prefs applicable to all profiles.
@@ -107,6 +114,8 @@ void TestExtensionEnvironment::RegisterProfilePrefs(
   registry->RegisterStringPref(prefs::kWebRTCUDPPortRange, std::string());
   registry->RegisterBooleanPref(prefs::kExtensionsUIDeveloperMode, false);
   registry->RegisterBooleanPref(prefs::kDisableExtensions, false);
+  registry->RegisterBooleanPref(prefs::kCloudExtensionRequestEnabled, false);
+  registry->RegisterDictionaryPref(prefs::kCloudExtensionRequestIds);
 }
 
 // static
@@ -148,6 +157,8 @@ TestExtensionEnvironment::TestExtensionEnvironment(
 void TestExtensionEnvironment::Initialize() {
   DCHECK(!g_test_extensions_environment);
   g_test_extensions_environment = this;
+
+  EnsureBrowserContextKeyedServiceFactoriesBuiltForTesting();
 
   if (browser_context_ptr_) {
     local_state_ = extensions::shell_prefs::CreateLocalState(
