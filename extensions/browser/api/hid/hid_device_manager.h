@@ -14,10 +14,13 @@
 #include "base/memory/raw_ptr.h"
 #include "base/threading/thread_checker.h"
 #include "base/values.h"
+#include "components/extensions/common/buildflags.h"
 #include "extensions/browser/browser_context_keyed_api_factory.h"
 #include "extensions/browser/event_router.h"
 #include "extensions/browser/extension_event_histogram_value.h"
+#if !BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
 #include "extensions/common/api/hid.h"
+#endif
 #include "mojo/public/cpp/bindings/associated_receiver.h"
 #include "mojo/public/cpp/bindings/pending_remote.h"
 #include "mojo/public/cpp/bindings/remote.h"

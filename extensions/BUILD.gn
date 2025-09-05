@@ -2,7 +2,7 @@
 # found in the LICENSE file.
 
 import("//build/config/chromeos/ui_mode.gni")
-import("//extensions/buildflags/buildflags.gni")
+import("//extensions/buildflags/internal/buildflags.gni")
 import("//testing/test.gni")
 import("//tools/grit/grit_rule.gni")
 import("//tools/grit/repack.gni")
@@ -183,6 +183,12 @@ static_library("test_support") {
     "//third_party/zlib/google:zip",
   ]
 
+  if (enable_extensions_in_components) {
+    deps -= [
+      "//chrome/common:buildflags",
+    ]
+  }
+
   # Generally, //extensions should not depend on //chromeos. However, a number
   # of the APIs and the extensions shell already do. We should try to avoid
   # expanding these dependencies.
@@ -237,6 +243,17 @@ repack("shell_and_test_pak") {
     "//ui/resources",
     "//ui/strings",
   ]
+
+  if (is_android || is_fuchsia || is_ios) {
+    sources -= [
+      "$root_gen_dir/content/browser/devtools/devtools_resources.pak",
+    ]
+
+    deps -= [
+      "//content/browser/devtools:devtools_resources",
+    ]
+  }
+
 }
 
 test("extensions_unittests") {
@@ -272,6 +289,12 @@ test("extensions_unittests") {
     "//ui/gl:test_support",
   ]
 
+  if (enable_extensions_in_components) {
+    deps -= [
+      ":extensions_resources",
+    ]
+  }
+
   data_deps = [
     "//testing/buildbot/filters:extensions_unittests_filters",
     "//third_party/mesa_headers",
@@ -303,6 +326,7 @@ test("extensions_browsertests") {
   data_deps = [ "//third_party/mesa_headers" ]
 }
 
+if (!enable_extensions_in_components) {
 # TODO(rockot) bug 505926: These should be moved to extensions_browsertests but have
 # old dependencies on chrome files. The chrome dependencies should be removed
 # and these moved to the extensions_browsertests target. Currently, we solve
@@ -375,4 +399,5 @@ source_set("chrome_extensions_browsertests_sources") {
   if (is_chromeos_ash) {
     deps += [ "//components/user_manager:test_support" ]
   }
+}
 }

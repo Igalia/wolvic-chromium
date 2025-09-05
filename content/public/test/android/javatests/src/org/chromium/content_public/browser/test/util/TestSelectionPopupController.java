@@ -27,6 +27,12 @@ public class TestSelectionPopupController implements SelectionPopupController {
     public TestSelectionPopupController() {}
 
     @Override
+    public void setDelegate(Delegate delegate) {}
+
+    @Override
+    public DelegateEventHandler getDelegateEventHandler() { return null; }
+
+    @Override
     public void setActionModeCallback(ActionModeCallback callback) {}
 
     @Override

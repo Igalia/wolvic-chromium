@@ -1,0 +1,77 @@
+import("//build/buildflag_header.gni")
+import("//build/config/features.gni")
+import("//build/config/compontents_extensions_build.gni")
+import("//tools/json_schema_compiler/json_features.gni")
+import("//tools/json_schema_compiler/json_schema_api.gni")
+
+assert(enable_extensions_in_components)
+
+component("common") {
+  sources = [
+    "api/url_handlers/url_handlers_parser.cc",
+    "api/url_handlers/url_handlers_parser.h",
+    "chrome_extensions_api_provider.cc",
+    "chrome_extensions_api_provider.h",
+    "chrome_extensions_client.cc",
+    "chrome_extensions_client.h",
+    "chrome_manifest_handlers.cc",
+    "chrome_manifest_handlers.h",
+    "chrome_manifest_url_handlers.cc",
+    "chrome_manifest_url_handlers.h",
+    "chrome_resource_request_blocked_reason.h",
+    "extension_constants.cc",
+    "extension_constants.h",
+    "manifest_handlers/app_launch_info.cc",
+    "manifest_handlers/app_launch_info.h",
+    "manifest_handlers/minimum_chrome_version_checker.cc",
+    "manifest_handlers/minimum_chrome_version_checker.h",
+    "manifest_handlers/natively_connectable_handler.cc",
+    "manifest_handlers/natively_connectable_handler.h",
+    "manifest_handlers/settings_overrides_handler.cc",
+    "manifest_handlers/settings_overrides_handler.h",
+    "manifest_handlers/theme_handler.cc",
+    "manifest_handlers/theme_handler.h",
+    "initialize_extensions_client.cc",
+    "initialize_extensions_client.h",
+    "permissions/chrome_api_permissions.cc",
+    "permissions/chrome_api_permissions.h",
+    "permissions/chrome_permission_message_provider.cc",
+    "permissions/chrome_permission_message_provider.h",
+    "permissions/chrome_permission_message_rules.cc",
+    "permissions/chrome_permission_message_rules.h",
+    "pref_names.h",
+    "webstore_install_result.cc",
+    "webstore_install_result.h",
+  ]
+  deps = [
+    "//base",
+    "//components/resources",
+    "//components/url_formatter",
+    "//extensions/common:core_api_provider",
+    "//extensions:extensions_resources",
+  ]
+
+  public_deps = [
+    "//components/extensions/common/api",
+    "//components/extensions/common/api:extensions_features",
+  ]
+
+  defines = [ "IS_EXETENSIONS_IMPL" ]
+}
+
+buildflag_header("buildflags") {
+  header = "buildflags.h"
+  flags = [ "ENABLE_EXTENSIONS_IN_COMPONENTS=$enable_extensions_in_components" ]
+}
+
+json_features("extension_features_unittest") {
+  feature_type = "APIFeature"
+  method_name = "AddUnittestAPIFeatures"
+  sources = [
+    "//chrome/test/data/extensions/extension_api_unittest/api_features.json",
+  ]
+}
+
+group("test_features") {
+  public_deps = [ ":extension_features_unittest" ]
+}

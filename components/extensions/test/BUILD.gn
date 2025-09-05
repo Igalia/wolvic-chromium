@@ -1,0 +1,304 @@
+import("//build/config/features.gni")
+import("//build/config/compontents_extensions_build.gni")
+import("//build/config/ui.gni")
+import("//components/safe_browsing/buildflags.gni")
+import("//testing/test.gni")
+import("//tools/grit/repack.gni")
+
+assert(enable_extensions_in_components)
+
+
+static_library("test_support") {
+  testonly = true
+
+  sources = [
+    "../browser/browsertest_util.cc",
+    "../browser/browsertest_util.h",
+    "../browser/chrome_extension_test_notification_observer.cc",
+    "../browser/chrome_extension_test_notification_observer.h",
+    "../browser/chrome_test_extension_loader.cc",
+    "../browser/chrome_test_extension_loader.h",
+    "../browser/extension_api_unittest.cc",
+    "../browser/extension_api_unittest.h",
+    "../browser/extension_browsertest.cc",
+    "../browser/extension_browsertest.h",
+    "../browser/extension_management_test_util.cc",
+    "../browser/extension_management_test_util.h",
+    "../browser/extension_service_test_base.cc",
+    "../browser/extension_service_test_base.h",
+    "../browser/extension_service_test_with_install.cc",
+    "../browser/extension_service_test_with_install.h",
+    "../browser/extension_service_user_test_base.cc",
+    "../browser/extension_service_user_test_base.h",
+    "../browser/fake_crx_installer.cc",
+    "../browser/fake_crx_installer.h",
+    "../browser/fake_safe_browsing_database_manager.cc",
+    "../browser/fake_safe_browsing_database_manager.h",
+    "../browser/load_error_waiter.cc",
+    "../browser/load_error_waiter.h",
+    "../browser/mock_crx_installer.cc",
+    "../browser/mock_crx_installer.h",
+    "../browser/permissions_test_util.cc",
+    "../browser/permissions_test_util.h",
+    "../browser/scoped_database_manager_for_test.cc",
+    "../browser/scoped_database_manager_for_test.h",    
+    "../browser/test_blocklist.cc",
+    "../browser/test_blocklist.h",
+    "../browser/test_blocklist_state_fetcher.cc",
+    "../browser/test_blocklist_state_fetcher.h",
+    "../browser/test_extension_service.cc",
+    "../browser/test_extension_service.h",
+    "../browser/test_extension_system.cc",
+    "../browser/test_extension_system.h",
+    "../common/extension_test_util.cc",
+    "../common/extension_test_util.h",
+    "../common/manifest_tests/chrome_manifest_test.cc",
+    "../common/manifest_tests/chrome_manifest_test.h",
+    "test_extension_paths.cc",
+    "test_extension_paths.h",
+  ]
+
+  deps = [
+    "//base",
+    "//components/crx_file",
+    "//components/enterprise/common/proto:connectors_proto",
+    "//components/extensions/browser",
+    "//components/extensions/common",
+    "//components/extensions/common:test_features",
+    "//components/extensions/renderer",
+    "//components/policy/core/common:test_support",
+    "//components/safe_browsing/core/browser/db:database_manager",
+    "//components/safe_browsing/core/browser/db:v4_test_util",
+    "//components/safe_browsing/core/browser/db:test_database_manager",
+    "//components/services/unzip:in_process",
+    "//components/services/unzip/content",
+    "//components/sessions",
+    "//components/value_store:test_support",
+    "//content/public/browser",
+    "//content/test:test_support",
+    "//extensions:test_support",
+    "//extensions/browser",
+    "//extensions/browser:test_support",
+    "//extensions/common",
+    "//extensions/common:mojom",
+    "//extensions/common:test_support",
+    "//extensions/renderer",
+    "//extensions/renderer:unit_test_support",
+    "//extensions/shell:app_shell_lib",
+  ]
+}
+
+source_set("unit_tests") {
+  testonly = true
+  sources = [
+    "../browser/api/chrome_extensions_api_client_unittest.cc",
+    "../browser/api/device_permissions_manager_unittest.cc",
+    "../browser/api/runtime/chrome_runtime_api_delegate_unittest.cc",
+    "../browser/api/webstore_private/extension_install_status_unittest.cc",
+    "../browser/api/webstore_private/webstore_private_unittest.cc",
+    "../browser/blocklist_check_unittest.cc",
+    "../browser/blocklist_extension_prefs_unittest.cc",
+    "../browser/blocklist_state_fetcher_unittest.cc",
+    "../browser/blocklist_states_interaction_unittest.cc",
+    "../browser/chrome_app_sorting_unittest.cc",
+    "../browser/chrome_content_verifier_unittest.cc",
+    "../browser/chrome_extension_function_unittest.cc",
+    "../browser/component_loader_unittest.cc",
+    "../browser/convert_user_script_unittest.cc",
+    "../browser/cws_info_service_unittest.cc",
+    "../browser/event_router_forwarder_unittest.cc",
+    "../browser/extension_allowlist_unittest.cc",
+    "../browser/extension_error_controller_unittest.cc",
+    "../browser/extension_prefs_unittest.cc",
+    "../browser/extension_prefs_unittest.h",
+    "../browser/extension_telemetry_service_verdict_handler_unittest.cc",
+    "../browser/extension_test_message_listener_unittest.cc",
+    "../browser/extension_util_unittest.cc",
+    # TODO(mshin): Enable the below tests after supporting Policy
+    # "../browser/forced_extensions/force_installed_metrics_unittest.cc",
+    # "../browser/forced_extensions/force_installed_test_base.cc",
+    # "../browser/forced_extensions/force_installed_test_base.h",
+    # "../browser/forced_extensions/force_installed_tracker_unittest.cc",
+    "../browser/install_tracker_unittest.cc",
+    "../browser/install_verifier_unittest.cc",
+    "../browser/installed_loader_unittest.cc",
+    "../browser/omaha_attributes_handler_unittest.cc",
+    "../browser/permission_message_combinations_unittest.cc",
+    "../browser/permission_messages_unittest.cc",
+    "../browser/permissions_manager_unittest.cc",
+    "../browser/permissions_updater_unittest.cc",
+    "../browser/safe_browsing_verdict_handler_unittest.cc",
+    "../browser/scripting_permissions_modifier_unittest.cc",
+    "../browser/shared_module_service_unittest.cc",
+    "../browser/test_extension_prefs.cc",
+    "../browser/test_extension_prefs.h",
+    "../browser/unpacked_installer_unittest.cc",
+    "../browser/user_script_listener_unittest.cc",
+    "../browser/zipfile_installer_unittest.cc",
+    "../common/api/common_extension_api_unittest.cc",
+    "../common/api/extension_action/browser_action_manifest_unittest.cc",
+    "../common/api/url_handlers/url_handlers_parser_unittest.cc",
+    "../common/chrome_extensions_client_unittest.cc",
+    "../common/chrome_manifest_url_handlers_unittest.cc",
+    "../common/extension_unittest.cc",
+    "../common/manifest_handlers/content_scripts_manifest_unittest.cc",
+    "../common/manifest_handlers/exclude_matches_manifest_unittest.cc",
+    "../common/manifest_handlers/natively_connectable_handler_unittest.cc",
+    "../common/manifest_handlers/settings_overrides_handler_unittest.cc",
+    "../common/manifest_tests/extension_manifests_chromepermission_unittest.cc",
+    "../common/manifest_tests/extension_manifests_contentsecuritypolicy_unittest.cc",
+    "../common/manifest_tests/extension_manifests_default_extent_path_unittest.cc",
+    "../common/manifest_tests/extension_manifests_devtools_unittest.cc",
+    "../common/manifest_tests/extension_manifests_experimental_unittest.cc",
+    "../common/manifest_tests/extension_manifests_icons_unittest.cc",
+    "../common/manifest_tests/extension_manifests_initvalue_unittest.cc",
+    "../common/manifest_tests/extension_manifests_launch_unittest.cc",
+    "../common/manifest_tests/extension_manifests_manifest_version_unittest.cc",
+    "../common/manifest_tests/extension_manifests_name_unittest.cc",
+    "../common/manifest_tests/extension_manifests_offline_unittest.cc",
+    "../common/manifest_tests/extension_manifests_old_unittest.cc",
+    "../common/manifest_tests/extension_manifests_options_unittest.cc",
+    "../common/manifest_tests/extension_manifests_override_unittest.cc",
+    "../common/manifest_tests/extension_manifests_platformapp_unittest.cc",
+    "../common/manifest_tests/extension_manifests_portsinpermissions_unittest.cc",
+    "../common/manifest_tests/extension_manifests_sample_unittest.cc",
+    "../common/manifest_tests/extension_manifests_ui_unittest.cc",
+    "../common/manifest_tests/extension_manifests_validapp_unittest.cc",
+    "../common/manifest_tests/extension_manifests_web_accessible_resources_unittest.cc",
+    "../common/manifest_tests/extension_manifests_web_unittest.cc",
+    "../common/manifest_tests/extension_manifests_webview_accessible_resources_unittest.cc",
+    "../common/manifest_tests/permissions_parser_unittest.cc",
+    "../common/manifest_unittest.cc",
+    "../common/permissions/chrome_api_permissions_unittest.cc",
+    "../common/permissions/chrome_permission_message_provider_unittest.cc",
+    "../common/permissions/chrome_permission_message_rules_unittest.cc",
+    "../common/permissions/permission_set_unittest.cc",
+    "../common/permissions/permissions_data_unittest.cc",
+    "../common/permissions/settings_override_permission_unittest.cc",
+    "../renderer/api/extension_hooks_delegate_unittest.cc",
+    "../renderer/api/identity_hooks_delegate_unittest.cc",
+    "../renderer/chrome_native_extension_bindings_system_unittest.cc",
+    "../renderer/custom_types_unittest.cc",
+    "../renderer/renderer_permissions_policy_delegate_unittest.cc",
+  ]
+
+  sources += [ "../browser/blocklist_unittest.cc" ]
+
+  data = [
+    "//base/test/data/",
+    "//components/test/data/",
+    "//extensions/test/data/",
+  ]
+
+  deps = [
+    ":test_support",
+    "//components/extensions/browser:cws_item_service_proto",
+    "//components/extensions/common:extension_features_unittest",
+    "//services/device/public/cpp:test_support",
+    "//v8",
+  ]
+
+  public_deps = [ "//base/test:test_support" ]
+}
+
+source_set("browser_tests") {
+  testonly = true
+  defines = [ "HAS_OUT_OF_PROC_TEST_RUNNER" ]
+  sources = [
+    "../browser/extension_browsertest_browsertest.cc",
+  ]
+
+  deps = [
+    ":test_support",
+    "//base",
+    "//testing/gmock",
+    "//testing/gtest",
+  ]
+
+  public_deps = [
+    "//components/extensions/browser/api",
+    "//components/extensions/browser/api:api_registration",
+    "//components/strings:components_strings",
+  ]
+}
+
+repack("extensions_tests_pak") {
+  testonly = true
+  sources = [
+    "$root_gen_dir/components/components_resources.pak",
+    "$root_gen_dir/components/strings/components_strings_en-US.pak",
+    "$root_gen_dir/content/content_resources.pak",
+    "$root_gen_dir/extensions/extensions_browser_resources_100_percent.pak",
+    "$root_gen_dir/extensions/extensions_renderer_resources.pak",
+    "$root_gen_dir/extensions/extensions_resources.pak",
+    "$root_gen_dir/extensions/strings/extensions_strings_en-US.pak",
+    "$root_gen_dir/net/net_resources.pak",
+    "$root_gen_dir/third_party/blink/public/resources/blink_resources.pak",
+    "$root_gen_dir/third_party/blink/public/resources/blink_scaled_resources_100_percent.pak",
+    "$root_gen_dir/third_party/blink/public/strings/blink_strings_en-US.pak",
+  ]
+
+  output = "$root_out_dir/extensions_tests_resources.pak"
+  deps = [
+    "//components/resources",
+    "//components/strings",
+    "//content:content_resources",
+    "//content/browser/resources:resources",
+    "//extensions:extensions_browser_resources_grit",
+    "//extensions:extensions_renderer_resources_grit",
+    "//extensions:extensions_resources_grd_grit",
+    "//extensions/strings",
+    "//extensions/strings:strings_grit",
+    "//mojo/public/js:resources",
+    "//net:net_resources",
+    "//third_party/blink/public:resources",
+    "//third_party/blink/public:scaled_resources_100_percent",
+    "//third_party/blink/public/strings",
+  ]
+}
+
+test("extensions_in_components_unittests") {
+  use_xvfb = use_xvfb_in_this_config
+  testonly = true
+
+  sources = [
+    "run_all_unittests.cc",
+    "test_extension_environment.cc",
+    "test_extension_environment.h",
+  ]
+
+  data = [
+    "$root_out_dir/extensions_tests_resources.pak",
+    "$root_out_dir/ui_test.pak",
+    "//chrome/test/data/extensions/",
+  ]
+
+  deps = [
+    ":unit_tests",
+    ":test_support",
+    "//content/public/browser",
+    "//content/public/common",
+    "//components/embedder_support:browser_util",
+    "//extensions/common",
+    "//extensions:shell_and_test_pak",
+    "//gin:v8_snapshot_assets",
+    "//testing/gtest",
+    "//ui/base",
+    "//ui/resources:ui_test_pak",
+  ]
+
+  if (is_android) {
+    deps += [
+      "//base:base_unittest_support_java",
+      "//content/public/android:content_java",
+      "//services/data_decoder/public/cpp/android:safe_json_java",
+      "//ui/android:ui_java",
+    ]
+  }
+
+  public_deps = [
+    "//components/extensions/browser/api",
+    "//components/extensions/browser/api:api_registration",
+    "//components/strings:components_strings",
+  ]
+}

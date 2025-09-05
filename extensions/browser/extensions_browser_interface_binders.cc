@@ -11,7 +11,6 @@
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/render_process_host.h"
 #include "extensions/browser/mojo/keep_alive_impl.h"
-#include "extensions/buildflags/buildflags.h"
 #include "extensions/common/extension_api.h"
 #include "extensions/common/mojom/keep_alive.mojom.h"  // nogncheck
 

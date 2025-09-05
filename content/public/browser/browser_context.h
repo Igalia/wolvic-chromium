@@ -30,6 +30,8 @@
 #include "third_party/blink/public/mojom/push_messaging/push_messaging_status.mojom-forward.h"
 #include "third_party/perfetto/include/perfetto/tracing/traced_value_forward.h"
 
+#include "components/extensions/common/buildflags.h"
+
 class GURL;
 
 namespace base {
@@ -291,6 +293,10 @@ class CONTENT_EXPORT BrowserContext : public base::SupportsUserData {
   // have similar encode/decode performance and stats are not exposed to the web
   // directly, so privacy is not compromised.
   media::WebrtcVideoPerfHistory* GetWebrtcVideoPerfHistory();
+
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  BrowserContext* GetOTRBrowserContext();
+#endif
 
   // Returns a LearningSession associated with |this|. Used as the central
   // source from which to retrieve LearningTaskControllers for media machine

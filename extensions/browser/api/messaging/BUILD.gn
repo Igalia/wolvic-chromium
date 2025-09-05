@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-import("//extensions/buildflags/buildflags.gni")
+import("//extensions/buildflags/internal/buildflags.gni")
 
 assert(enable_extensions,
        "Cannot depend on extensions because enable_extensions=false.")
@@ -36,6 +36,11 @@ source_set("messaging") {
     "//extensions/common",
     "//extensions/common/api",
   ]
+
+  if (enable_extensions_in_components) {
+    deps -= [ "//extensions/buildflags" ]
+    deps += [ "//extensions/buildflags/internal:buildflags" ]
+  }
 
   public_deps = [ "//extensions/browser:browser_sources" ]
 }

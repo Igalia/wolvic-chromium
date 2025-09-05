@@ -14,6 +14,12 @@ WolvicRenderFrameObserver::WolvicRenderFrameObserver(
 
 WolvicRenderFrameObserver::~WolvicRenderFrameObserver() = default;
 
+void WolvicRenderFrameObserver::OnInterfaceRequestForFrame(
+  const std::string& interface_name,
+  mojo::ScopedMessagePipeHandle* interface_pipe) {
+  registry_.TryBindInterface(interface_name, interface_pipe);
+}
+
 bool WolvicRenderFrameObserver::OnAssociatedInterfaceRequestForFrame(
     const std::string& interface_name,
     mojo::ScopedInterfaceEndpointHandle* handle) {

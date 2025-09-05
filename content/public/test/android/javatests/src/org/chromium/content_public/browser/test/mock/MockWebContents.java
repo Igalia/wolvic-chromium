@@ -357,4 +357,7 @@ public class MockWebContents implements WebContents {
     public boolean needToFireBeforeUnloadOrUnloadEvents() {
         return false;
     }
+
+    @Override
+    public void notifyOnCreateNewPaymentHandler(WebContents newWebContents) {}
 }

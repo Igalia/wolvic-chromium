@@ -34,6 +34,9 @@ dev_ui_components_resources.grd.
       <if expr="enable_supervised_users">
         <part file="supervised_user_resources.grdp" />
       </if>
+      <if expr="enable_extensions_in_components">
+        <part file="extensions_resources.grdp" />
+      </if>
     </includes>
   </release>
 </grit>

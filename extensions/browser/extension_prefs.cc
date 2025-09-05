@@ -26,6 +26,7 @@
 #include "build/build_config.h"
 #include "components/content_settings/core/common/content_settings.h"
 #include "components/crx_file/id_util.h"
+#include "components/extensions/common/buildflags.h"
 #include "components/pref_registry/pref_registry_syncable.h"
 #include "components/prefs/pref_service.h"
 #include "components/supervised_user/core/common/buildflags.h"
@@ -2300,6 +2301,10 @@ void ExtensionPrefs::RegisterProfilePrefs(
   registry->RegisterIntegerPref(pref_names::kExtensionUnpublishedAvailability,
                                 0);
   registry->RegisterListPref(pref_names::kExtensionInstallTypeBlocklist);
+
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  registry->RegisterBooleanPref(pref_names::kAlertsInitialized, false);
+#endif
 }
 
 template <class ExtensionIdContainer>

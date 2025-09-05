@@ -191,6 +191,9 @@ inline constexpr char kKeybindingPlatformDefault[] = "default";
 inline constexpr char kKeybindingPlatformLinux[] = "linux";
 inline constexpr char kKeybindingPlatformMac[] = "mac";
 inline constexpr char kKeybindingPlatformWin[] = "windows";
+#if BUILDFLAG(IS_ANDROID)
+inline constexpr char kKeybindingPlatformAndroid[] = "android";
+#endif
 inline constexpr char kKeyAlt[] = "Alt";
 inline constexpr char kKeyComma[] = "Comma";
 inline constexpr char kKeyCommand[] = "Command";

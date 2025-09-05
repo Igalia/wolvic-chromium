@@ -16,6 +16,16 @@
 #include "extensions/common/permissions/manifest_permission_set.h"
 #include "extensions/common/url_pattern_set.h"
 
+#include "components/extensions/common/buildflags.h"
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+namespace components_extensions {
+class PermissionsTest;
+
+FORWARD_DECLARE_TEST(PermissionsTest, GetWarningMessages_AudioVideo);
+FORWARD_DECLARE_TEST(PermissionsTest, AccessToDevicesMessages);
+}
+#endif
+
 namespace extensions {
 
 // The PermissionSet is a class that encapsulates extension permissions of
@@ -128,8 +138,16 @@ class PermissionSet {
   const URLPatternSet& scriptable_hosts() const { return scriptable_hosts_; }
 
  private:
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  friend class components_extensions::PermissionsTest;
+  FRIEND_TEST_ALL_PREFIXES(components_extensions::PermissionsTest,
+                           GetWarningMessages_AudioVideo);
+  FRIEND_TEST_ALL_PREFIXES(components_extensions::PermissionsTest,
+                           AccessToDevicesMessages);
+#else
   FRIEND_TEST_ALL_PREFIXES(PermissionsTest, GetWarningMessages_AudioVideo);
   FRIEND_TEST_ALL_PREFIXES(PermissionsTest, AccessToDevicesMessages);
+#endif
 
   // Deliberate copy constructor for cloning the set.
   PermissionSet(const PermissionSet& permission_set);

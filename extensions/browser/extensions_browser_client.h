@@ -33,6 +33,8 @@
 #include "ui/base/page_transition_types.h"
 #include "url/gurl.h"
 
+#include "components/extensions/common/buildflags.h"
+
 class ExtensionFunctionRegistry;
 class PrefService;
 
@@ -76,6 +78,12 @@ namespace media_device_salt {
 class MediaDeviceSaltService;
 }  // namespace media_device_salt
 
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+namespace components_extensions {
+class UserScriptListener;
+}
+#endif
+
 namespace extensions {
 
 class ComponentExtensionResourceManager;
@@ -93,7 +101,11 @@ class ProcessManagerDelegate;
 class ProcessMap;
 class RuntimeAPIDelegate;
 class ScopedExtensionUpdaterKeepAlive;
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+using components_extensions::UserScriptListener;
+#else
 class UserScriptListener;
+#endif
 
 // Interface to allow the extensions module to make browser-process-specific
 // queries of the embedder. Should be Set() once in the browser process.

@@ -1,0 +1,6 @@
+import("//extensions/buildflags/buildflags.gni")
+import("//build/config/compontents_extensions_build.gni")
+
+if (enable_extensions_in_components) {
+  enable_extensions = enable_extensions_in_components
+}

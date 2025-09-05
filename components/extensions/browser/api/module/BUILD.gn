@@ -1,0 +1,23 @@
+# Copyright 2022 The Chromium Authors
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+import("//build/config/compontents_extensions_build.gni")
+
+assert(enable_extensions_in_components,
+       "Cannot depend on extensions because enable_extensions_in_components=false.")
+
+source_set("module") {
+  sources = [
+    "module.cc",
+    "module.h",
+  ]
+
+  deps = [
+    "//base",
+    "//components/extensions/browser",
+    "//content/public/browser",
+    "//extensions/browser",
+    "//extensions/common",
+  ]
+}

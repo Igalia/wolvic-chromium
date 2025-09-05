@@ -18,7 +18,21 @@
 #include "extensions/common/extension_id.h"
 
 #if !BUILDFLAG(ENABLE_EXTENSIONS)
+#undef BUILDFLAG_INTERNAL_ENABLE_EXTENSIONS
+#include "extensions/buildflags/internal/buildflags.h"
+#endif
+
+#if !BUILDFLAG(ENABLE_EXTENSIONS)
 #error "Extensions must be enabled"
+#endif
+
+#include "components/extensions/common/buildflags.h"
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+namespace components_extensions {
+class ExtensionService;
+}
+
+using components_extensions::ExtensionService;
 #endif
 
 namespace base {
@@ -38,7 +52,9 @@ namespace extensions {
 class AppSorting;
 class ContentVerifier;
 class Extension;
+#if !BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
 class ExtensionService;
+#endif
 class ExtensionSet;
 class ManagementPolicy;
 class QuotaService;
@@ -73,8 +89,11 @@ class ExtensionSystem : public KeyedService {
 
   // The ExtensionService is created at startup. ExtensionService is only
   // defined in Chrome.
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  virtual components_extensions::ExtensionService* extension_service() = 0;
+#else
   virtual ExtensionService* extension_service() = 0;
-
+#endif
   // The class controlling whether users are permitted to perform certain
   // actions on extensions (install, uninstall, disable, etc.).
   // The ManagementPolicy is created at startup.

@@ -59,6 +59,8 @@
 #include "extensions/browser/api/webcam_private/webcam_private_api.h"
 #endif
 
+#include "components/extensions/common/buildflags.h"
+
 namespace extensions {
 
 void EnsureApiBrowserContextKeyedServiceFactoriesBuilt() {
@@ -67,7 +69,9 @@ void EnsureApiBrowserContextKeyedServiceFactoriesBuilt() {
   ApiResourceManager<BluetoothApiSocket>::GetFactoryInstance();
   ApiResourceManager<BluetoothLowEnergyConnection>::GetFactoryInstance();
   ApiResourceManager<BluetoothLowEnergyNotifySession>::GetFactoryInstance();
+#if !BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
   ApiResourceManager<HidConnectionResource>::GetFactoryInstance();
+#endif
 #if BUILDFLAG(IS_CHROMEOS_ASH)
   ApiResourceManager<LogSourceResource>::GetFactoryInstance();
 #endif
@@ -94,7 +98,9 @@ void EnsureApiBrowserContextKeyedServiceFactoriesBuilt() {
   ContentSettingsService::GetFactoryInstance();
   declarative_net_request::RulesMonitorService::GetFactoryInstance();
   FeedbackPrivateAPI::GetFactoryInstance();
+#if !BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
   HidDeviceManager::GetFactoryInstance();
+#endif
   IdleManagerFactory::GetInstance();
   ManagementAPI::GetFactoryInstance();
 #if BUILDFLAG(IS_CHROMEOS_ASH)

@@ -3,7 +3,7 @@
 # found in the LICENSE file.
 
 import("//build/config/features.gni")
-import("//extensions/buildflags/buildflags.gni")
+import("//extensions/buildflags/internal/buildflags.gni")
 
 assert(enable_extensions)
 
@@ -325,6 +325,11 @@ static_library("unit_test_support") {
     "//testing/gtest",
     "//third_party/zlib/google:compression_utils",
   ]
+
+  if (enable_extensions_in_components) {
+    deps -= [ "//extensions/buildflags" ]
+    deps += [ "//extensions/buildflags/internal:buildflags" ]
+  }
 }
 
 source_set("unit_tests") {
@@ -404,6 +409,11 @@ source_set("unit_tests") {
     "//third_party/blink/public:blink",
     "//ui/base",
   ]
+
+  if (enable_extensions_in_components) {
+    deps -= [ "//extensions/buildflags" ]
+    deps += [ "//extensions/buildflags/internal:buildflags" ]
+  }
 }
 
 source_set("browser_tests") {

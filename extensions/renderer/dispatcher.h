@@ -39,6 +39,15 @@
 #include "third_party/blink/public/platform/web_string.h"
 #include "v8/include/v8-forward.h"
 
+#include "components/extensions/common/buildflags.h"
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+namespace components_extensions {
+class RendererPermissionsPolicyDelegateTest;
+FORWARD_DECLARE_TEST(RendererPermissionsPolicyDelegateTest,
+                     CannotScriptWebstore);
+}
+#endif
+
 class ChromeRenderViewTest;
 class GURL;
 
@@ -206,8 +215,14 @@ class Dispatcher : public content::RenderThreadObserver,
   // The RendererPermissionsPolicyDelegateTest.CannotScriptWebstore test needs
   // to call the ActivateExtension IPCs.
   friend class ::ChromeRenderViewTest;
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  friend class components_extensions::RendererPermissionsPolicyDelegateTest;
+  FRIEND_TEST_ALL_PREFIXES(components_extensions::RendererPermissionsPolicyDelegateTest,
+                           CannotScriptWebstore);
+#else
   FRIEND_TEST_ALL_PREFIXES(RendererPermissionsPolicyDelegateTest,
                            CannotScriptWebstore);
+#endif
 
   // RenderThreadObserver implementation:
   void RegisterMojoInterfaces(

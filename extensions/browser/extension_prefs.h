@@ -16,6 +16,7 @@
 #include "base/observer_list.h"
 #include "base/time/time.h"
 #include "base/values.h"
+#include "components/extensions/common/buildflags.h"
 #include "components/keyed_service/core/keyed_service.h"
 #include "components/prefs/scoped_user_pref_update.h"
 #include "components/sync/model/string_ordinal.h"
@@ -44,6 +45,15 @@ class Clock;
 namespace content {
 class BrowserContext;
 }
+
+
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+namespace components_extensions {
+class ExtensionPrefsComponentExtension;
+class ExtensionPrefsMigratesToLastUpdateTime;
+class ExtensionPrefsBitMapPrefValueClearedIfEqualsDefaultValue;
+}
+#endif
 
 namespace prefs {
 class DictionaryValueUpdate;
@@ -804,12 +814,20 @@ class ExtensionPrefs : public KeyedService {
   static const char kFakeObsoletePrefForTesting[];
 
  private:
+
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  friend class components_extensions::ExtensionPrefsComponentExtension;     // Unit test.
+  friend class components_extensions::ExtensionPrefsMigratesToLastUpdateTime;  // Unit test.
+  friend class
+      components_extensions::ExtensionPrefsBitMapPrefValueClearedIfEqualsDefaultValue;  // Unit test.
+#else
   friend class ExtensionPrefsBlocklistedExtensions;  // Unit test.
   friend class ExtensionPrefsComponentExtension;     // Unit test.
   friend class ExtensionPrefsUninstallExtension;     // Unit test.
   friend class ExtensionPrefsMigratesToLastUpdateTime;  // Unit test.
   friend class
       ExtensionPrefsBitMapPrefValueClearedIfEqualsDefaultValue;  // Unit test.
+#endif
 
   // Updates ExtensionPrefs for a specific extension.
   void UpdateExtensionPrefInternal(const ExtensionId& id,

@@ -182,6 +182,7 @@ class UsbDevicePermissionsPrompt : public DevicePermissionsPrompt::Prompt,
       manager_observation_{this};
 };
 
+#if !BUILDFLAG(IS_ANDROID)
 class HidDeviceInfo : public DevicePermissionsPrompt::Prompt::DeviceInfo {
  public:
   explicit HidDeviceInfo(device::mojom::HidDeviceInfoPtr device)
@@ -366,6 +367,7 @@ class HidDevicePermissionsPrompt : public DevicePermissionsPrompt::Prompt,
   DevicePermissionsPrompt::HidDevicesCallback callback_;
   mojo::AssociatedReceiver<device::mojom::HidManagerClient> receiver_{this};
 };
+#endif
 
 }  // namespace
 
@@ -435,6 +437,7 @@ void DevicePermissionsPrompt::AskForUsbDevices(
   ShowDialog();
 }
 
+#if !BUILDFLAG(IS_ANDROID)
 void DevicePermissionsPrompt::AskForHidDevices(
     const Extension* extension,
     content::BrowserContext* context,
@@ -454,6 +457,7 @@ DevicePermissionsPrompt::CreateHidPromptForTest(const Extension* extension,
       extension, nullptr, multiple, std::vector<HidDeviceFilter>(),
       base::DoNothing());
 }
+#endif
 
 // static
 scoped_refptr<DevicePermissionsPrompt::Prompt>
@@ -464,10 +468,12 @@ DevicePermissionsPrompt::CreateUsbPromptForTest(const Extension* extension,
       base::DoNothing());
 }
 
+#if !BUILDFLAG(IS_ANDROID)
 // static
 void DevicePermissionsPrompt::OverrideHidManagerBinderForTesting(
     HidManagerBinder binder) {
   GetHidManagerBinderOverride() = std::move(binder);
 }
+#endif
 
 }  // namespace extensions

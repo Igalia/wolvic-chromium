@@ -141,7 +141,7 @@ class DevicePermissionsPrompt {
                         bool multiple,
                         std::vector<device::mojom::UsbDeviceFilterPtr> filters,
                         UsbDevicesCallback callback);
-
+#if !BUILDFLAG(IS_ANDROID)
   void AskForHidDevices(const Extension* extension,
                         content::BrowserContext* context,
                         bool multiple,
@@ -151,14 +151,17 @@ class DevicePermissionsPrompt {
   static scoped_refptr<Prompt> CreateHidPromptForTest(
       const Extension* extension,
       bool multiple);
+#endif
   static scoped_refptr<Prompt> CreateUsbPromptForTest(
       const Extension* extension,
       bool multiple);
 
+#if !BUILDFLAG(IS_ANDROID)
   // Allows tests to override how the HidManager interface is bound.
   using HidManagerBinder = base::RepeatingCallback<void(
       mojo::PendingReceiver<device::mojom::HidManager> receiver)>;
   static void OverrideHidManagerBinderForTesting(HidManagerBinder binder);
+#endif
 
  protected:
   virtual void ShowDialog() = 0;

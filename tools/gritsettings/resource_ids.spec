@@ -252,6 +252,10 @@
     "includes": [3040],
     "structures": [3060],
   },
+  "components/resources/component_extension_resources.grd": {
+    "includes": [3060],
+    "structures": [3080],
+  },
   "<(SHARED_INTERMEDIATE_DIR)/chrome/browser/resources/access_code_cast/resources.grd": {
     "META": {"sizes": {"includes": [50]}},
     "includes": [3080],

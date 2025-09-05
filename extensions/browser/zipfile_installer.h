@@ -18,6 +18,19 @@
 #include "base/task/sequenced_task_runner.h"
 #include "base/values.h"
 
+#include "components/extensions/common/buildflags.h"
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+namespace components_extensions {
+class ZipFileInstallerFilterTest;
+FORWARD_DECLARE_TEST(ZipFileInstallerFilterTest,
+                     NonTheme_FileExtractionFilter);
+FORWARD_DECLARE_TEST(ZipFileInstallerFilterTest,
+                     Theme_FileExtractionFilter);
+FORWARD_DECLARE_TEST(ZipFileInstallerFilterTest,
+                     ManifestExtractionFilter);
+}
+#endif
+
 namespace extensions {
 
 using ZipResultVariant = absl::variant<base::FilePath, std::string>;
@@ -63,12 +76,22 @@ class ZipFileInstaller : public base::RefCountedThreadSafe<ZipFileInstaller> {
 
  private:
   friend class base::RefCountedThreadSafe<ZipFileInstaller>;
+#if BUILDFLAG(ENABLE_EXTENSIONS_IN_COMPONENTS)
+  friend class components_extensions::ZipFileInstallerFilterTest;
+  FRIEND_TEST_ALL_PREFIXES(components_extensions::ZipFileInstallerFilterTest,
+                           NonTheme_FileExtractionFilter);
+  FRIEND_TEST_ALL_PREFIXES(components_extensions::ZipFileInstallerFilterTest,
+                           Theme_FileExtractionFilter);
+  FRIEND_TEST_ALL_PREFIXES(components_extensions::ZipFileInstallerFilterTest,
+                           ManifestExtractionFilter);
+#else
   FRIEND_TEST_ALL_PREFIXES(ZipFileInstallerFilterTest,
                            NonTheme_FileExtractionFilter);
   FRIEND_TEST_ALL_PREFIXES(ZipFileInstallerFilterTest,
                            Theme_FileExtractionFilter);
   FRIEND_TEST_ALL_PREFIXES(ZipFileInstallerFilterTest,
                            ManifestExtractionFilter);
+#endif
 
   explicit ZipFileInstaller(
       const scoped_refptr<base::SequencedTaskRunner>& io_task_runner,
