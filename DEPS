@@ -288,7 +288,6 @@ vars = {
   'swiftshader_git': 'https://swiftshader.googlesource.com',
   'webrtc_git': 'https://webrtc.googlesource.com',
   'betocore_git': 'https://beto-core.googlesource.com',
-  'igalia_git': 'https://github.com/Igalia',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling V8
   # and whatever else without interference from each other.
@@ -304,7 +303,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': 'refs/heads/wolvic_update_m124',
+  'angle_revision': '5a9f361c53bdf98f2faf4288f625b1c1b791fcdf',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -1802,7 +1801,7 @@ deps = {
   },
 
   'src/third_party/angle':
-    Var('igalia_git') + '/wolvic-angle.git' + '@' +  Var('angle_revision'),
+    Var('chromium_git') + '/angle/angle.git' + '@' +  Var('angle_revision'),
 
   'src/third_party/anonymous_tokens/src':
     Var('chromium_git') + '/external/github.com/google/anonymous-tokens.git' + '@' + 'd708a2602a5947ee068f784daa1594a673d47c4a',
