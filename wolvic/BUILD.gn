@@ -24,6 +24,14 @@ shared_library("libcontent_native") {
     "../content/shell/browser/shell_devtools_bindings.h",
     "../content/shell/browser/shell_devtools_manager_delegate.cc",
     "../content/shell/browser/shell_devtools_manager_delegate.h",
+    "../content/shell/browser/protocol/browser_handler.cc",
+    "../content/shell/browser/protocol/browser_handler.h",
+    "../content/shell/browser/protocol/domain_handler.h",
+    "../content/shell/browser/protocol/shell_devtools_session.cc",
+    "../content/shell/browser/protocol/shell_devtools_session.h",
+    "$root_gen_dir/content/shell/browser/protocol/browser.cc",
+    "$root_gen_dir/content/shell/browser/protocol/browser.h",
+    "$root_gen_dir/content/shell/browser/protocol/protocol.h",
     "../content/shell/browser/shell_javascript_dialog_manager.cc",
     "../content/shell/browser/shell_javascript_dialog_manager.h",
     "../content/shell/browser/shell_paths.cc",
@@ -128,6 +136,8 @@ shared_library("libcontent_native") {
     "//services/network/public/mojom",
     "//skia",
     "//third_party/widevine/cdm:buildflags",
+    "//content/shell:protocol_sources",
+    "//third_party/inspector_protocol:crdtp",
   ]
 
   # Explicit dependency required for JNI registration to be able to
@@ -160,7 +170,6 @@ repack("pak") {
     "$root_gen_dir/third_party/blink/public/resources/blink_resources.pak",
     "$root_gen_dir/third_party/blink/public/resources/blink_scaled_resources_100_percent.pak",
     "$root_gen_dir/third_party/blink/public/resources/inspector_overlay_resources.pak",
-    "$root_gen_dir/third_party/blink/public/strings/blink_accessibility_strings_en-US.pak",
     "$root_gen_dir/third_party/blink/public/strings/blink_strings_en-US.pak",
     "$root_gen_dir/ui/resources/ui_resources_100_percent.pak",
     "$root_gen_dir/ui/resources/webui_resources.pak",
@@ -183,7 +192,6 @@ repack("pak") {
     "//third_party/blink/public:resources",
     "//third_party/blink/public:scaled_resources_100_percent",
     "//third_party/blink/public/strings",
-    "//third_party/blink/public/strings:accessibility_strings",
     "//ui/resources",
     "//ui/strings",
   ]
@@ -220,7 +228,6 @@ static_library("content_native_lib") {
     ":pak",
     "//base",
     "//base:base_static",
-    "//base/third_party/dynamic_annotations",
     "//build:chromeos_buildflags",
     "//cc/base",
     "//components/autofill/content/browser",
@@ -271,7 +278,6 @@ static_library("content_native_lib") {
     "//third_party/blink/public:image_resources",
     "//third_party/blink/public:resources",
     "//third_party/blink/public/strings",
-    "//third_party/blink/public/strings:accessibility_strings",
     "//ui/base",
     "//ui/base/clipboard",
     "//ui/base/ime/init",
@@ -296,6 +302,8 @@ static_library("content_native_lib") {
 
 generate_build_config_srcjar("build_config_gen") {
   use_final_fields = true
+  min_sdk_version = default_min_sdk_version
+  version_code = android_default_version_code
 }
 
 jinja_template("content_manifest") {
@@ -448,6 +456,7 @@ dist_aar("content_aar") {
     "org/chromium/content_public/*.class",
     "org/chromium/content/*.class",
     "org/chromium/device/*",
+    "org/chromium/gfx/mojom/*.class",
     "org/chromium/gms/*.class",
     "org/chromium/installedapp/mojom/*.class",
     "org/chromium/media/*.class",
@@ -459,8 +468,10 @@ dist_aar("content_aar") {
     "org/chromium/payments/mojom/*.class",
     "org/chromium/service_manager/mojom/*.class",
     "org/chromium/services/*.class",
+    "org/chromium/skia/mojom/*.class",
     "org/chromium/ui/touch_selection/*.class",
     "org/chromium/url/*.class",
+    "org/chromium/window/*.class",
     "org/chromium/wolvic/*.class",
     "org/jni_zero/*.class",
   ]

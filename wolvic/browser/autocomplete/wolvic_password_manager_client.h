@@ -89,8 +89,7 @@ class WolvicPasswordManagerClient
   void PasswordWasAutofilled(
       base::span<const password_manager::PasswordForm> best_matches,
       const url::Origin& origin,
-      const std::vector<raw_ptr<const password_manager::PasswordForm,
-                                VectorExperimental>>* federated_matches,
+      base::span<const password_manager::PasswordForm> federated_matches,
       bool was_autofilled_on_pageload) override;
   void AutofillHttpAuth(
       const password_manager::PasswordForm& preferred_match,
@@ -180,6 +179,12 @@ class WolvicPasswordManagerClient
   password_manager::HttpAuthManagerImpl httpauth_manager_;
 
   const password_manager::SyncCredentialsFilter credentials_filter_;
+
+  // Wolvic does not support passkeys/WebAuthn, but since M128 the password
+  // suggestion show/accept paths unconditionally dereference this delegate, so
+  // it must be non-null. Lazily created no-op instance (concrete type in .cc).
+  std::unique_ptr<password_manager::WebAuthnCredentialsDelegate>
+      webauthn_credentials_delegate_;
 
   // A callback to be invoked when user accept to save the password.
   base::OnceCallback<void(password_manager::PasswordForm& saved_form)>

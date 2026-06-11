@@ -12,7 +12,9 @@
 #include "components/autofill/content/browser/renderer_forms_with_server_predictions.h"
 #include "components/autofill/core/browser/logging/log_manager.h"
 #include "components/password_manager/core/browser/form_parsing/form_data_parser.h"
+#include "components/password_manager/core/browser/passkey_credential.h"
 #include "components/password_manager/core/browser/password_ui_utils.h"
+#include "components/password_manager/core/browser/webauthn_credentials_delegate.h"
 #include "components/password_manager/content/browser/bad_message.h"
 #include "components/password_manager/content/browser/content_password_manager_driver.h"
 #include "components/password_manager/content/browser/form_meta_data.h"
@@ -34,6 +36,53 @@
 using base::android::AttachCurrentThread;
 using base::android::ConvertUTF8ToJavaString;
 using base::android::ScopedJavaLocalRef;
+
+namespace {
+
+// Wolvic does not support passkeys/WebAuthn. Since M128 the password
+// suggestion show and accept paths (PasswordAutofillManager::ShowPopup and
+// DidAcceptSuggestion) unconditionally call
+// GetWebAuthnCredentialsDelegateForDriver(...)->HasPendingPasskeySelection(),
+// so returning null crashes. This stateless no-op delegate reports "no
+// passkeys, nothing pending", which is the behavior-preserving answer: no
+// passkey suggestions are ever produced (GetPasskeys() is nullopt) and the
+// HasPendingPasskeySelection() checks simply return false.
+class NoOpWebAuthnCredentialsDelegate
+    : public password_manager::WebAuthnCredentialsDelegate {
+ public:
+  NoOpWebAuthnCredentialsDelegate() = default;
+  ~NoOpWebAuthnCredentialsDelegate() override = default;
+
+  void LaunchWebAuthnFlow() override {}
+  void SelectPasskey(const std::string& backend_id,
+                     OnPasskeySelectedCallback callback) override {
+    std::move(callback).Run();
+  }
+  const std::optional<std::vector<password_manager::PasskeyCredential>>&
+  GetPasskeys() const override {
+    return passkeys_;
+  }
+  bool OfferPasskeysFromAnotherDeviceOption() const override { return false; }
+  void RetrievePasskeys(base::OnceCallback<void()> callback) override {
+    std::move(callback).Run();
+  }
+  bool HasPendingPasskeySelection() override { return false; }
+#if BUILDFLAG(IS_ANDROID)
+  void ShowAndroidHybridSignIn() override {}
+  bool IsAndroidHybridAvailable() const override { return false; }
+#endif
+  base::WeakPtr<password_manager::WebAuthnCredentialsDelegate> AsWeakPtr()
+      override {
+    return weak_ptr_factory_.GetWeakPtr();
+  }
+
+ private:
+  const std::optional<std::vector<password_manager::PasskeyCredential>>
+      passkeys_;
+  base::WeakPtrFactory<NoOpWebAuthnCredentialsDelegate> weak_ptr_factory_{this};
+};
+
+}  // namespace
 
 namespace wolvic {
 
@@ -104,9 +153,10 @@ void WolvicPasswordManagerClient::OnDismissed(JNIEnv* env) {
 void WolvicPasswordManagerClient::HandleSavePassword(
     std::unique_ptr<password_manager::PasswordFormManagerForUI> form_to_save,
   password_manager::PasswordForm& saved_form) {
-  // Avoid DCHECK when adding the new ID/PW via PasswordFormManagerForUI::Update
-  saved_form.federation_origin = url::Origin::Create(GURL(saved_form.url));
-  form_to_save->Update(saved_form);
+  // Apply the username/password edited in the prompt, then save. Replaces the
+  // removed PasswordFormManagerForUI::Update(const PasswordForm&).
+  form_to_save->OnUpdateUsernameFromPrompt(saved_form.username_value);
+  form_to_save->OnUpdatePasswordFromPrompt(saved_form.password_value);
   form_to_save->Save();
 }
 
@@ -251,8 +301,7 @@ void WolvicPasswordManagerClient::AutomaticPasswordSave(
 void WolvicPasswordManagerClient::PasswordWasAutofilled(
     base::span<const password_manager::PasswordForm> best_matches,
     const url::Origin& origin,
-    const std::vector<raw_ptr<const password_manager::PasswordForm,
-                              VectorExperimental>>* federated_matches,
+    base::span<const password_manager::PasswordForm> federated_matches,
     bool was_autofilled_on_pageload) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
   if (!best_matches.size() || !best_matches[0].primary_key.has_value())
@@ -269,7 +318,8 @@ void WolvicPasswordManagerClient::AutofillHttpAuth(
   httpauth_manager_.Autofill(preferred_match, form_manager);
   DCHECK(!form_manager->GetBestMatches().empty());
   PasswordWasAutofilled(form_manager->GetBestMatches(),
-                        url::Origin::Create(form_manager->GetURL()), nullptr,
+                        url::Origin::Create(form_manager->GetURL()),
+                        /*federated_matches=*/{},
                         /*was_autofilled_on_pageload=*/false);
 }
 
@@ -385,7 +435,15 @@ WolvicPasswordManagerClient::GetIdentityManager() {
 
 password_manager::WebAuthnCredentialsDelegate*
 WolvicPasswordManagerClient::GetWebAuthnCredentialsDelegateForDriver(
-      password_manager::PasswordManagerDriver* driver) { return nullptr; }
+    password_manager::PasswordManagerDriver* driver) {
+  // Stateless no-op delegate shared across drivers; see
+  // NoOpWebAuthnCredentialsDelegate above. Must be non-null since M128.
+  if (!webauthn_credentials_delegate_) {
+    webauthn_credentials_delegate_ =
+        std::make_unique<NoOpWebAuthnCredentialsDelegate>();
+  }
+  return webauthn_credentials_delegate_.get();
+}
 
 bool WolvicPasswordManagerClient::IsNewTabPage() const { return false; }
 
@@ -441,7 +499,7 @@ void WolvicPasswordManagerClient::OnFieldTypesDetermined(
     return;
   }
 
-  absl::optional<autofill::RendererFormsWithServerPredictions>
+  std::optional<autofill::RendererFormsWithServerPredictions>
       forms_and_predictions =
           autofill::RendererFormsWithServerPredictions::FromBrowserForm(
               manager, form_id);
