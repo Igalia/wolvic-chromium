@@ -21,6 +21,7 @@
 #include "components/password_manager/core/browser/password_form.h"
 #include "components/password_manager/core/browser/password_store/get_logins_with_affiliations_request_handler.h"
 #include "components/password_manager/core/browser/password_store/password_store_backend.h"
+#include "components/sync/model/model_type_controller_delegate.h"
 #include "components/password_manager/core/browser/password_store/password_store_util.h"
 #include "components/password_manager/core/browser/password_store/psl_matching_helper.h"
 #include "wolvic/browser/autocomplete/wolvic_password_form_util.h"
@@ -277,12 +278,14 @@ void WolvicPasswordStoreBackend::UpdateLoginAsync(
 }
 
 void WolvicPasswordStoreBackend::RemoveLoginAsync(
+    const base::Location& location,
     const password_manager::PasswordForm& form,
     password_manager::PasswordChangesOrErrorReply callback) {
   RemoveLoginInternal(form, std::move(callback));
 }
 
 void WolvicPasswordStoreBackend::RemoveLoginsByURLAndTimeAsync(
+    const base::Location& location,
     const base::RepeatingCallback<bool(const GURL&)>& url_filter,
     base::Time delete_begin,
     base::Time delete_end,
@@ -295,6 +298,7 @@ void WolvicPasswordStoreBackend::RemoveLoginsByURLAndTimeAsync(
 }
 
 void WolvicPasswordStoreBackend::RemoveLoginsCreatedBetweenAsync(
+    const base::Location& location,
     base::Time delete_begin,
     base::Time delete_end,
     password_manager::PasswordChangesOrErrorReply callback) {
@@ -329,7 +333,7 @@ WolvicPasswordStoreBackend::GetSmartBubbleStatsStore() {
   return nullptr;
 }
 
-std::unique_ptr<syncer::ProxyModelTypeControllerDelegate>
+std::unique_ptr<syncer::ModelTypeControllerDelegate>
 WolvicPasswordStoreBackend::CreateSyncControllerDelegate() {
   // Not implemented
   return nullptr;

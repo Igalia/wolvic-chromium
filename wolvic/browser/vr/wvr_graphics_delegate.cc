@@ -43,7 +43,7 @@ base::WeakPtr<WvrGraphicsDelegate> WvrGraphicsDelegate::GetWeakPtr() {
 }
 
 void WvrGraphicsDelegate::InitializeGl(base::OnceClosure callback) {
-  gl::init::DisableANGLE();
+  gl::DisableANGLE();
 
   gl::GLDisplay* display = nullptr;
   if (gl::GetGLImplementation() == gl::kGLImplementationNone) {

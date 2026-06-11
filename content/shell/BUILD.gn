@@ -149,7 +149,10 @@ static_library("content_shell_app") {
 }
 
 inspector_protocol_generate("protocol_sources") {
-  visibility = [ ":content_shell_lib" ]
+  visibility = [
+    ":content_shell_lib",
+    "//wolvic:*",
+  ]
   deps = [ "//third_party/blink/public/devtools_protocol:protocol_version" ]
   _blink_protocol_path = rebase_path(
           "$root_gen_dir/third_party/blink/public/devtools_protocol/protocol.json",
