@@ -22,7 +22,8 @@
 #include "components/autofill/core/browser/filling_product.h"
 #include "components/autofill/core/browser/form_data_importer.h"
 #include "components/autofill/core/browser/form_structure.h"
-#include "components/autofill/core/browser/ui/autofill_popup_delegate.h"
+#include "components/autofill/core/browser/ui/autofill_suggestion_delegate.h"
+#include "components/autofill/core/common/autofill_clock.h"
 #include "components/autofill/core/common/form_interactions_flow.h"
 #include "components/autofill/core/common/unique_ids.h"
 #include "components/password_manager/content/browser/content_password_manager_driver.h"
@@ -161,54 +162,7 @@ translate::TranslateDriver* WolvicAutofillClient::GetTranslateDriver() {
 }
 
 void WolvicAutofillClient::ShowAutofillSettings(
-    autofill::FillingProduct main_filling_product) {}
-
-void WolvicAutofillClient::ShowUnmaskPrompt(
-    const autofill::CreditCard& card,
-    const autofill::CardUnmaskPromptOptions& card_unmask_prompt_options,
-        base::WeakPtr<autofill::CardUnmaskDelegate> delegate) {
-}
-
-void WolvicAutofillClient::OnUnmaskVerificationResult(
-    PaymentsRpcResult result) {}
-
-void WolvicAutofillClient::ConfirmAccountNameFixFlow(
-    base::OnceCallback<void(const std::u16string&)> callback) {
-  // Not implemented
-  std::move(callback).Run(std::u16string());
-}
-
-void WolvicAutofillClient::ConfirmExpirationDateFixFlow(
-    const autofill::CreditCard& card,
-    base::OnceCallback<void(const std::u16string&, const std::u16string&)>
-        callback) {
-  // Not implemented
-  std::move(callback).Run(std::u16string(), std::u16string());
-}
-
-void WolvicAutofillClient::ConfirmSaveCreditCardLocally(
-    const autofill::CreditCard& card,
-    SaveCreditCardOptions options,
-    LocalSaveCardPromptCallback callback) {
-  // Not implemented
-  std::move(callback).Run(SaveCardOfferUserDecision::kIgnored);
-}
-
-void WolvicAutofillClient::ConfirmSaveCreditCardToCloud(
-    const autofill::CreditCard& card,
-    const autofill::LegalMessageLines& legal_message_lines,
-    SaveCreditCardOptions options,
-    UploadSaveCardPromptCallback callback) {
-  // Not implemented
-  std::move(callback).Run(SaveCardOfferUserDecision::kIgnored, {});
-}
-
-void WolvicAutofillClient::ConfirmCreditCardFillAssist(
-    const autofill::CreditCard& card,
-    base::OnceClosure callback) {
-  // Not implemented
-  std::move(callback).Run();
-}
+    autofill::SuggestionType suggestion_type) {}
 
 void WolvicAutofillClient::ShowEditAddressProfileDialog(
     const autofill::AutofillProfile& profile,
@@ -231,21 +185,12 @@ void WolvicAutofillClient::ConfirmSaveAddressProfile(
       autofill::AutofillProfile(AddressCountryCode("")));
 }
 
-bool WolvicAutofillClient::HasCreditCardScanFeature() const {
-  return false;
-}
-
-void WolvicAutofillClient::ScanCreditCard(CreditCardScanCallback callback) {
-  // Not implemented
-  std::move(callback).Run(autofill::CreditCard());
-}
-
 bool WolvicAutofillClient::ShowTouchToFillCreditCard(
     base::WeakPtr<autofill::TouchToFillDelegate> delegate,
-    base::span<const autofill::CreditCard> cards_to_suggest) {
+    base::span<const autofill::CreditCard> cards_to_suggest,
+    const std::vector<bool>& card_acceptabilies) {
   // Touch To Fill is not supported yet.
   NOTREACHED();
-  return false;
 }
 
 void WolvicAutofillClient::HideTouchToFillCreditCard() {
@@ -263,8 +208,9 @@ void WolvicAutofillClient::OnLoginSelected(JNIEnv* env, jint index) {
   }
 
   delegate_->DidAcceptSuggestion(
-      suggestions_[index], autofill::AutofillPopupDelegate::SuggestionPosition{
-                               index, /*sub_popup_level=*/0});
+      suggestions_[index],
+      autofill::AutofillSuggestionDelegate::SuggestionPosition{
+          index, /*sub_popup_level=*/0});
 }
 
 void WolvicAutofillClient::CreatJavaArrayFromSuggestions(JNIEnv* env) {
@@ -277,9 +223,9 @@ void WolvicAutofillClient::CreatJavaArrayFromSuggestions(JNIEnv* env) {
   }
 }
 
-void WolvicAutofillClient::ShowAutofillPopup(
+void WolvicAutofillClient::ShowAutofillSuggestions(
     const autofill::AutofillClient::PopupOpenArgs& open_args,
-    base::WeakPtr<autofill::AutofillPopupDelegate> delegate) {
+    base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate) {
   suggestions_ = std::move(open_args.suggestions);
   trigger_source_ = open_args.trigger_source;
   delegate_ = delegate;
@@ -288,19 +234,19 @@ void WolvicAutofillClient::ShowAutofillPopup(
   CreatJavaArrayFromSuggestions(env);
   Java_AutofillManager_showAutofillPopup(env, java_obj_);
 
-  delegate_->OnPopupShown();
+  delegate_->OnSuggestionsShown();
 }
 
-void WolvicAutofillClient::UpdateAutofillPopupDataListValues(
+void WolvicAutofillClient::UpdateAutofillDataListValues(
     base::span<const autofill::SelectOption> datalist) {
 }
 
-std::vector<autofill::Suggestion>
-WolvicAutofillClient::GetPopupSuggestions() const {
+base::span<const autofill::Suggestion>
+WolvicAutofillClient::GetAutofillSuggestions() const {
   return suggestions_;
 }
 
-void WolvicAutofillClient::PinPopupView() {}
+void WolvicAutofillClient::PinAutofillSuggestions() {}
 
 void WolvicAutofillClient::UpdatePopup(
     const std::vector<autofill::Suggestion>& suggestions,
@@ -316,13 +262,13 @@ void WolvicAutofillClient::UpdatePopup(
   Java_AutofillManager_showAutofillPopup(env, java_obj_);
 }
 
-void WolvicAutofillClient::HideAutofillPopup(
-    autofill::PopupHidingReason reason) {
+void WolvicAutofillClient::HideAutofillSuggestions(
+    autofill::SuggestionHidingReason reason) {
   JNIEnv* env = AttachCurrentThread();
   Java_AutofillManager_dismissPrompt(env, java_obj_);
   if (delegate_) {
     delegate_->ClearPreviewedForm();
-    delegate_->OnPopupHidden();
+    delegate_->OnSuggestionsHidden();
   }
   suggestions_.clear();
   delegate_.reset();
@@ -356,20 +302,8 @@ void WolvicAutofillClient::DidFillOrPreviewForm(
     bool is_refill) {
 }
 
-void WolvicAutofillClient::DidFillOrPreviewField(
-    const std::u16string& autofilled_value,
-    const std::u16string& profile_full_name) {
-}
-
 bool WolvicAutofillClient::IsContextSecure() const {
   return false;
-}
-
-void WolvicAutofillClient::OpenPromoCodeOfferDetailsURL(const GURL& url) {
-  web_contents()->OpenURL(content::OpenURLParams(
-      url, content::Referrer(), WindowOpenDisposition::NEW_FOREGROUND_TAB,
-      ui::PageTransition::PAGE_TRANSITION_AUTO_TOPLEVEL,
-      /*is_renderer_initiated=*/false));
 }
 
 autofill::FormInteractionsFlowId

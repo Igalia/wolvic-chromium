@@ -58,29 +58,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   const translate::LanguageState* GetLanguageState() override;
   translate::TranslateDriver* GetTranslateDriver() override;
   void ShowAutofillSettings(
-      autofill::FillingProduct main_filling_product) override;
-  void ShowUnmaskPrompt(
-      const autofill::CreditCard& card,
-      const autofill::CardUnmaskPromptOptions& card_unmask_prompt_options,
-      base::WeakPtr<autofill::CardUnmaskDelegate> delegate) override;
-  void OnUnmaskVerificationResult(PaymentsRpcResult result) override;
-  void ConfirmAccountNameFixFlow(
-      base::OnceCallback<void(const std::u16string&)> callback) override;
-  void ConfirmExpirationDateFixFlow(
-      const autofill::CreditCard& card,
-      base::OnceCallback<void(const std::u16string&, const std::u16string&)>
-          callback) override;
-  void ConfirmSaveCreditCardLocally(
-      const autofill::CreditCard& card,
-      SaveCreditCardOptions options,
-      LocalSaveCardPromptCallback callback) override;
-  void ConfirmSaveCreditCardToCloud(
-      const autofill::CreditCard& card,
-      const autofill::LegalMessageLines& legal_message_lines,
-      SaveCreditCardOptions options,
-      UploadSaveCardPromptCallback callback) override;
-  void ConfirmCreditCardFillAssist(const autofill::CreditCard& card,
-                                   base::OnceClosure callback) override;
+      autofill::SuggestionType suggestion_type) override;
   void ShowEditAddressProfileDialog(
       const autofill::AutofillProfile& profile,
       AddressProfileSavePromptCallback on_user_decision_callback) override;
@@ -92,24 +70,25 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       const autofill::AutofillProfile* original_profile,
       SaveAddressProfilePromptOptions options,
       AddressProfileSavePromptCallback callback) override;
-  bool HasCreditCardScanFeature() const override;
-  void ScanCreditCard(CreditCardScanCallback callback) override;
   bool ShowTouchToFillCreditCard(
       base::WeakPtr<autofill::TouchToFillDelegate> delegate,
-      base::span<const autofill::CreditCard> cards_to_suggest) override;
+      base::span<const autofill::CreditCard> cards_to_suggest,
+      const std::vector<bool>& card_acceptabilies) override;
   void HideTouchToFillCreditCard() override;
-  void ShowAutofillPopup(
+  void ShowAutofillSuggestions(
       const PopupOpenArgs& open_args,
-      base::WeakPtr<autofill::AutofillPopupDelegate> delegate) override;
-  void UpdateAutofillPopupDataListValues(
+      base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate) override;
+  void UpdateAutofillDataListValues(
       base::span<const autofill::SelectOption> datalist) override;
-  std::vector<autofill::Suggestion> GetPopupSuggestions() const override;
-  void PinPopupView() override;
+  base::span<const autofill::Suggestion> GetAutofillSuggestions()
+      const override;
+  void PinAutofillSuggestions() override;
   void UpdatePopup(
       const std::vector<autofill::Suggestion>& suggestions,
       autofill::FillingProduct main_filling_product,
       autofill::AutofillSuggestionTriggerSource trigger_source) override;
-  void HideAutofillPopup(autofill::PopupHidingReason reason) override;
+  void HideAutofillSuggestions(
+      autofill::SuggestionHidingReason reason) override;
 
   bool IsAutocompleteEnabled() const override;
   bool IsPasswordManagerEnabled() override;
@@ -117,10 +96,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       autofill::mojom::ActionPersistence action_persistence,
       autofill::AutofillTriggerSource trigger_source,
       bool is_refill) override;
-  void DidFillOrPreviewField(const std::u16string& autofilled_value,
-                             const std::u16string& profile_full_name) override;
   bool IsContextSecure() const override;
-  void OpenPromoCodeOfferDetailsURL(const GURL& url) override;
   autofill::FormInteractionsFlowId GetCurrentFormInteractionsFlowId() override;
 
   // autofill::ContentAutofillClient:
@@ -147,7 +123,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   std::vector<autofill::Suggestion> suggestions_;
   autofill::AutofillSuggestionTriggerSource trigger_source_{
       autofill::AutofillSuggestionTriggerSource::kUnspecified};
-  base::WeakPtr<autofill::AutofillPopupDelegate> delegate_;
+  base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate_;
   base::android::ScopedJavaGlobalRef<jobject> java_obj_;
 };
 
