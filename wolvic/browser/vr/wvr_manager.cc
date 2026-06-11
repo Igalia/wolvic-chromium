@@ -4,6 +4,7 @@
 
 #include "wolvic/browser/vr/wvr_manager.h"
 
+#include "base/containers/span.h"
 #include "base/task/bind_post_task.h"
 #include "components/webxr/mailbox_to_surface_bridge_impl.h"
 #include "device/vr/util/xr_standard_gamepad_builder.h"
@@ -30,9 +31,12 @@ gfx::Transform WvrPoseToTransform(const mozilla::gfx::VRPose* pose) {
       gfx::Quaternion(pose->orientation[0], pose->orientation[1],
                       pose->orientation[2], pose->orientation[3]);
 
-  decomp.translate[0] = pose->position[0];
-  decomp.translate[1] = pose->position[1];
-  decomp.translate[2] = pose->position[2];
+  // base::span gives bounds-safe access to the fixed-size translate[] array
+  // (satisfies -Wunsafe-buffer-usage without changing the composition).
+  base::span<double, 3> translate(decomp.translate);
+  translate[0] = pose->position[0];
+  translate[1] = pose->position[1];
+  translate[2] = pose->position[2];
 
   return gfx::Transform::Compose(decomp);
 }

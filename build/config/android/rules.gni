@@ -1680,6 +1680,12 @@ if (!is_robolectric && enable_java_templates) {
 
       _outer_target_name = target_name
       _jni_srcjar_target = "${target_name}__final_jni"
+
+      # Needed for generate_jni_registration (now defined in jni_zero.gni).
+      # Imported in this narrow scope, matching the guarded import used
+      # elsewhere in this file, rather than forcing jni_zero on all //build
+      # consumers.
+      import("//third_party/jni_zero/jni_zero.gni")
       generate_jni_registration(_jni_srcjar_target) {
         java_targets = [ ":$_outer_target_name" ]
       }
