@@ -320,7 +320,7 @@ vars = {
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling ANGLE
   # and whatever else without interference from each other.
-  'angle_revision': 'refs/heads/wolvic_update_m124',
+  'angle_revision': '713102774487cf1a8b3f433529eb8181cbcec31a',
   # Three lines of non-changing comments so that
   # the commit queue can handle CLs rolling SwiftShader
   # and whatever else without interference from each other.
@@ -1549,7 +1549,7 @@ deps = {
   },
 
   'src/third_party/angle':
-    Var('igalia_git') + '/wolvic-angle.git' + '@' +  Var('angle_revision'),
+    Var('chromium_git') + '/angle/angle.git' + '@' +  Var('angle_revision'),
 
   'src/third_party/anonymous_tokens/src':
     Var('chromium_git') + '/external/github.com/google/anonymous-tokens.git' + '@' + '76bfcccb6418239183df55111f2f24782d9f3680',
