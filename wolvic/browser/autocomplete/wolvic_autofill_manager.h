@@ -22,7 +22,7 @@ class WolvicAutofillManager : public autofill::AutofillManager {
   base::WeakPtr<AutofillManager> GetWeakPtr() override;
   bool ShouldClearPreviewedForm() override;
 
-  void OnFocusNoLongerOnFormImpl(bool had_interacted_form) override {}
+  void OnFocusOnNonFormFieldImpl(bool had_interacted_form) override {}
 
   void OnDidFillAutofillFormDataImpl(const autofill::FormData& form,
                                      const base::TimeTicks timestamp) override {
@@ -42,33 +42,34 @@ class WolvicAutofillManager : public autofill::AutofillManager {
                            bool known_success,
                            autofill::mojom::SubmissionSource source) override {}
 
+  void OnCaretMovedInFormFieldImpl(const autofill::FormData& form,
+                                   const autofill::FieldGlobalId& field_id,
+                                   const gfx::Rect& caret_bounds) override {}
+
   void OnTextFieldDidChangeImpl(const autofill::FormData& form,
-                                const autofill::FormFieldData& field,
-                                const gfx::RectF& bounding_box,
+                                const autofill::FieldGlobalId& field_id,
                                 const base::TimeTicks timestamp) override {}
 
   void OnTextFieldDidScrollImpl(const autofill::FormData& form,
-                                const autofill::FormFieldData& field,
-                                const gfx::RectF& bounding_box) override {}
+                                const autofill::FieldGlobalId& field_id) override {}
 
   void OnAskForValuesToFillImpl(
       const autofill::FormData& form,
-      const autofill::FormFieldData& field,
-      const gfx::RectF& bounding_box,
+      const autofill::FieldGlobalId& field_id,
+      const gfx::Rect& caret_bounds,
       autofill::AutofillSuggestionTriggerSource trigger_source) override {}
 
   void OnFocusOnFormFieldImpl(const autofill::FormData& form,
-                              const autofill::FormFieldData& field,
-                              const gfx::RectF& bounding_box) override {}
+                              const autofill::FieldGlobalId& field_id) override {}
 
   void OnSelectControlDidChangeImpl(const autofill::FormData& form,
-                                    const autofill::FormFieldData& field,
-                                    const gfx::RectF& bounding_box) override {}
+                                    const autofill::FieldGlobalId& field_id) override {}
 
   void OnJavaScriptChangedAutofilledValueImpl(
       const autofill::FormData& form,
-      const autofill::FormFieldData& field,
-      const std::u16string& old_value) override {}
+      const autofill::FieldGlobalId& field_id,
+      const std::u16string& old_value,
+      bool formatting_only) override {}
 
   bool ShouldParseForms() override;
 
@@ -78,8 +79,6 @@ class WolvicAutofillManager : public autofill::AutofillManager {
                        const autofill::FormStructure& form_structure) override {
   }
 
-  void OnAfterProcessParsedForms(
-      const autofill::DenseSet<autofill::FormType>& form_types) override {}
 
  private:
   base::WeakPtrFactory<WolvicAutofillManager> weak_ptr_factory_{this};

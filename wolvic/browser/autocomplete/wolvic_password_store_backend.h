@@ -74,15 +74,18 @@ class WolvicPasswordStoreBackend
       const password_manager::PasswordForm& form,
       password_manager::PasswordChangesOrErrorReply callback) override;
   void RemoveLoginAsync(
+      const base::Location& location,
       const password_manager::PasswordForm& form,
       password_manager::PasswordChangesOrErrorReply callback) override;
   void RemoveLoginsByURLAndTimeAsync(
+      const base::Location& location,
       const base::RepeatingCallback<bool(const GURL&)>& url_filter,
       base::Time delete_begin,
       base::Time delete_end,
       base::OnceCallback<void(bool)> sync_completion,
       password_manager::PasswordChangesOrErrorReply callback) override;
   void RemoveLoginsCreatedBetweenAsync(
+      const base::Location& location,
       base::Time delete_begin,
       base::Time delete_end,
       password_manager::PasswordChangesOrErrorReply callback) override;
@@ -90,7 +93,7 @@ class WolvicPasswordStoreBackend
       const base::RepeatingCallback<bool(const GURL&)>& origin_filter,
       base::OnceClosure completion) override;
   password_manager::SmartBubbleStatsStore* GetSmartBubbleStatsStore() override;
-  std::unique_ptr<syncer::ProxyModelTypeControllerDelegate>
+  std::unique_ptr<syncer::ModelTypeControllerDelegate>
   CreateSyncControllerDelegate() override;
   void OnSyncServiceInitialized(syncer::SyncService* sync_service) override;
   void RecordAddLoginAsyncCalledFromTheStore() override;
