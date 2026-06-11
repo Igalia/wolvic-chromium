@@ -326,6 +326,13 @@ WolvicBrowserContext::RebuildTable(
   enumerator->OnComplete(true);
 }
 
+void
+WolvicBrowserContext::BuildVisitedLinkTable(
+    const scoped_refptr<VisitedLinkEnumerator>& enumerator) {
+  // Partitioned visited links are not persisted by Wolvic (see RebuildTable).
+  enumerator->OnVisitedLinkComplete(true);
+}
+
 autofill::AutocompleteHistoryManager* WolvicBrowserContext::GetAutocompleteHistoryManager() {
   if (!autocomplete_history_manager_)
     CreateAutocompleteHistoryManager();
