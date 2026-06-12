@@ -126,6 +126,7 @@ shared_library("libcontent_native") {
   deps = [
     ":content_native_lib",
     ":jni_headers",
+    "//components/os_crypt/async/browser",
     "//components/page_info/android",
     "//components/payments/content/android",
     "//components/webdata_services",
@@ -301,7 +302,6 @@ static_library("content_native_lib") {
 }
 
 generate_build_config_srcjar("build_config_gen") {
-  use_final_fields = true
   min_sdk_version = default_min_sdk_version
   version_code = android_default_version_code
 }
@@ -408,7 +408,7 @@ dist_aar("content_aar") {
     "//base:base_java",
     "//components/browser_ui/media/android:java",
     "//components/embedder_support/android:view_java",
-    "//components/externalauth/android:google_delegate_public_impl_java",
+    "//components/externalauth/android:java",
     "//components/find_in_page/android:java",
     "//components/metrics:metrics_java",
     "//components/signin/public/android:java",

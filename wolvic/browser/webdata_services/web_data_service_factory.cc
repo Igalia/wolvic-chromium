@@ -3,6 +3,8 @@
 #include "base/files/file_path.h"
 #include "base/functional/bind.h"
 #include "base/no_destructor.h"
+#include "components/os_crypt/async/browser/key_provider.h"
+#include "components/os_crypt/async/browser/os_crypt_async.h"
 #include "components/webdata_services/web_data_service_wrapper.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/browser_task_traits.h"
@@ -24,10 +26,19 @@ void ContextErrorCallback(WebDataServiceWrapper::ErrorType error_type,
 std::unique_ptr<KeyedService> BuildWebDataService(
     content::BrowserContext* context) {
   const base::FilePath& path = context->GetPath();
+  // M132 made an OSCryptAsync mandatory for WebDataServiceWrapper (its
+  // LoadDatabase dereferences it). The WebData databases delegate all
+  // encryption to OSCrypt, so — like android_webview — we use an OSCryptAsync
+  // with no key providers. It is process-global and must outlive every
+  // WebDataServiceWrapper KeyedService, hence the function-local static.
+  static base::NoDestructor<os_crypt_async::OSCryptAsync> os_crypt(
+      std::vector<
+          std::pair<size_t, std::unique_ptr<os_crypt_async::KeyProvider>>>{});
   return std::make_unique<WebDataServiceWrapper>(
-      path, "" /* application locale */ ,
+      path, "" /* application locale */,
       content::GetUIThreadTaskRunner({}),
-      base::BindRepeating(&ContextErrorCallback));
+      base::BindRepeating(&ContextErrorCallback), os_crypt.get(),
+      /*use_in_memory_autofill_account_database=*/false);
 }
 
 } // namespace

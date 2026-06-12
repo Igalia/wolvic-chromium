@@ -63,6 +63,10 @@ void WolvicAutofillClient::CreateForWebContents(
 
 WolvicAutofillClient::~WolvicAutofillClient() = default;
 
+base::WeakPtr<autofill::AutofillClient> WolvicAutofillClient::GetWeakPtr() {
+  return weak_ptr_factory_.GetWeakPtr();
+}
+
 bool WolvicAutofillClient::IsOffTheRecord() const {
   return web_contents()->GetBrowserContext()->IsOffTheRecord();
 }
@@ -111,6 +115,11 @@ syncer::SyncService* WolvicAutofillClient::GetSyncService() {
 }
 
 signin::IdentityManager* WolvicAutofillClient::GetIdentityManager() {
+  return nullptr;
+}
+
+const signin::IdentityManager* WolvicAutofillClient::GetIdentityManager()
+    const {
   return nullptr;
 }
 
@@ -177,25 +186,12 @@ void WolvicAutofillClient::ShowDeleteAddressProfileDialog(
 void WolvicAutofillClient::ConfirmSaveAddressProfile(
     const autofill::AutofillProfile& profile,
     const autofill::AutofillProfile* original_profile,
-    SaveAddressProfilePromptOptions options,
+    bool is_migration_to_account,
     AddressProfileSavePromptCallback callback) {
   // Not implemented
   std::move(callback).Run(
       AddressPromptUserDecision::kIgnored,
       autofill::AutofillProfile(AddressCountryCode("")));
-}
-
-bool WolvicAutofillClient::ShowTouchToFillCreditCard(
-    base::WeakPtr<autofill::TouchToFillDelegate> delegate,
-    base::span<const autofill::CreditCard> cards_to_suggest,
-    const std::vector<bool>& card_acceptabilies) {
-  // Touch To Fill is not supported yet.
-  NOTREACHED();
-}
-
-void WolvicAutofillClient::HideTouchToFillCreditCard() {
-  // Touch To Fill is not supported yet.
-  NOTREACHED();
 }
 
 void WolvicAutofillClient::OnLoginSelected(JNIEnv* env, jint index) {
@@ -209,8 +205,8 @@ void WolvicAutofillClient::OnLoginSelected(JNIEnv* env, jint index) {
 
   delegate_->DidAcceptSuggestion(
       suggestions_[index],
-      autofill::AutofillSuggestionDelegate::SuggestionPosition{
-          index, /*sub_popup_level=*/0});
+      autofill::AutofillSuggestionDelegate::SuggestionMetadata{
+          .row = index, .sub_popup_level = 0});
 }
 
 void WolvicAutofillClient::CreatJavaArrayFromSuggestions(JNIEnv* env) {
@@ -223,7 +219,8 @@ void WolvicAutofillClient::CreatJavaArrayFromSuggestions(JNIEnv* env) {
   }
 }
 
-void WolvicAutofillClient::ShowAutofillSuggestions(
+autofill::AutofillClient::SuggestionUiSessionId
+WolvicAutofillClient::ShowAutofillSuggestions(
     const autofill::AutofillClient::PopupOpenArgs& open_args,
     base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate) {
   suggestions_ = std::move(open_args.suggestions);
@@ -234,7 +231,9 @@ void WolvicAutofillClient::ShowAutofillSuggestions(
   CreatJavaArrayFromSuggestions(env);
   Java_AutofillManager_showAutofillPopup(env, java_obj_);
 
-  delegate_->OnSuggestionsShown();
+  delegate_->OnSuggestionsShown(suggestions_);
+
+  return autofill::AutofillClient::SuggestionUiSessionId();
 }
 
 void WolvicAutofillClient::UpdateAutofillDataListValues(
@@ -248,7 +247,7 @@ WolvicAutofillClient::GetAutofillSuggestions() const {
 
 void WolvicAutofillClient::PinAutofillSuggestions() {}
 
-void WolvicAutofillClient::UpdatePopup(
+void WolvicAutofillClient::UpdateAutofillSuggestions(
     const std::vector<autofill::Suggestion>& suggestions,
     autofill::FillingProduct main_filling_product,
     autofill::AutofillSuggestionTriggerSource trigger_source) {
