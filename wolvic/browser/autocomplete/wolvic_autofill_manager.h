@@ -22,7 +22,7 @@ class WolvicAutofillManager : public autofill::AutofillManager {
   base::WeakPtr<AutofillManager> GetWeakPtr() override;
   bool ShouldClearPreviewedForm() override;
 
-  void OnFocusOnNonFormFieldImpl(bool had_interacted_form) override {}
+  void OnFocusOnNonFormFieldImpl() override {}
 
   void OnDidFillAutofillFormDataImpl(const autofill::FormData& form,
                                      const base::TimeTicks timestamp) override {
@@ -30,7 +30,7 @@ class WolvicAutofillManager : public autofill::AutofillManager {
 
   void OnDidEndTextFieldEditingImpl() override {}
   void OnHidePopupImpl() override {}
-  void OnSelectOrSelectListFieldOptionsDidChangeImpl(
+  void OnSelectFieldOptionsDidChangeImpl(
       const autofill::FormData& form) override {}
 
   void Reset() override {}
@@ -39,7 +39,6 @@ class WolvicAutofillManager : public autofill::AutofillManager {
 
  protected:
   void OnFormSubmittedImpl(const autofill::FormData& form,
-                           bool known_success,
                            autofill::mojom::SubmissionSource source) override {}
 
   void OnCaretMovedInFormFieldImpl(const autofill::FormData& form,
