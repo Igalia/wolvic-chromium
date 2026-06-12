@@ -139,6 +139,9 @@ class WolvicPasswordManagerClient
 #endif
   password_manager::PasswordManagerMetricsRecorder*
   GetMetricsRecorder() override;
+  password_manager::FirstCctPageLoadPasswordsUkmRecorder*
+  GetFirstCctPageLoadUkmRecorder() override;
+  void PotentialSaveFormSubmitted() override;
   signin::IdentityManager* GetIdentityManager() override;
   password_manager::FieldInfoManager* GetFieldInfoManager() const override;
   password_manager::WebAuthnCredentialsDelegate*

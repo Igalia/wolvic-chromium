@@ -34,6 +34,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   ~WolvicAutofillClient() override;
 
   // autofill::AutofillClient:
+  base::WeakPtr<autofill::AutofillClient> GetWeakPtr() override;
   bool IsOffTheRecord() const override;
   scoped_refptr<network::SharedURLLoaderFactory>
   GetURLLoaderFactory() override;
@@ -45,6 +46,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   const PrefService* GetPrefs() const override;
   syncer::SyncService* GetSyncService() override;
   signin::IdentityManager* GetIdentityManager() override;
+  const signin::IdentityManager* GetIdentityManager() const override;
   autofill::FormDataImporter* GetFormDataImporter() override;
   autofill::payments::PaymentsAutofillClient* GetPaymentsAutofillClient()
       override;
@@ -68,14 +70,9 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   void ConfirmSaveAddressProfile(
       const autofill::AutofillProfile& profile,
       const autofill::AutofillProfile* original_profile,
-      SaveAddressProfilePromptOptions options,
+      bool is_migration_to_account,
       AddressProfileSavePromptCallback callback) override;
-  bool ShowTouchToFillCreditCard(
-      base::WeakPtr<autofill::TouchToFillDelegate> delegate,
-      base::span<const autofill::CreditCard> cards_to_suggest,
-      const std::vector<bool>& card_acceptabilies) override;
-  void HideTouchToFillCreditCard() override;
-  void ShowAutofillSuggestions(
+  autofill::AutofillClient::SuggestionUiSessionId ShowAutofillSuggestions(
       const PopupOpenArgs& open_args,
       base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate) override;
   void UpdateAutofillDataListValues(
@@ -83,7 +80,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   base::span<const autofill::Suggestion> GetAutofillSuggestions()
       const override;
   void PinAutofillSuggestions() override;
-  void UpdatePopup(
+  void UpdateAutofillSuggestions(
       const std::vector<autofill::Suggestion>& suggestions,
       autofill::FillingProduct main_filling_product,
       autofill::AutofillSuggestionTriggerSource trigger_source) override;
@@ -125,6 +122,8 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       autofill::AutofillSuggestionTriggerSource::kUnspecified};
   base::WeakPtr<autofill::AutofillSuggestionDelegate> delegate_;
   base::android::ScopedJavaGlobalRef<jobject> java_obj_;
+
+  base::WeakPtrFactory<WolvicAutofillClient> weak_ptr_factory_{this};
 };
 
 }  // namespace wolvic
