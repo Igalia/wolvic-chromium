@@ -18,6 +18,7 @@ import org.chromium.components.url_formatter.UrlFormatter;
 import org.chromium.content_public.browser.ImeAdapter;
 import org.chromium.content_public.browser.LoadUrlParams;
 import org.chromium.content_public.browser.NavigationController;
+import org.chromium.content_public.browser.Visibility;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.content_public.browser.navigation_controller.LoadURLType;
 import org.chromium.ui.base.ActivityWindowAndroid;
@@ -59,7 +60,8 @@ public class Tab {
 
     public Tab(@NonNull Context context, boolean is_off_the_record, WebContents webContents) {
         mWindowAndroid = new ActivityWindowAndroid(context, false,
-                IntentRequestTracker.createFromActivity(ContextUtils.activityFromContext(context)));
+                IntentRequestTracker.createFromActivity(ContextUtils.activityFromContext(context)),
+                /* insetObserver= */ null);
 
         mCompositorView = new TabCompositorView(context);
         mCompositorView.onNativeLibraryLoaded(mWindowAndroid);
@@ -72,8 +74,7 @@ public class Tab {
             mWebContents = WolvicWebContentsFactory.createWebContents(is_off_the_record);
         }
 
-        mContentView =
-                ContentView.createContentView(context, null /* eventOffsetHandler */, mWebContents);
+        mContentView = ContentView.createContentView(context, mWebContents);
         mWebContents.setDelegates("", ViewAndroidDelegate.createBasicDelegate(mContentView),
                 mContentView, mWindowAndroid, WebContents.createDefaultInternalsHolder());
 
@@ -81,9 +82,9 @@ public class Tab {
 
         mCompositorView.setCurrentWebContents(mWebContents);
 
-        // TODO: Call `onShow()` on the appropriate place and should be pair
-        // with `onHide()`.
-        mWebContents.onShow();
+        // TODO: Call this on the appropriate place and should be paired with a
+        // matching Visibility.HIDDEN update.
+        mWebContents.updateWebContentsVisibility(Visibility.VISIBLE);
     }
 
     public void destroy() {
