@@ -193,10 +193,18 @@ gpu::ContextResult GLES2CommandBufferStub::Initialize(
     // To use virtualized contexts we need on screen surface format match the
     // offscreen.
     auto surface_format = default_surface->GetFormat();
+    // CreateNativeGLSurface already returns an initialized surface (it calls
+    // GLSurface::Initialize() internally). NativeViewGLSurfaceEGL::Initialize()
+    // is not idempotent: re-running it issues a second eglCreateWindowSurface on
+    // the same ANativeWindow, which fails with EGL_BAD_ALLOC
+    // ("native_window_api_connect: already connected"). Only WebXR reaches this
+    // branch (its bridge passes can_be_used_with_surface_control=false, forcing
+    // CreateNativeGLSurface instead of the SurfaceControl presenter); the
+    // DCHECK(!surface_) that would catch the double-init is compiled out of our
+    // official build. So check for failure only -- do not re-initialize.
     surface_ = ImageTransportSurface::CreateNativeGLSurface(
         display, init_params.surface_handle, surface_format);
-    if (!surface_ || !surface_->Initialize(surface_format)) {
-      surface_ = nullptr;
+    if (!surface_) {
       LOG(ERROR) << "ContextResult::kSurfaceFailure: Failed to create surface.";
       return gpu::ContextResult::kSurfaceFailure;
     }
