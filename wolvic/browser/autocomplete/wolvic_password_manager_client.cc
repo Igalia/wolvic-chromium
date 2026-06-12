@@ -53,7 +53,7 @@ class NoOpWebAuthnCredentialsDelegate
   NoOpWebAuthnCredentialsDelegate() = default;
   ~NoOpWebAuthnCredentialsDelegate() override = default;
 
-  void LaunchWebAuthnFlow() override {}
+  void LaunchSecurityKeyOrHybridFlow() override {}
   void SelectPasskey(const std::string& backend_id,
                      OnPasskeySelectedCallback callback) override {
     std::move(callback).Run();
@@ -62,15 +62,11 @@ class NoOpWebAuthnCredentialsDelegate
   GetPasskeys() const override {
     return passkeys_;
   }
-  bool OfferPasskeysFromAnotherDeviceOption() const override { return false; }
+  bool IsSecurityKeyOrHybridFlowAvailable() const override { return false; }
   void RetrievePasskeys(base::OnceCallback<void()> callback) override {
     std::move(callback).Run();
   }
   bool HasPendingPasskeySelection() override { return false; }
-#if BUILDFLAG(IS_ANDROID)
-  void ShowAndroidHybridSignIn() override {}
-  bool IsAndroidHybridAvailable() const override { return false; }
-#endif
   base::WeakPtr<password_manager::WebAuthnCredentialsDelegate> AsWeakPtr()
       override {
     return weak_ptr_factory_.GetWeakPtr();
@@ -426,6 +422,13 @@ void WolvicPasswordManagerClient::CheckSafeBrowsingReputation(
 
 password_manager::PasswordManagerMetricsRecorder*
 WolvicPasswordManagerClient::GetMetricsRecorder() { return nullptr; }
+
+password_manager::FirstCctPageLoadPasswordsUkmRecorder*
+WolvicPasswordManagerClient::GetFirstCctPageLoadUkmRecorder() {
+  return nullptr;
+}
+
+void WolvicPasswordManagerClient::PotentialSaveFormSubmitted() {}
 
 signin::IdentityManager*
 WolvicPasswordManagerClient::GetIdentityManager() {
