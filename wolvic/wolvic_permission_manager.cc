@@ -568,12 +568,17 @@ void WolvicPermissionManager::CompleteRequest(
   CHECK(in_progress_request->content_results &&
         in_progress_request->android_results);
 
-  auto result = CombineStatuses(in_progress_request->content_results.value(),
-                                in_progress_request->android_results.value());
-  for (auto& callback : in_progress_request->callbacks) {
+  // Take ownership out of the in-progress list before running callbacks: a
+  // callback may synchronously start another permission request, which must not
+  // find, mutate, or erase this request while we are still iterating it.
+  std::unique_ptr<InProgressRequest> request = std::move(*it);
+  in_progress_requests_.erase(it);
+
+  auto result = CombineStatuses(request->content_results.value(),
+                                request->android_results.value());
+  for (auto& callback : request->callbacks) {
     std::move(callback).Run(result);
   }
-  in_progress_requests_.erase(it);
 }
 
 void WolvicPermissionManager::RequestContentPermissions(
