@@ -10,7 +10,7 @@
 #include "base/android/scoped_java_ref.h"
 #include "base/files/file_path.h"
 #include "base/memory/raw_ptr.h"
-#include "components/autofill/core/browser/autocomplete_history_manager.h"
+#include "components/autofill/core/browser/single_field_fillers/autocomplete/autocomplete_history_manager.h"
 #include "components/password_manager/core/browser/field_info_manager.h"
 #include "components/password_manager/core/browser/password_store/password_store.h"
 #include "components/prefs/pref_name_set.h"

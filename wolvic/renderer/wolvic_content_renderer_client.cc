@@ -52,19 +52,9 @@ void WolvicContentRendererClient::RenderFrameCreated(
       base::FeatureList::IsEnabled(blink::features::kFencedFramesAPIChanges)) {
     auto password_autofill_agent =
         std::make_unique<autofill::PasswordAutofillAgent>(
-            render_frame, associated_interfaces,
-            autofill::PasswordAutofillAgent::EnableHeavyFormDataScraping(
-                false));
+            render_frame, associated_interfaces);
     new autofill::AutofillAgent(
         render_frame,
-        {
-            autofill::AutofillAgent::ExtractAllDatalists(false),
-            autofill::AutofillAgent::FocusRequiresScroll(false),
-            autofill::AutofillAgent::QueryPasswordSuggestions(false),
-            autofill::AutofillAgent::SecureContextRequired(false),
-            autofill::AutofillAgent::UserGestureRequired(false),
-            autofill::AutofillAgent::UsesKeyboardAccessoryForSuggestions(false),
-        },
         std::move(password_autofill_agent),
         std::unique_ptr<autofill::PasswordGenerationAgent>(),
         associated_interfaces);
