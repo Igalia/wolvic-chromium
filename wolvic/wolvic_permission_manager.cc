@@ -133,7 +133,7 @@ blink::PermissionType MediaStreamTypeToContentPermission(
     case MediaStreamType::DISPLAY_VIDEO_CAPTURE_SET:
       return blink::PermissionType::DISPLAY_CAPTURE;
     default:
-      NOTREACHED_NORETURN();
+      NOTREACHED();
   }
 }
 

@@ -61,7 +61,8 @@ public class Tab {
     public Tab(@NonNull Context context, boolean is_off_the_record, WebContents webContents) {
         mWindowAndroid = new ActivityWindowAndroid(context, false,
                 IntentRequestTracker.createFromActivity(ContextUtils.activityFromContext(context)),
-                /* insetObserver= */ null);
+                /* insetObserver= */ null,
+                /* trackOcclusion= */ false);
 
         mCompositorView = new TabCompositorView(context);
         mCompositorView.onNativeLibraryLoaded(mWindowAndroid);

@@ -5,7 +5,7 @@
 #ifndef WOLVIC_BROWSER_AUTOCOMPLETE_WOLVIC_AUTOFILL_MANAGER_H_
 #define WOLVIC_BROWSER_AUTOCOMPLETE_WOLVIC_AUTOFILL_MANAGER_H_
 
-#include "components/autofill/core/browser/autofill_manager.h"
+#include "components/autofill/core/browser/foundations/autofill_manager.h"
 
 namespace wolvic {
 
@@ -45,9 +45,9 @@ class WolvicAutofillManager : public autofill::AutofillManager {
                                    const autofill::FieldGlobalId& field_id,
                                    const gfx::Rect& caret_bounds) override {}
 
-  void OnTextFieldDidChangeImpl(const autofill::FormData& form,
-                                const autofill::FieldGlobalId& field_id,
-                                const base::TimeTicks timestamp) override {}
+  void OnTextFieldValueChangedImpl(const autofill::FormData& form,
+                                   const autofill::FieldGlobalId& field_id,
+                                   const base::TimeTicks timestamp) override {}
 
   void OnTextFieldDidScrollImpl(const autofill::FormData& form,
                                 const autofill::FieldGlobalId& field_id) override {}
@@ -61,14 +61,13 @@ class WolvicAutofillManager : public autofill::AutofillManager {
   void OnFocusOnFormFieldImpl(const autofill::FormData& form,
                               const autofill::FieldGlobalId& field_id) override {}
 
-  void OnSelectControlDidChangeImpl(const autofill::FormData& form,
-                                    const autofill::FieldGlobalId& field_id) override {}
+  void OnSelectControlSelectionChangedImpl(const autofill::FormData& form,
+                                           const autofill::FieldGlobalId& field_id) override {}
 
   void OnJavaScriptChangedAutofilledValueImpl(
       const autofill::FormData& form,
       const autofill::FieldGlobalId& field_id,
-      const std::u16string& old_value,
-      bool formatting_only) override {}
+      const std::u16string& old_value) override {}
 
   bool ShouldParseForms() override;
 
@@ -78,6 +77,9 @@ class WolvicAutofillManager : public autofill::AutofillManager {
                        const autofill::FormStructure& form_structure) override {
   }
 
+  void OnLoadedServerPredictionsImpl(
+      base::span<const raw_ptr<autofill::FormStructure, VectorExperimental>>
+          forms) override {}
 
  private:
   base::WeakPtrFactory<WolvicAutofillManager> weak_ptr_factory_{this};

@@ -173,7 +173,7 @@ repack("pak") {
     "$root_gen_dir/third_party/blink/public/resources/inspector_overlay_resources.pak",
     "$root_gen_dir/third_party/blink/public/strings/blink_strings_en-US.pak",
     "$root_gen_dir/ui/resources/ui_resources_100_percent.pak",
-    "$root_gen_dir/ui/resources/webui_resources.pak",
+    "$root_gen_dir/ui/webui/resources/webui_resources.pak",
     "$root_gen_dir/ui/strings/app_locale_settings_en-US.pak",
     "$root_gen_dir/ui/strings/ax_strings_en-US.pak",
     "$root_gen_dir/ui/strings/ui_strings_en-US.pak",
@@ -195,6 +195,7 @@ repack("pak") {
     "//third_party/blink/public/strings",
     "//ui/resources",
     "//ui/strings",
+    "//ui/webui/resources:resources",
   ]
 
   if (enable_vr) {
@@ -237,7 +238,7 @@ static_library("content_native_lib") {
     "//components/cdm/common",
     "//components/cdm/renderer",
     "//components/custom_handlers",
-    "//components/embedder_support:browser_util",
+    "//components/embedder_support:user_agent",
     "//components/embedder_support/android:web_contents_delegate",
     "//components/find_in_page",
     "//components/keyed_service/content",
@@ -384,6 +385,7 @@ android_library("wolvic_java") {
     "//content/public/android:content_java",
     "//components/payments/content/android:java",
     "//components/payments/content/android:service_java",
+    "//components/payments/content/android/ui:java",
     "//components/payments/mojom:mojom_java",
     "//mojo/public/java:bindings_java",
     "//services/service_manager/public/java:service_manager_java",

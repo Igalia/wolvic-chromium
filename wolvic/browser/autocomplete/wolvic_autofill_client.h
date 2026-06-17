@@ -13,8 +13,8 @@
 #include "base/functional/callback.h"
 #include "base/memory/weak_ptr.h"
 #include "components/autofill/content/browser/content_autofill_client.h"
-#include "components/autofill/core/browser/autofill_client.h"
-#include "components/autofill/core/browser/filling_product.h"
+#include "components/autofill/core/browser/foundations/autofill_client.h"
+#include "components/autofill/core/browser/filling/filling_product.h"
 
 namespace payments {
 class PaymentsClient;
@@ -38,8 +38,8 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   bool IsOffTheRecord() const override;
   scoped_refptr<network::SharedURLLoaderFactory>
   GetURLLoaderFactory() override;
-  autofill::AutofillCrowdsourcingManager* GetCrowdsourcingManager() override;
-  autofill::PersonalDataManager* GetPersonalDataManager() override;
+  autofill::AutofillCrowdsourcingManager& GetCrowdsourcingManager() override;
+  autofill::PersonalDataManager& GetPersonalDataManager() override;
   autofill::AutocompleteHistoryManager*
   GetAutocompleteHistoryManager() override;
   PrefService* GetPrefs() override;
@@ -52,7 +52,6 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       override;
   autofill::StrikeDatabase* GetStrikeDatabase() override;
   ukm::UkmRecorder* GetUkmRecorder() override;
-  ukm::SourceId GetUkmSourceId() override;
   autofill::AddressNormalizer* GetAddressNormalizer() override;
   const GURL& GetLastCommittedPrimaryMainFrameURL() const override;
   url::Origin GetLastCommittedPrimaryMainFrameOrigin() const override;
@@ -61,12 +60,6 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   translate::TranslateDriver* GetTranslateDriver() override;
   void ShowAutofillSettings(
       autofill::SuggestionType suggestion_type) override;
-  void ShowEditAddressProfileDialog(
-      const autofill::AutofillProfile& profile,
-      AddressProfileSavePromptCallback on_user_decision_callback) override;
-  void ShowDeleteAddressProfileDialog(
-      const autofill::AutofillProfile& profile,
-      AddressProfileDeleteDialogCallback delete_dialog_callback) override;
   void ConfirmSaveAddressProfile(
       const autofill::AutofillProfile& profile,
       const autofill::AutofillProfile* original_profile,
@@ -79,7 +72,6 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
       base::span<const autofill::SelectOption> datalist) override;
   base::span<const autofill::Suggestion> GetAutofillSuggestions()
       const override;
-  void PinAutofillSuggestions() override;
   void UpdateAutofillSuggestions(
       const std::vector<autofill::Suggestion>& suggestions,
       autofill::FillingProduct main_filling_product,
@@ -87,12 +79,20 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   void HideAutofillSuggestions(
       autofill::SuggestionHidingReason reason) override;
 
+  const std::string& GetAppLocale() const override;
+  autofill::VotesUploader& GetVotesUploader() override;
+  autofill::EntityDataManager* GetEntityDataManager() override;
+  autofill::SingleFieldFillRouter& GetSingleFieldFillRouter() override;
+  bool IsAutofillEnabled() const override;
+  bool IsAutofillProfileEnabled() const override;
+  bool IsAutofillPaymentMethodsEnabled() const override;
+  void DidFillForm(autofill::AutofillTriggerSource trigger_source,
+                   bool is_refill) override;
+  autofill::autofill_metrics::FormInteractionsUkmLogger&
+  GetFormInteractionsUkmLogger() override;
+
   bool IsAutocompleteEnabled() const override;
-  bool IsPasswordManagerEnabled() override;
-  void DidFillOrPreviewForm(
-      autofill::mojom::ActionPersistence action_persistence,
-      autofill::AutofillTriggerSource trigger_source,
-      bool is_refill) override;
+  bool IsPasswordManagerEnabled() const override;
   bool IsContextSecure() const override;
   autofill::FormInteractionsFlowId GetCurrentFormInteractionsFlowId() override;
 

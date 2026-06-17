@@ -4,13 +4,16 @@
 
 package org.chromium.wolvic.payments;
 
-import androidx.annotation.Nullable;
 import android.content.Context;
 
+import org.chromium.base.Callback;
 import org.chromium.base.Log;
+import org.chromium.build.annotations.Nullable;
 import org.chromium.components.autofill.EditableOption;
 import org.chromium.components.payments.AbortReason;
+import org.chromium.components.payments.AndroidIntentLauncher;
 import org.chromium.components.payments.BrowserPaymentRequest;
+import org.chromium.components.payments.DialogController;
 import org.chromium.components.payments.ErrorStrings;
 import org.chromium.components.payments.JourneyLogger;
 import org.chromium.components.payments.PaymentApp;
@@ -321,10 +324,7 @@ public class WolvicPaymentRequestService
         }
     }
 
-    // Implements BrowserPaymentRequest:
-    @Override
     public boolean onPaymentAppCreated(PaymentApp paymentApp) {
-        paymentApp.setHaveRequestedAutofillData(mPaymentUiService.haveRequestedAutofillData());
         return true;
     }
 
@@ -429,5 +429,38 @@ public class WolvicPaymentRequestService
     @Override
     public @Nullable Context getContext() {
         return mDelegate.getContext(mRenderFrameHost);
+    }
+
+    // Implements BrowserPaymentRequest:
+    @Override
+    public boolean isFullDelegationRequired() {
+        return false;
+    }
+
+    // Implements BrowserPaymentRequest:
+    @Override
+    public @Nullable AndroidIntentLauncher getAndroidIntentLauncher() {
+        return null;
+    }
+
+    // Implements BrowserPaymentRequest:
+    @Override
+    public byte @Nullable [][] getCertificateChain() {
+        return null;
+    }
+
+    // Implements BrowserPaymentRequest:
+    @Override
+    public DialogController getDialogController() {
+        return new DialogController() {
+            @Override
+            public void showReadyToPayDebugInfo(String readyToPayDebugInfo) {}
+
+            @Override
+            public void showLeavingIncognitoWarning(
+                    Callback<String> denyCallback, Runnable approveCallback) {
+                approveCallback.run();
+            }
+        };
     }
 }

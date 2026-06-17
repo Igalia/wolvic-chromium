@@ -15,7 +15,7 @@ import org.chromium.components.autofill.Completable;
 import org.chromium.components.autofill.EditableOption;
 import org.chromium.components.embedder_support.view.ContentView;
 import org.chromium.components.payments.AbortReason;
-import org.chromium.components.payments.CurrencyFormatter;
+import org.chromium.components.payments.ui.CurrencyFormatter;
 import org.chromium.components.payments.ErrorStrings;
 import org.chromium.components.payments.JourneyLogger;
 import org.chromium.components.payments.PaymentApp;
@@ -264,13 +264,13 @@ public class WolvicPaymentUiService {
         return null;
       PaymentHandlerNavigationThrottle.markPaymentHandlerWebContents(paymentHandlerWebContents);
 
-      mPaymentWebContentsObserver = new WebContentsObserver(paymentHandlerWebContents) {
+      mPaymentWebContentsObserver = new WebContentsObserver() {
           @Override
-          public void destroy() {
-            onDismiss();
-            paymentHandlerWebContents.removeObserver(this);
+          public void webContentsDestroyed() {
+              onDismiss();
           }
       };
+      mPaymentWebContentsObserver.observe(paymentHandlerWebContents);
 
       mWebContents.notifyOnCreateNewPaymentHandler(paymentHandlerWebContents);
 
