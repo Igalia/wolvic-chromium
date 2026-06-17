@@ -6,7 +6,6 @@
 
 #include "base/check.h"
 #include "components/embedder_support/user_agent_utils.h"
-#include "content/public/common/user_agent.h"
 
 namespace wolvic {
 
@@ -39,11 +38,11 @@ SessionSettings::UserAgentMode SessionSettings::GetUserAgentMode() const {
 }
 
 void SessionSettings::SetUserAgentOverride(
-    const absl::optional<std::string>& value) {
+    const std::optional<std::string>& value) {
   user_agent_override_ = value;
 }
 
-absl::optional<std::string> SessionSettings::GetUserAgentOverride() const {
+std::optional<std::string> SessionSettings::GetUserAgentOverride() const {
   return user_agent_override_;
 }
 
@@ -58,7 +57,7 @@ std::string SessionSettings::GetDefaultUserAgent(UserAgentMode mode) const {
     kWolvicUserAgentVR = embedder_support::GetUserAgent() + " Mobile VR";
 
     const char kLinuxInfoStr[] = "X11; Linux x86_64";
-    kWolvicUserAgentDesktop = content::BuildUserAgentFromOSAndProduct(kLinuxInfoStr, embedder_support::GetProductAndVersion());
+    kWolvicUserAgentDesktop = embedder_support::BuildUserAgentFromOSAndProduct(kLinuxInfoStr, embedder_support::GetProductAndVersion());
   });
 
   switch (mode) {

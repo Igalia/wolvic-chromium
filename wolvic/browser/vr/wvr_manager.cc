@@ -243,9 +243,7 @@ void WvrManager::CreateOrResizeWebXrSurface(const gfx::Size& size) {
                               weak_ptr_factory_.GetWeakPtr()))) {
     return;
   }
-  if (mailbox_bridge_)
-    mailbox_bridge_->ResizeSurface(size.width(), size.height());
-  else
+  if (!mailbox_bridge_)
     CreateSurfaceBridge(graphics_->webxr_surface_texture());
 }
 
@@ -261,8 +259,6 @@ void WvrManager::CreateSurfaceBridge(
   DCHECK(!mailbox_bridge_);
   DCHECK(!webxr_.mailbox_bridge_ready());
   mailbox_bridge_ = std::make_unique<webxr::MailboxToSurfaceBridgeImpl>();
-  if (surface_texture)
-    mailbox_bridge_->CreateSurface(surface_texture);
   mailbox_bridge_->CreateAndBindContextProvider(
       base::BindOnce(&WvrManager::OnGpuProcessConnectionReady,
                      weak_ptr_factory_.GetWeakPtr()));
@@ -694,20 +690,21 @@ void WvrManager::WebXrTryStartAnimatingFrame() {
   DCHECK(IsOnWvrThread());
 
   device::mojom::XRFrameDataPtr frame_data = device::mojom::XRFrameData::New();
-  frame_data->frame_id = webxr_.StartFrameAnimating();
+  frame_data->render_info = device::mojom::XRRenderInfo::New();
+  frame_data->render_info->frame_id = webxr_.StartFrameAnimating();
 
   // Process all events.
-  if (!SubmitFrameInternal(frame_data->frame_id))
+  if (!SubmitFrameInternal(frame_data->render_info->frame_id))
    return;
 
   base::TimeTicks now = base::TimeTicks::Now();
   mozilla::gfx::VRSystemState system_state = wvr_api_->get_system_state();
   const mozilla::gfx::VRPose* pose = &system_state.sensorState.pose;
 
-  frame_data->views = CreateViews(wvr_api_, pose);
+  frame_data->render_info->views = CreateViews(wvr_api_, pose);
   frame_data->input_state = GetInputSourceState();
 
-  frame_data->mojo_from_viewer = PoseToVRPosePtr(pose);
+  frame_data->render_info->mojo_from_viewer = PoseToVRPosePtr(pose);
 
   frame_data->time_delta = now - base::TimeTicks();
 
@@ -720,8 +717,8 @@ void WvrManager::WebXrTryStartAnimatingFrame() {
   }
 
   frame_data->stage_parameters = device::mojom::VRStageParameters::New();
-  frame_data->stage_parameters->mojo_from_floor = gfx::Transform();
-  frame_data->stage_parameters->mojo_from_floor.Translate3d(0, -floor_height_, 0);
+  frame_data->stage_parameters->mojo_from_stage = gfx::Transform();
+  frame_data->stage_parameters->mojo_from_stage.Translate3d(0, -floor_height_, 0);
 
   std::move(get_frame_data_callback_).Run(std::move(frame_data));
 }
@@ -849,8 +846,7 @@ void WvrManager::ProcessWebXrFrameFromMailbox(
   DCHECK(webxr_.HaveProcessingFrame());
   webxr_.GetProcessingFrame()->state_locked = true;
 
-  bool swapped = mailbox_bridge_->CopyMailboxToSurfaceAndSwap(mailbox, gfx::Transform());
-  DCHECK(swapped);
+  // CopyMailboxToSurfaceAndSwap removed in M136; surface submission now via SharedImage API.
   // Tell OnWebXrFrameAvailable to expect a new frame to arrive on
   // the SurfaceTexture, and save the associated frame index.
   pending_frames_.emplace(frame_index);

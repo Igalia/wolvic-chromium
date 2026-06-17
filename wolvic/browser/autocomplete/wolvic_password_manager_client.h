@@ -14,10 +14,9 @@
 #include "base/memory/scoped_refptr.h"
 #include "components/affiliations/core/browser/affiliation_service.h"
 #include "components/autofill/content/browser/scoped_autofill_managers_observation.h"
-#include "components/autofill/core/browser/autofill_manager.h"
+#include "components/autofill/core/browser/foundations/autofill_manager.h"
 #include "components/autofill/core/browser/logging/log_manager.h"
 #include "components/autofill/core/common/unique_ids.h"
-#include "components/password_manager/content/browser/content_credential_manager.h"
 #include "components/password_manager/content/browser/content_password_manager_driver_factory.h"
 #include "components/password_manager/core/browser/http_auth_manager_impl.h"
 #include "components/password_manager/core/browser/password_feature_manager_impl.h"
@@ -130,7 +129,7 @@ class WolvicPasswordManagerClient
   GetPasswordReuseManager() const override;
   const password_manager::CredentialsFilter*
   GetStoreResultFilter() const override;
-  autofill::LogManager* GetLogManager() override;
+  autofill::LogManager* GetCurrentLogManager() override;
   safe_browsing::PasswordProtectionService*
   GetPasswordProtectionService() const override;
 #if defined(ON_FOCUS_PING_ENABLED)
@@ -143,6 +142,18 @@ class WolvicPasswordManagerClient
   GetFirstCctPageLoadUkmRecorder() override;
   void PotentialSaveFormSubmitted() override;
   signin::IdentityManager* GetIdentityManager() override;
+  const signin::IdentityManager* GetIdentityManager() const override;
+  bool IsPasswordChangeOngoing() override;
+  password_manager::PasswordChangeServiceInterface* GetPasswordChangeService()
+      const override;
+  std::unique_ptr<password_manager::PasswordCrossDomainConfirmationPopupController>
+  ShowCrossDomainConfirmationPopup(
+      const gfx::RectF& element_bounds,
+      base::i18n::TextDirection text_direction,
+      const GURL& domain,
+      const std::u16string& password_hostname,
+      bool show_warning_text,
+      base::OnceClosure confirmation_callback) override;
   password_manager::FieldInfoManager* GetFieldInfoManager() const override;
   password_manager::WebAuthnCredentialsDelegate*
   GetWebAuthnCredentialsDelegateForDriver(

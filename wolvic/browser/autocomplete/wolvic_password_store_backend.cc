@@ -59,13 +59,13 @@ password_manager::LoginsResultOrError JoinRetrievedLoginsOrError(
   password_manager::LoginsResult joined_logins;
   for (auto& result : results) {
     // If one of retrievals ended with an error, pass on the error.
-    if (absl::holds_alternative<
+    if (std::holds_alternative<
         password_manager::PasswordStoreBackendError>(result)) {
-      return std::move(absl::get<
+      return std::move(std::get<
               password_manager::PasswordStoreBackendError>(result));
     }
     password_manager::LoginsResult logins =
-        std::move(absl::get<password_manager::LoginsResult>(result));
+        std::move(std::get<password_manager::LoginsResult>(result));
     std::move(logins.begin(), logins.end(), std::back_inserter(joined_logins));
   }
   return joined_logins;
@@ -126,7 +126,7 @@ void WolvicPasswordStoreBackend::OnLoginChanged(JNIEnv* env, int reply_id) {
     return;
   }
   main_task_runner_->PostTask(FROM_HERE,
-      base::BindOnce(std::move(*reply), absl::nullopt));
+      base::BindOnce(std::move(*reply), std::nullopt));
 }
 
 void WolvicPasswordStoreBackend::OnError(
@@ -150,18 +150,18 @@ void WolvicPasswordStoreBackend::OnError(
 
 
 
-  if (absl::holds_alternative<
+  if (std::holds_alternative<
       password_manager::LoginsOrErrorReply>(iter->second)) {
     main_task_runner_->PostTask(
         FROM_HERE,
-        base::BindOnce(absl::get<password_manager::LoginsOrErrorReply>(
+        base::BindOnce(std::get<password_manager::LoginsOrErrorReply>(
             std::move(iter->second)), reported_error));
-  } else if (absl::holds_alternative<
+  } else if (std::holds_alternative<
       password_manager::PasswordChangesOrErrorReply>(iter->second)) {
     main_task_runner_->PostTask(
         FROM_HERE,
         base::BindOnce(
-            absl::get<password_manager::PasswordChangesOrErrorReply>(
+            std::get<password_manager::PasswordChangesOrErrorReply>(
             std::move(iter->second)), reported_error));
   } else {
     NOTREACHED();
@@ -183,7 +183,7 @@ void WolvicPasswordStoreBackend::InitBackend(
   // available and the store should request all logins asynchronously to
   // invoke `PasswordStoreInterface::Observer::OnLoginsRetained`.
   main_task_runner_->PostDelayedTask(
-      FROM_HERE, base::BindOnce(remote_form_changes_received, absl::nullopt),
+      FROM_HERE, base::BindOnce(remote_form_changes_received, std::nullopt),
       kPasswordStoreCallDelaySeconds);
 }
 
@@ -211,12 +211,6 @@ void WolvicPasswordStoreBackend::GetAllLoginsWithAffiliationAndBrandingAsync(
 void WolvicPasswordStoreBackend::GetAutofillableLoginsAsync(
     password_manager::LoginsOrErrorReply callback) {
   GetAutofillableLoginsAsyncInternal(std::move(callback));
-}
-
-void WolvicPasswordStoreBackend::GetAllLoginsForAccountAsync(
-    std::string account,
-    password_manager::LoginsOrErrorReply callback) {
-  GetAllLoginsAsync(std::move(callback));
 }
 
 void WolvicPasswordStoreBackend::FillMatchingLoginsAsync(
@@ -283,23 +277,11 @@ void WolvicPasswordStoreBackend::RemoveLoginAsync(
   RemoveLoginInternal(form, std::move(callback));
 }
 
-void WolvicPasswordStoreBackend::RemoveLoginsByURLAndTimeAsync(
-    const base::Location& location,
-    const base::RepeatingCallback<bool(const GURL&)>& url_filter,
-    base::Time delete_begin,
-    base::Time delete_end,
-    base::OnceCallback<void(bool)> sync_completion,
-    password_manager::PasswordChangesOrErrorReply callback) {
-  GetAllLoginsInternal(
-      base::BindOnce(&WolvicPasswordStoreBackend::FilterAndRemoveLogins,
-                     weak_ptr_factory_.GetWeakPtr(), std::move(url_filter),
-                     delete_begin, delete_end,std::move(callback)));
-}
-
 void WolvicPasswordStoreBackend::RemoveLoginsCreatedBetweenAsync(
     const base::Location& location,
     base::Time delete_begin,
     base::Time delete_end,
+    base::OnceCallback<void(bool)> sync_completion,
     password_manager::PasswordChangesOrErrorReply callback) {
   GetAllLoginsInternal(
       base::BindOnce(&WolvicPasswordStoreBackend::FilterAndRemoveLogins,
@@ -399,16 +381,16 @@ void WolvicPasswordStoreBackend::FilterAndRemoveLogins(
     base::Time delete_end,
     password_manager::PasswordChangesOrErrorReply reply,
     password_manager::LoginsResultOrError result) {
-  if (absl::holds_alternative<
+  if (std::holds_alternative<
       password_manager::PasswordStoreBackendError>(result)) {
     std::move(reply).Run(
-        std::move(absl::get<
+        std::move(std::get<
             password_manager::PasswordStoreBackendError>(result)));
     return;
   }
 
   password_manager::LoginsResult logins =
-      std::move(absl::get<password_manager::LoginsResult>(result));
+      std::move(std::get<password_manager::LoginsResult>(result));
   std::vector<password_manager::PasswordForm> logins_to_remove;
   for (const auto& login : logins) {
     if (login.date_created >= delete_begin &&
@@ -440,16 +422,16 @@ void WolvicPasswordStoreBackend::FilterAndDisableAutoSignIn(
     const base::RepeatingCallback<bool(const GURL&)>& origin_filter,
     password_manager::PasswordChangesOrErrorReply completion,
     password_manager::LoginsResultOrError result) {
-  if (absl::holds_alternative<
+  if (std::holds_alternative<
       password_manager::PasswordStoreBackendError>(result)) {
     std::move(completion)
         .Run(std::move(
-                absl::get<password_manager::PasswordStoreBackendError>(result)));
+                std::get<password_manager::PasswordStoreBackendError>(result)));
     return;
   }
 
   password_manager::LoginsResult logins =
-      std::move(absl::get<password_manager::LoginsResult>(result));
+      std::move(std::get<password_manager::LoginsResult>(result));
   std::vector<password_manager::PasswordForm> logins_to_update;
   for (password_manager::PasswordForm& login : logins) {
     // Update login if it matches |origin_filer| and has autosignin enabled.
@@ -483,15 +465,15 @@ void WolvicPasswordStoreBackend::AddReplayCallback(T callback) {
 }
 
 template <typename T>
-absl::optional<T> WolvicPasswordStoreBackend::GetAndEraseCallback(int reply_id) {
+std::optional<T> WolvicPasswordStoreBackend::GetAndEraseCallback(int reply_id) {
   DCHECK_CALLED_ON_VALID_SEQUENCE(main_sequence_checker_);
   auto iter = reply_map_.find(reply_id);
   if (iter == reply_map_.end())
-    return absl::nullopt;
+    return std::nullopt;
 
-  absl::optional<T> reply = absl::get<T>(std::move(iter->second));
+  std::optional<T> reply = std::get<T>(std::move(iter->second));
   reply_map_.erase(iter);
   return reply;
 }
 
-}  // namespace password_manager
+}  // namespace wolvic

@@ -32,6 +32,11 @@
 #include <cstdint>
 #include <type_traits>
 
+// std::is_pod is deprecated in C++20; suppress the deprecation warning for
+// the static_assert uses below that cannot be easily changed (upstream file).
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 namespace mozilla {
 #ifdef MOZILLA_INTERNAL_API
 namespace dom {
@@ -873,5 +878,7 @@ static_assert(std::is_pod<VRExternalShmem>::value,
 
 }  // namespace gfx
 }  // namespace mozilla
+
+#pragma clang diagnostic pop
 
 #endif /* GFX_VR_EXTERNAL_API_H */
