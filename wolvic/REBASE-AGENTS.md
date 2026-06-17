@@ -214,6 +214,100 @@ holds in the other direction too: when the drift report flags a *Wolvic fix* fil
 of forcing it through. Confirm by reading the target milestone's version of the function directly
 (`git show <NEW_BASE>:path`), not just the conflict hunk.
 
+## M136 API churn notes
+
+### `AutofillClient` — 9 new pure virtuals, return-type changes, method removed
+
+M136 added/changed substantially in `AutofillClient`:
+- `GetAppLocale()` became `const std::string& GetAppLocale() const` (was not present).
+- `GetVotesUploader()` new: returns `autofill::VotesUploader&` (reference, not pointer).
+- `GetEntityDataManager()` new: returns `autofill::EntityDataManager*`.
+- `GetSingleFieldFillRouter()` new: returns `autofill::SingleFieldFillRouter&` (reference).
+- `IsAutofillEnabled/ProfileEnabled/PaymentMethodsEnabled()` all gained `const`.
+- `DidFillForm(AutofillTriggerSource, bool is_refill)` added; `DidFillOrPreviewForm(ActionPersistence, …)` **removed** — delete the old override.
+- `GetFormInteractionsUkmLogger()` returns `autofill::autofill_metrics::FormInteractionsUkmLogger&`.
+  **Gotcha:** `autofill_metrics` is a *nested sub-namespace* inside `namespace autofill` (not a top-level namespace). From outside `namespace autofill` you must qualify it as `autofill::autofill_metrics::FormInteractionsUkmLogger`, not `autofill_metrics::FormInteractionsUkmLogger`.
+- `GetCrowdsourcingManager()` and `GetPersonalDataManager()` changed from pointer to reference returns.
+- `AutofillCrowdsourcingManager` ctor no longer takes a `LogManager*` arg.
+
+### `ContentBrowserClient::CreateLoginDelegate` gained `GuestPageHolder*`
+
+M136 added `content::GuestPageHolder* guest_page_holder` as the penultimate parameter (before the `LoginAuthRequiredCallback`). Add it to both the override declaration and definition.
+
+### `BrowserPaymentRequest` — `getCertificateChain()` and `getDialogController()` added
+
+Two new abstract Java methods:
+- `byte @Nullable [][] getCertificateChain()` — use `org.chromium.build.annotations.Nullable` (not `androidx.annotation.Nullable`), which supports type-use annotations. Return `null`.
+- `DialogController getDialogController()` — `DialogController` is a new interface in `org.chromium.components.payments`. Return a no-op anonymous class; `showLeavingIncognitoWarning` should call `approveCallback.run()` immediately (Wolvic has no incognito mode).
+
+### `XRFrameData` restructured — `render_info` nested struct
+
+`device::mojom::XRFrameData`'s `frame_id`, `views`, and `mojo_from_viewer` fields moved into a new `render_info` field of type `XRRenderInfo`. Initialize with `frame_data->render_info = device::mojom::XRRenderInfo::New()` before accessing them.
+
+### `VRStageParameters::mojo_from_floor` renamed to `mojo_from_stage`
+
+Global rename — `mojo_from_floor` → `mojo_from_stage`.
+
+### `MailboxToSurfaceBridge` — `CreateSurface` and `ResizeSurface` removed
+
+Both methods removed from the API. Drop all call sites in `wvr_manager.cc`.
+
+### `absl::` → `std::` migration complete in M136
+
+Any remaining `absl::optional`, `absl::variant`, `absl::holds_alternative`, `absl::get<>`, `absl::nullopt` must be migrated to `std::` equivalents. Replace `#include "third_party/abseil-cpp/absl/types/optional.h"` → `<optional>`, and similarly for `variant.h` → `<variant>`.
+
+### `PasswordStoreBackend` interface trimmed
+
+`GetAllLoginsForAccountAsync` and `RemoveLoginsByURLAndTimeAsync` removed. `RemoveLoginsCreatedBetweenAsync` gained a `base::OnceCallback<void(bool)> sync_completion` trailing param (pass-through/ignore is fine).
+
+### `WebAuthnCredentialsDelegate::GetPasskeys()` return type changed
+
+Old: `const std::optional<std::vector<PasskeyCredential>>&`
+New: `base::expected<const std::vector<PasskeyCredential>*, PasskeysUnavailableReason>` — return `base::unexpected(PasskeysUnavailableReason::kNotReceived)` for the no-op stub. Include `base/types/expected.h`. `RetrievePasskeys` renamed to `RequestNotificationWhenPasskeysReady`; `NotifyForPasskeysDisplay()` added as a no-op.
+
+### `AutofillAgent` constructor — options struct removed
+
+M136 dropped the 6-bool options struct from `autofill::AutofillAgent`'s constructor. Drop the struct argument entirely.
+
+### `AutofillManager` virtual method renames
+
+- `OnTextFieldDidChangeImpl` → `OnTextFieldValueChangedImpl`
+- `OnSelectControlDidChangeImpl` → `OnSelectControlSelectionChangedImpl`
+- `OnJavaScriptChangedAutofilledValueImpl` dropped `bool formatting_only` parameter
+- `OnLoadedServerPredictionsImpl(base::span<const raw_ptr<FormStructure, VectorExperimental>>)` added
+
+### `embedder_support::BuildUserAgentFromOSAndProduct` moved namespace
+
+Was `content::BuildUserAgentFromOSAndProduct`; now in `embedder_support::`. Include `components/embedder_support/user_agent_utils.h`.
+
+### `TraceLog::SetProcessSortIndex` removed
+
+`base::trace_event::TraceLog::GetInstance()->SetProcessSortIndex(…)` removed in M136 — delete the call site and the `base/trace_event/trace_log.h` include.
+
+### `VariationsSafeSeedStoreLocalState` ctor reordered + new param
+
+New order: `(local_state, seed_file_dir, channel, entropy_providers)`. Pass `nullptr` for `entropy_providers` if you're not using limited entropy mode.
+
+### `SetUpFieldTrials` gained `EntropyProviders` arg
+
+10th argument added: pass `*metrics_state_manager->CreateEntropyProviders(/*enable_limited_entropy_mode=*/false)`.
+
+### `ActivityWindowAndroid` ctor gained `trackOcclusion`
+
+5th boolean parameter added to the Java constructor. Pass `/* trackOcclusion= */ false`.
+
+### `InstalledAppProviderImpl` ctor lost trailing `null`
+
+Java constructor now takes 2 args instead of 3 — remove the trailing `null`.
+
+### `WebContentsObserver` API changed (Java)
+
+No-arg constructor + explicit `observe(webContents)` call + `webContentsDestroyed()` callback. Replace the 1-arg constructor pattern.
+
+### `NOTREACHED_NORETURN()` removed
+
+Renamed to `NOTREACHED()` — the old macro was deleted in M136.
+
 ## A patch that "drops a fork back to upstream" pins a stale revision (check DEPS after the rebase)
 
 A Wolvic commit that retires a dependency fork (e.g. "Build against upstream ANGLE — drop the
