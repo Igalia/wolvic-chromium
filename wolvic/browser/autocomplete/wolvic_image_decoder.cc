@@ -8,7 +8,7 @@
 
 #include "base/functional/callback.h"
 #include "base/memory/raw_ptr.h"
-#include "base/ranges/algorithm.h"
+#include <algorithm>
 #include "base/task/sequenced_task_runner.h"
 #include "base/task/single_thread_task_runner.h"
 #include "ipc/ipc_channel.h"
@@ -59,7 +59,7 @@ class WolvicImageDecoder::DecodeImageRequest {
         callback_(std::move(callback)) {
     DCHECK_CALLED_ON_VALID_SEQUENCE(sequence_checker_);
     base::span<const uint8_t> image_data_span(
-        base::as_bytes(base::make_span(image_data)));
+        base::as_bytes(base::span(image_data)));
 
   auto decode_callback =
       base::BindOnce(&OnDecodeImageDone,
@@ -129,7 +129,7 @@ void WolvicImageDecoder::DecodeImage(
 void WolvicImageDecoder::RemoveDecodeImageRequest(DecodeImageRequest* request) {
   // Remove the finished request from the request queue.
   auto request_it =
-      base::ranges::find(decode_image_requests_, request,
+      std::ranges::find(decode_image_requests_, request,
                          &std::unique_ptr<DecodeImageRequest>::get);
   DCHECK(request_it != decode_image_requests_.end());
   decode_image_requests_.erase(request_it);

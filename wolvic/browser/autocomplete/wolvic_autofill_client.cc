@@ -9,6 +9,7 @@
 #include "base/android/jni_android.h"
 #include "base/android/jni_string.h"
 #include "base/check.h"
+#include "base/notreached.h"
 #include "base/functional/bind.h"
 #include "base/functional/callback_helpers.h"
 #include "base/strings/string_util.h"
@@ -18,9 +19,9 @@
 #include "components/autofill/content/browser/content_autofill_driver_factory.h"
 #include "components/autofill/core/browser/autofill_type.h"
 #include "components/autofill/core/browser/country_type.h"
-#include "components/autofill/core/browser/data_model/autofill_offer_data.h"
-#include "components/autofill/core/browser/filling_product.h"
-#include "components/autofill/core/browser/form_data_importer.h"
+#include "components/autofill/core/browser/data_model/payments/autofill_offer_data.h"
+#include "components/autofill/core/browser/filling/filling_product.h"
+#include "components/autofill/core/browser/form_import/form_data_importer.h"
 #include "components/autofill/core/browser/form_structure.h"
 #include "components/autofill/core/browser/ui/autofill_suggestion_delegate.h"
 #include "components/autofill/core/common/autofill_clock.h"
@@ -79,19 +80,19 @@ WolvicAutofillClient::GetURLLoaderFactory() {
       ->GetURLLoaderFactoryForBrowserProcess();
 }
 
-autofill::AutofillCrowdsourcingManager*
+autofill::AutofillCrowdsourcingManager&
 WolvicAutofillClient::GetCrowdsourcingManager() {
   if (!crowdsourcing_manager_) {
     // Lazy initialization to avoid virtual function calls in the constructor.
     crowdsourcing_manager_ =
         std::make_unique<autofill::AutofillCrowdsourcingManager>(
-            this, GetChannel(), GetLogManager());
+            this, GetChannel());
   }
-  return crowdsourcing_manager_.get();
+  return *crowdsourcing_manager_;
 }
 
-autofill::PersonalDataManager* WolvicAutofillClient::GetPersonalDataManager() {
-  return nullptr;
+autofill::PersonalDataManager& WolvicAutofillClient::GetPersonalDataManager() {
+  NOTREACHED();
 }
 
 autofill::AutocompleteHistoryManager*
@@ -140,10 +141,6 @@ ukm::UkmRecorder* WolvicAutofillClient::GetUkmRecorder() {
   return ukm::UkmRecorder::Get();
 }
 
-ukm::SourceId WolvicAutofillClient::GetUkmSourceId() {
-  return web_contents()->GetPrimaryMainFrame()->GetPageUkmSourceId();
-}
-
 autofill::AddressNormalizer* WolvicAutofillClient::GetAddressNormalizer() {
   return nullptr;
 }
@@ -172,16 +169,6 @@ translate::TranslateDriver* WolvicAutofillClient::GetTranslateDriver() {
 
 void WolvicAutofillClient::ShowAutofillSettings(
     autofill::SuggestionType suggestion_type) {}
-
-void WolvicAutofillClient::ShowEditAddressProfileDialog(
-    const autofill::AutofillProfile& profile,
-    AddressProfileSavePromptCallback on_user_decision_callback) {
-}
-
-void WolvicAutofillClient::ShowDeleteAddressProfileDialog(
-    const autofill::AutofillProfile& profile,
-    AddressProfileDeleteDialogCallback delete_dialog_callback) {
-}
 
 void WolvicAutofillClient::ConfirmSaveAddressProfile(
     const autofill::AutofillProfile& profile,
@@ -245,8 +232,6 @@ WolvicAutofillClient::GetAutofillSuggestions() const {
   return suggestions_;
 }
 
-void WolvicAutofillClient::PinAutofillSuggestions() {}
-
 void WolvicAutofillClient::UpdateAutofillSuggestions(
     const std::vector<autofill::Suggestion>& suggestions,
     autofill::FillingProduct main_filling_product,
@@ -273,6 +258,44 @@ void WolvicAutofillClient::HideAutofillSuggestions(
   delegate_.reset();
 }
 
+const std::string& WolvicAutofillClient::GetAppLocale() const {
+  static const std::string kEmpty;
+  return kEmpty;
+}
+
+autofill::VotesUploader& WolvicAutofillClient::GetVotesUploader() {
+  NOTREACHED();
+}
+
+autofill::EntityDataManager* WolvicAutofillClient::GetEntityDataManager() {
+  return nullptr;
+}
+
+autofill::SingleFieldFillRouter& WolvicAutofillClient::GetSingleFieldFillRouter() {
+  NOTREACHED();
+}
+
+bool WolvicAutofillClient::IsAutofillEnabled() const {
+  return false;
+}
+
+bool WolvicAutofillClient::IsAutofillProfileEnabled() const {
+  return false;
+}
+
+bool WolvicAutofillClient::IsAutofillPaymentMethodsEnabled() const {
+  return false;
+}
+
+void WolvicAutofillClient::DidFillForm(
+    autofill::AutofillTriggerSource trigger_source,
+    bool is_refill) {}
+
+autofill::autofill_metrics::FormInteractionsUkmLogger&
+WolvicAutofillClient::GetFormInteractionsUkmLogger() {
+  NOTREACHED();
+}
+
 bool WolvicAutofillClient::IsAutocompleteEnabled() const {
   ui::WindowAndroid* window_android =
       web_contents()->GetTopLevelNativeWindow();
@@ -284,7 +307,7 @@ bool WolvicAutofillClient::IsAutocompleteEnabled() const {
       env, java_obj_, window_android->GetJavaObject());
 }
 
-bool WolvicAutofillClient::IsPasswordManagerEnabled() {
+bool WolvicAutofillClient::IsPasswordManagerEnabled() const {
   ui::WindowAndroid* window_android =
       web_contents()->GetTopLevelNativeWindow();
   if (!window_android)
@@ -293,12 +316,6 @@ bool WolvicAutofillClient::IsPasswordManagerEnabled() {
   JNIEnv* env = AttachCurrentThread();
   return Java_AutofillManager_isPasswordManagerEnabled(
       env, java_obj_, window_android->GetJavaObject());
-}
-
-void WolvicAutofillClient::DidFillOrPreviewForm(
-    autofill::mojom::ActionPersistence action_persistence,
-    autofill::AutofillTriggerSource trigger_source,
-    bool is_refill) {
 }
 
 bool WolvicAutofillClient::IsContextSecure() const {

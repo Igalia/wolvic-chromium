@@ -6,10 +6,12 @@
 
 #include "base/android/jni_android.h"
 #include "base/android/jni_string.h"
+#include "base/containers/to_vector.h"
 #include "base/memory/raw_ptr.h"
 #include "base/notimplemented.h"
 #include "base/strings/utf_string_conversions.h"
-#include "components/autofill/content/browser/renderer_forms_with_server_predictions.h"
+#include "base/types/expected.h"
+#include "components/autofill/content/browser/renderer_forms_from_browser_form.h"
 #include "components/autofill/core/browser/logging/log_manager.h"
 #include "components/password_manager/core/browser/form_parsing/form_data_parser.h"
 #include "components/password_manager/core/browser/passkey_credential.h"
@@ -45,8 +47,8 @@ namespace {
 // GetWebAuthnCredentialsDelegateForDriver(...)->HasPendingPasskeySelection(),
 // so returning null crashes. This stateless no-op delegate reports "no
 // passkeys, nothing pending", which is the behavior-preserving answer: no
-// passkey suggestions are ever produced (GetPasskeys() is nullopt) and the
-// HasPendingPasskeySelection() checks simply return false.
+// passkey suggestions are ever produced (GetPasskeys() returns kNotReceived)
+// and the HasPendingPasskeySelection() checks simply return false.
 class NoOpWebAuthnCredentialsDelegate
     : public password_manager::WebAuthnCredentialsDelegate {
  public:
@@ -58,12 +60,17 @@ class NoOpWebAuthnCredentialsDelegate
                      OnPasskeySelectedCallback callback) override {
     std::move(callback).Run();
   }
-  const std::optional<std::vector<password_manager::PasskeyCredential>>&
+  base::expected<const std::vector<password_manager::PasskeyCredential>*,
+                 password_manager::WebAuthnCredentialsDelegate::PasskeysUnavailableReason>
   GetPasskeys() const override {
-    return passkeys_;
+    return base::unexpected(
+        password_manager::WebAuthnCredentialsDelegate::PasskeysUnavailableReason::
+            kNotReceived);
   }
+  void NotifyForPasskeysDisplay() override {}
   bool IsSecurityKeyOrHybridFlowAvailable() const override { return false; }
-  void RetrievePasskeys(base::OnceCallback<void()> callback) override {
+  void RequestNotificationWhenPasskeysReady(
+      base::OnceCallback<void()> callback) override {
     std::move(callback).Run();
   }
   bool HasPendingPasskeySelection() override { return false; }
@@ -73,8 +80,6 @@ class NoOpWebAuthnCredentialsDelegate
   }
 
  private:
-  const std::optional<std::vector<password_manager::PasskeyCredential>>
-      passkeys_;
   base::WeakPtrFactory<NoOpWebAuthnCredentialsDelegate> weak_ptr_factory_{this};
 };
 
@@ -406,7 +411,7 @@ WolvicPasswordManagerClient::GetStoreResultFilter() const {
   return &credentials_filter_;
 }
 
-autofill::LogManager* WolvicPasswordManagerClient::GetLogManager() {
+autofill::LogManager* WolvicPasswordManagerClient::GetCurrentLogManager() {
   return log_manager_.get();
 }
 
@@ -434,6 +439,32 @@ signin::IdentityManager*
 WolvicPasswordManagerClient::GetIdentityManager() {
   return WolvicBrowserContext::FromWebContents(*web_contents())
       ->GetIdentityManager();
+}
+
+const signin::IdentityManager*
+WolvicPasswordManagerClient::GetIdentityManager() const {
+  return WolvicBrowserContext::FromWebContents(*web_contents())
+      ->GetIdentityManager();
+}
+
+bool WolvicPasswordManagerClient::IsPasswordChangeOngoing() {
+  return false;
+}
+
+password_manager::PasswordChangeServiceInterface*
+WolvicPasswordManagerClient::GetPasswordChangeService() const {
+  return nullptr;
+}
+
+std::unique_ptr<password_manager::PasswordCrossDomainConfirmationPopupController>
+WolvicPasswordManagerClient::ShowCrossDomainConfirmationPopup(
+    const gfx::RectF& element_bounds,
+    base::i18n::TextDirection text_direction,
+    const GURL& domain,
+    const std::u16string& password_hostname,
+    bool show_warning_text,
+    base::OnceClosure confirmation_callback) {
+  return nullptr;
 }
 
 password_manager::WebAuthnCredentialsDelegate*
@@ -502,15 +533,13 @@ void WolvicPasswordManagerClient::OnFieldTypesDetermined(
     return;
   }
 
-  std::optional<autofill::RendererFormsWithServerPredictions>
-      forms_and_predictions =
-          autofill::RendererFormsWithServerPredictions::FromBrowserForm(
-              manager, form_id);
-  if (!forms_and_predictions) {
+  std::optional<autofill::RendererForms> renderer_forms =
+      autofill::RendererFormsFromBrowserForm(manager, form_id);
+  if (!renderer_forms) {
     return;
   }
 
-  for (const auto& [form, rfh_id] : forms_and_predictions->renderer_forms) {
+  for (const auto& [form, rfh_id] : *renderer_forms) {
     auto* rfh = content::RenderFrameHost::FromID(rfh_id);
     if (!rfh) {
       continue;
@@ -521,8 +550,11 @@ void WolvicPasswordManagerClient::OnFieldTypesDetermined(
     if (!driver) {
       continue;
     }
+    std::vector<autofill::FieldGlobalId> field_ids =
+        base::ToVector(form.fields(), &autofill::FormFieldData::global_id);
     password_manager_.ProcessAutofillPredictions(
-        driver, form, forms_and_predictions->predictions);
+        driver, form,
+        manager.GetServerPredictionsForForm(form_id, field_ids));
   }
 }
 

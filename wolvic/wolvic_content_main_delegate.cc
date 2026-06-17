@@ -18,9 +18,7 @@
 #include "base/logging.h"
 #include "base/path_service.h"
 #include "base/process/current_process.h"
-#include "base/trace_event/trace_log.h"
 #include "build/build_config.h"
-#include "cc/base/switches.h"
 #include "components/crash/core/common/crash_key.h"
 #include "components/metrics/metrics_service.h"
 #include "components/metrics/metrics_state_manager.h"
@@ -38,7 +36,6 @@
 #include "components/variations/variations_safe_seed_store_local_state.h"
 #include "components/variations/variations_switches.h"
 #include "content/app/android/content_main_android.h"
-#include "content/common/content_constants_internal.h"
 #include "content/public/app/initialize_mojo_core.h"
 #include "content/public/browser/browser_main_runner.h"
 #include "content/public/browser/content_browser_client.h"
@@ -47,7 +44,6 @@
 #include "content/public/common/content_switches.h"
 #include "content/public/common/main_function_params.h"
 #include "content/public/common/url_constants.h"
-#include "content/public/common/user_agent.h"
 #include "content/public/gpu/content_gpu_client.h"
 #include "content/public/renderer/content_renderer_client.h"
 #include "content/public/utility/content_utility_client.h"
@@ -55,7 +51,7 @@
 #include "content/shell/browser/shell_paths.h"
 #include "ipc/ipc_buildflags.h"
 #include "net/cookies/cookie_monster.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
+#include <variant>
 #include "ui/base/page_transition_types.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "wolvic/browser/metrics/wolvic_enabled_state_provider.h"
@@ -129,23 +125,6 @@ class ShellVariationsServiceClient
       PrefService* local_state) override {}
 };
 
-// Returns the full user agent string for the content shell.
-std::string GetShellFullUserAgent() {
-  std::string product = "Chrome/Wolvic";
-  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
-  if (command_line->HasSwitch(switches::kUseMobileUserAgent)) {
-    product += " Mobile";
-  }
-  return content::BuildUserAgentFromProduct(product);
-}
-
-// Returns the reduced user agent string for the content shell.
-std::string GetShellReducedUserAgent() {
-  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
-  return content::GetReducedUserAgent(
-      command_line->HasSwitch(switches::kUseMobileUserAgent), "1.0");
-}
-
 void BindNetworkHintsHandler(
     content::RenderFrameHost* frame_host,
     mojo::PendingReceiver<network_hints::mojom::NetworkHintsHandler> receiver) {
@@ -169,7 +148,7 @@ WolvicContentMainDelegate* WolvicContentMainDelegate::Get() {
       content::GetContentMainDelegateForTesting());
 }
 
-absl::optional<int> WolvicContentMainDelegate::BasicStartupComplete() {
+std::optional<int> WolvicContentMainDelegate::BasicStartupComplete() {
   content::Compositor::Initialize();
 
   base::CommandLine& command_line = *base::CommandLine::ForCurrentProcess();
@@ -177,11 +156,11 @@ absl::optional<int> WolvicContentMainDelegate::BasicStartupComplete() {
   LOG(INFO) << "Command line: " << command_line.GetCommandLineString();
   content::RegisterShellPathProvider();
 
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 bool WolvicContentMainDelegate::ShouldCreateFeatureList(InvokedIn invoked_in) {
-  return absl::holds_alternative<InvokedInChildProcess>(invoked_in);
+  return std::holds_alternative<InvokedInChildProcess>(invoked_in);
 }
 
 bool WolvicContentMainDelegate::ShouldInitializeMojo(InvokedIn invoked_in) {
@@ -198,7 +177,7 @@ void WolvicContentMainDelegate::PreSandboxStartup() {
   InitializeResourceBundle();
 }
 
-absl::variant<int, content::MainFunctionParams>
+std::variant<int, content::MainFunctionParams>
 WolvicContentMainDelegate::RunProcess(
     const std::string& process_type,
     content::MainFunctionParams main_function_params) {
@@ -209,8 +188,6 @@ WolvicContentMainDelegate::RunProcess(
 
   base::CurrentProcess::GetInstance().SetProcessType(
       base::CurrentProcessType::PROCESS_BROWSER);
-  base::trace_event::TraceLog::GetInstance()->SetProcessSortIndex(
-      content::kTraceEventBrowserProcessSortIndex);
   //
   // On Android, we defer to the system message loop when the stack unwinds.
   // So here we only create (and leak) a BrowserMainRunner. The shutdown
@@ -269,17 +246,17 @@ void WolvicContentMainDelegate::InitializeResourceBundle() {
       std::move(android_pak_file), pak_region, ui::k100Percent);
 }
 
-absl::optional<int> WolvicContentMainDelegate::PreBrowserMain() {
-  absl::optional<int> exit_code =
+std::optional<int> WolvicContentMainDelegate::PreBrowserMain() {
+  std::optional<int> exit_code =
       content::ContentMainDelegate::PreBrowserMain();
   if (exit_code.has_value()) {
     return exit_code;
   }
 
-  return absl::nullopt;
+  return std::nullopt;
 }
 
-absl::optional<int> WolvicContentMainDelegate::PostEarlyInitialization(
+std::optional<int> WolvicContentMainDelegate::PostEarlyInitialization(
     InvokedIn invoked_in) {
   if (!ShouldCreateFeatureList(invoked_in)) {
     // Apply field trial testing configuration since content did not.
@@ -288,7 +265,7 @@ absl::optional<int> WolvicContentMainDelegate::PostEarlyInitialization(
   if (!ShouldInitializeMojo(invoked_in)) {
     content::InitializeMojoCore();
   }
-  return absl::nullopt;
+  return std::nullopt;
 }
 
 content::ContentClient* WolvicContentMainDelegate::CreateContentClient() {
@@ -376,8 +353,9 @@ void WolvicContentMainDelegate::SetUpFieldTrials() {
           /*signature_verification_enabled=*/true,
           std::make_unique<variations::VariationsSafeSeedStoreLocalState>(
               local_state_.get(),
+              variations_service_client.GetVariationsSeedFileDir(),
               variations_service_client.GetChannelForVariations(),
-              variations_service_client.GetVariationsSeedFileDir()),
+              /*entropy_providers=*/nullptr),
           variations_service_client.GetChannelForVariations(),
           variations_service_client.GetVariationsSeedFileDir()),
       variations::UIStringOverrider(),
@@ -399,7 +377,9 @@ void WolvicContentMainDelegate::SetUpFieldTrials() {
       content::GetSwitchDependentFeatureOverrides(*command_line),
       std::move(feature_list), metrics_state_manager.get(),
       &synthetic_trial_registry, &platform_field_trials, &safe_seed_manager,
-      /*add_entropy_source_to_variations_ids=*/false);
+      /*add_entropy_source_to_variations_ids=*/false,
+      *metrics_state_manager->CreateEntropyProviders(
+          /*enable_limited_entropy_mode=*/false));
 }
 
 }  // namespace wolvic

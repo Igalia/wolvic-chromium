@@ -17,8 +17,8 @@
 #include "base/task/sequenced_task_runner.h"
 #include "base/time/time.h"
 #include "components/password_manager/core/browser/password_store/password_store_backend.h"
-#include "third_party/abseil-cpp/absl/types/optional.h"
-#include "third_party/abseil-cpp/absl/types/variant.h"
+#include <optional>
+#include <variant>
 
 namespace wolvic {
 
@@ -57,9 +57,6 @@ class WolvicPasswordStoreBackend
       password_manager::LoginsOrErrorReply callback) override;
   void GetAutofillableLoginsAsync(
       password_manager::LoginsOrErrorReply callback) override;
-  void GetAllLoginsForAccountAsync(
-      std::string account,
-      password_manager::LoginsOrErrorReply callback) override;
   void FillMatchingLoginsAsync(
       password_manager::LoginsOrErrorReply callback,
       bool include_psl,
@@ -77,17 +74,11 @@ class WolvicPasswordStoreBackend
       const base::Location& location,
       const password_manager::PasswordForm& form,
       password_manager::PasswordChangesOrErrorReply callback) override;
-  void RemoveLoginsByURLAndTimeAsync(
-      const base::Location& location,
-      const base::RepeatingCallback<bool(const GURL&)>& url_filter,
-      base::Time delete_begin,
-      base::Time delete_end,
-      base::OnceCallback<void(bool)> sync_completion,
-      password_manager::PasswordChangesOrErrorReply callback) override;
   void RemoveLoginsCreatedBetweenAsync(
       const base::Location& location,
       base::Time delete_begin,
       base::Time delete_end,
+      base::OnceCallback<void(bool)> sync_completion,
       password_manager::PasswordChangesOrErrorReply callback) override;
   void DisableAutoSignInForOriginsAsync(
       const base::RepeatingCallback<bool(const GURL&)>& origin_filter,
@@ -122,14 +113,14 @@ class WolvicPasswordStoreBackend
       password_manager::LoginsResultOrError result);
 
   template <typename T> void AddReplayCallback(T callback);
-  template <typename T> absl::optional<T> GetAndEraseCallback(int reply_id);
+  template <typename T> std::optional<T> GetAndEraseCallback(int reply_id);
 
   base::android::ScopedJavaGlobalRef<jobject> java_obj_;
 
   uint64_t reply_id_ = 0;
   // Using a small_map should ensure that we handle rare cases with many jobs
   // like a bulk deletion just as well as the normal, rather small job load.
-  base::small_map<std::unordered_map<uint64_t, absl::variant<
+  base::small_map<std::unordered_map<uint64_t, std::variant<
       password_manager::LoginsOrErrorReply,
       password_manager::PasswordChangesOrErrorReply>>> reply_map_
           GUARDED_BY_CONTEXT(main_sequence_checker_);

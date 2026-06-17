@@ -127,7 +127,7 @@ void FileSelectManager::ConvertToFileChooserFileInfoList(
   for (const auto& file : files) {
     selected_files.push_back(
         blink::mojom::FileChooserFileInfo::NewNativeFile(
-            blink::mojom::NativeFileInfo::New(file, file.BaseName().AsUTF16Unsafe())));
+            blink::mojom::NativeFileInfo::New(file, file.BaseName().AsUTF16Unsafe(), std::vector<std::u16string>())));
   }
 
   listener_->FileSelected(std::move(selected_files), base::FilePath(),
