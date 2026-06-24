@@ -13,6 +13,7 @@ static_library("renderer") {
     "//components/cdm/*",
     "//content/shell/*",
     "//fuchsia_web/*",
+    "//wolvic/*",
   ]
 
   sources = [

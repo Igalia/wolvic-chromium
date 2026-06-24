@@ -15,6 +15,7 @@ static_library("common") {
     "//components/cdm/*",
     "//content/shell/*",
     "//fuchsia_web/*",
+    "//wolvic/*",
   ]
 
   deps = [
