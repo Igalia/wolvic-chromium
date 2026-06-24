@@ -7,10 +7,12 @@
 #include "base/containers/span.h"
 #include "base/task/bind_post_task.h"
 #include "components/webxr/mailbox_to_surface_bridge_impl.h"
+#include "device/vr/android/web_xr_presentation_state.h"
 #include "device/vr/util/xr_standard_gamepad_builder.h"
 #include "ui/gfx/geometry/decomposed_transform.h"
 #include "ui/gfx/geometry/quaternion.h"
 #include "ui/gfx/geometry/transform.h"
+#include "ui/gfx/gpu_fence.h"
 #include "wolvic/browser/vr/wvr_api.h"
 
 
@@ -371,44 +373,17 @@ WvrManager::GetWebXrFrameTransportOptions(
     const device::mojom::XRRuntimeSessionOptionsPtr& options) {
   device::mojom::XRPresentationTransportOptionsPtr transport_options =
       device::mojom::XRPresentationTransportOptions::New();
-  // Only set boolean options that we need. Default is false, and we should be
-  // able to safely ignore ones that our implementation doesn't care about.
-  transport_options->wait_for_transfer_notification = true;
   transport_options->transport_method =
-      device::mojom::XRPresentationTransportMethod::SUBMIT_AS_MAILBOX_HOLDER;
-  transport_options->wait_for_render_notification = true;
-
+      device::mojom::XRPresentationTransportMethod::DRAW_INTO_TEXTURE_MAILBOX;
+  transport_options->wait_for_gpu_fence = true;
   return transport_options;
 }
 
 void WvrManager::OnWebXrFrameAvailable() {
-  // This is called each time a frame that was drawn on the WebVR Surface
-  // arrives on the SurfaceTexture.
-
-  is_frame_submmitted_ = true;
-
-  // This event should only occur in response to a SwapBuffers from
-  // an incoming SubmitFrame call.
-  DCHECK(!pending_frames_.empty()) << ": Frame arrived before SubmitFrame";
-
-  // LIFECYCLE: we should have exactly one pending frame. This is true
-  // even after exiting a session with a not-yet-surfaced frame.
-  DCHECK_EQ(pending_frames_.size(), 1U);
-
-  int frame_index = pending_frames_.front();
-  DVLOG(2) << __func__ << "frame: " << frame_index;
-  pending_frames_.pop();
-
-  // LIFECYCLE: we should be in processing state.
-  DCHECK(webxr_.HaveProcessingFrame());
-  device::WebXrFrame* processing_frame = webxr_.GetProcessingFrame();
-
-  // Frame should be locked. Unlock it.
-  DCHECK(processing_frame->state_locked);
-  processing_frame->state_locked = false;
-
-  // Continue with submit immediately.
-  DrawFrameSubmitNow(processing_frame);
+  // Frame lifecycle is handled directly in OnWebXrTokenSignaled.
+  // This SurfaceTexture callback may still fire from SwapBuffers, but the
+  // frame has already been processed by the time it arrives here.
+  DVLOG(2) << __func__ << ": frame already processed via OnWebXrTokenSignaled";
 }
 
 void WvrManager::ClosePresentationBindings() {
@@ -631,13 +606,16 @@ WvrManager::GetInputSourceState() {
 }
 
 void WvrManager::DrawFrameSubmitNow(device::WebXrFrame* processing_frame) {
-  // Report rendering completion to the Renderer so that it's permitted to
-  // submit a fresh frame. We could do this earlier, as soon as the frame
-  // got pulled off the transfer surface, but that results in overstuffed
-  // buffers.
-
-  // Renderer is waiting for the previous frame to render, unblock it now.
-  submit_client_->OnSubmitFrameRendered();
+  // The DRAW_INTO_TEXTURE_MAILBOX transport requests wait_for_gpu_fence, so the
+  // renderer blocks before drawing the next frame until it receives a GPU fence
+  // for the previous one. Hand it a fence covering the blit's reads of the
+  // shared buffer so it can safely reuse the buffer.
+  if (submit_client_) {
+    if (auto gpu_fence = graphics_->CreateGpuFence()) {
+      submit_client_->OnSubmitFrameGpuFence(
+          gpu_fence->GetGpuFenceHandle().Clone());
+    }
+  }
 
   if (webxr_.HaveRenderingFrame())
     webxr_.EndFrameRendering();
@@ -693,9 +671,26 @@ void WvrManager::WebXrTryStartAnimatingFrame() {
   frame_data->render_info = device::mojom::XRRenderInfo::New();
   frame_data->render_info->frame_id = webxr_.StartFrameAnimating();
 
-  // Process all events.
+  // Push the previous frame to the VR display and synchronize with the SDK.
   if (!SubmitFrameInternal(frame_data->render_info->frame_id))
-   return;
+    return;
+
+  // Provide the renderer with a shared buffer to draw the next frame into.
+  const gfx::Size& frame_size = graphics_->webxr_surface_size();
+  if (!frame_size.IsEmpty()) {
+    device::WebXrFrame* animating_frame = webxr_.GetAnimatingFrame();
+    if (!animating_frame->shared_buffer) {
+      animating_frame->shared_buffer = graphics_->CreateSharedBuffer();
+    }
+    graphics_->ResizeSharedBuffer(animating_frame->shared_buffer.get(),
+                                  frame_size, mailbox_bridge_.get());
+    if (animating_frame->shared_buffer->shared_image) {
+      frame_data->buffer_shared_image =
+          animating_frame->shared_buffer->shared_image->Export();
+      frame_data->buffer_sync_token =
+          animating_frame->shared_buffer->sync_token;
+    }
+  }
 
   base::TimeTicks now = base::TimeTicks::Now();
   mozilla::gfx::VRSystemState system_state = wvr_api_->get_system_state();
@@ -808,61 +803,73 @@ void WvrManager::SubmitFrameMissing(int16_t frame_index,
 void WvrManager::SubmitFrame(int16_t frame_index,
                              const gpu::MailboxHolder& mailbox,
                              base::TimeDelta time_waited) {
-  if (!SubmitFrameCommon(frame_index, time_waited))
-    return;
-
-  webxr_.ProcessOrDefer(
-      base::BindOnce(&WvrManager::ProcessWebXrFrameFromMailbox,
-                     weak_ptr_factory_.GetWeakPtr(), frame_index, mailbox));
-}
-
-bool WvrManager::SubmitFrameCommon(int16_t frame_index,
-                                   base::TimeDelta time_waited) {
-  DVLOG(2) << __func__ << ": frame=" << frame_index;
-
-  if (!IsSubmitFrameExpected(frame_index))
-    return false;
-
-  // TODO(tiago): we'll be using time_waited next.
-
-  return true;
-}
-
-void WvrManager::ProcessWebXrFrameFromMailbox(
-    int16_t frame_index,
-    const gpu::MailboxHolder& mailbox) {
-  // LIFECYCLE: pending_frames_ should be empty when there's no processing
-  // frame. It gets one element here, and then is emptied again before leaving
-  // processing state. Swapping twice on a Surface without calling
-  // updateTexImage in between can lose frames, so don't draw+swap if we
-  // already have a pending frame we haven't consumed yet.
-  DCHECK(pending_frames_.empty());
-
-  // LIFECYCLE: We shouldn't have gotten here unless mailbox_bridge_ is ready.
-  DCHECK(webxr_.mailbox_bridge_ready());
-
-  // Don't allow any state changes for this processing frame until it
-  // arrives on the Surface. See OnWebXrFrameAvailable.
-  DCHECK(webxr_.HaveProcessingFrame());
-  webxr_.GetProcessingFrame()->state_locked = true;
-
-  // CopyMailboxToSurfaceAndSwap removed in M136; surface submission now via SharedImage API.
-  // Tell OnWebXrFrameAvailable to expect a new frame to arrive on
-  // the SurfaceTexture, and save the associated frame index.
-  pending_frames_.emplace(frame_index);
-
-  // LIFECYCLE: we should have a pending frame now.
-  DCHECK_EQ(pending_frames_.size(), 1U);
-
-  // Notify the client that we're done with the mailbox so that the underlying
-  // image is eligible for destruction.
-  submit_client_->OnSubmitFrameTransferred(true);
+  NOTREACHED() << "WVR uses DRAW_INTO_TEXTURE_MAILBOX transport";
 }
 
 void WvrManager::SubmitFrameDrawnIntoTexture(int16_t frame_index,
                                              const gpu::SyncToken& sync_token,
                                              base::TimeDelta time_waited) {
-  NOTREACHED() << "Not implemented.";
+  DVLOG(2) << __func__ << ": frame=" << frame_index;
+
+  if (!IsSubmitFrameExpected(frame_index))
+    return;
+
+  webxr_.ProcessOrDefer(
+      base::BindOnce(&WvrManager::ProcessFrameDrawnIntoTexture,
+                     weak_ptr_factory_.GetWeakPtr(), frame_index, sync_token));
+}
+
+void WvrManager::ProcessFrameDrawnIntoTexture(int16_t frame_index,
+                                              const gpu::SyncToken& sync_token) {
+  DCHECK(IsOnWvrThread());
+  DCHECK(pending_frames_.empty());
+  DCHECK(webxr_.mailbox_bridge_ready());
+  DCHECK(webxr_.HaveProcessingFrame());
+
+  device::WebXrFrame* processing_frame = webxr_.GetProcessingFrame();
+  processing_frame->state_locked = true;
+  pending_frames_.emplace(processing_frame->index);
+
+  // Ask the GPU bridge to create a fence from the renderer's sync token.
+  // OnWebXrTokenSignaled fires on the mailbox bridge thread; we post back to
+  // the VR thread before doing GL work.
+  mailbox_bridge_->CreateGpuFence(
+      sync_token,
+      base::BindPostTask(
+          task_runner_,
+          base::BindOnce(&WvrManager::OnWebXrTokenSignaled,
+                         weak_ptr_factory_.GetWeakPtr(), frame_index)));
+
+  if (pending_getframedata_) {
+    std::move(pending_getframedata_).Run();
+  }
+}
+
+void WvrManager::OnWebXrTokenSignaled(int16_t frame_index,
+                                      std::unique_ptr<gfx::GpuFence> gpu_fence) {
+  DCHECK(IsOnWvrThread());
+  DCHECK(webxr_.HaveProcessingFrame());
+
+  // Block the WVR GL context until the renderer has finished writing.
+  graphics_->ServerWaitForGpuFence(std::move(gpu_fence));
+
+  device::WebXrFrame* processing_frame = webxr_.GetProcessingFrame();
+
+  // Blit the AHardwareBuffer-backed shared image to the SurfaceTexture so that
+  // the subsequent SyncState call can latch it via updateTexImage().
+  // Only mark the frame as submitted when the blit actually delivers a frame;
+  // if the blit fails SyncState uses is_submitted=false (drops frame) and
+  // does not block waiting for Wolvic to acknowledge a frame that never arrived.
+  is_frame_submmitted_ = graphics_->BlitSharedBufferToSurfaceTexture(
+      processing_frame->shared_buffer.get());
+
+  // Drive the rendering loop directly instead of waiting for the async
+  // OnWebXrFrameAvailable callback, which only fires if the blit succeeded.
+  DCHECK(!pending_frames_.empty());
+  DCHECK(processing_frame->state_locked);
+  pending_frames_.pop();
+  processing_frame->state_locked = false;
+  DrawFrameSubmitNow(processing_frame);
 }
 
 void WvrManager::UpdateLayerBounds(int16_t frame_index,

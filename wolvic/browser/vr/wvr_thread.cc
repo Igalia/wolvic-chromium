@@ -21,13 +21,18 @@ void WvrThread::Init() {
   wvr_graphics_ = std::make_unique<WvrGraphicsDelegate>();
 
   wvr_manager_ = std::make_unique<WvrManager>(wvr_api_.get(), wvr_graphics_.get());
-  wvr_graphics_->set_webxr_presentation_state(wvr_manager_->webxr());
 
   std::move(initialized_callback_).Run();
 }
 
 void WvrThread::CleanUp() {
+  // Destroy everything created in Init() here, on the WVR thread, while the GL
+  // context is current. WvrGraphicsDelegate frees GL resources in its
+  // destructor, so it must not be destroyed on the main thread in ~WvrThread().
+  // wvr_manager_ holds raw pointers to the other two, so it goes first.
   wvr_manager_.reset();
+  wvr_graphics_.reset();
+  wvr_api_.reset();
 }
 
 }  // namespace wolvic
