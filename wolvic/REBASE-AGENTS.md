@@ -163,6 +163,18 @@ updateAcquireFence: Did not find frame` spam (no Pico OpenXR integration) — bu
 **picoxr** flavor for Pico hardware. (`adb logcat`'s dedicated `-b crash` buffer holds tombstones and
 is *not* flooded by the `FrameEvents` spam that buries them in the main buffer.)
 
+**Two divergent APKs per flavor — install from `outputs/`, never `intermediates/`.** The Gradle build
+produces *two* APKs at the same flavor name: `app/build/intermediates/apk/<flavor>/debug/…apk` and
+`app/build/outputs/apk/<flavor>/debug/…apk`. They can hold *different* `libcontent_native.so` (the
+`intermediates/` one lags — observed a full build behind, with the old `.so`). Installing the
+`intermediates/` path silently runs stale native code → "I changed it but see no change," and any
+logcat captured against it is worthless. **The deliverable is `outputs/apk/…`.** Verify what's
+actually on the device, don't trust the build log: pull it and diff the `.so` —
+`adb pull $(adb shell pm path com.igalia.wolvic.dev | sed 's/package://' | tr -d '\r' | grep base) /tmp/d.apk`
+then `unzip -p /tmp/d.apk lib/arm64-v8a/libcontent_native.so | md5sum` and compare to the AAR's
+`.so`. Embed a greppable sentinel (e.g. a unique `LOG(ERROR)` string) when you need to prove a
+specific source change reached the headset.
+
 Disk note: `/tmp` here is a small (~920M) partition that fills with `siso.*.log.*` build logs (a
 build run can leave 500M+ across dozens of files) and fails the build with
 `OSError: [Errno 28] No space left on device`. `rm -f /tmp/siso.*.log.*` is safe — siso writes a
