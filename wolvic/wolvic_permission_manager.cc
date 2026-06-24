@@ -469,6 +469,16 @@ void WolvicPermissionManager::OnContentPermissionResult(
 void WolvicPermissionManager::OnAndroidPermissionResult(
     InProgressRequest* in_progress_request,
     const std::vector<content::PermissionStatus>& result) {
+  // Guard against a stale pointer: the delegate could call back twice (once
+  // synchronously for NO_ANDROID_PERMISSION and once via a delayed path).
+  auto it = std::find_if(in_progress_requests_.begin(),
+                         in_progress_requests_.end(),
+                         [&](const auto& r) { return r.get() == in_progress_request; });
+  if (it == in_progress_requests_.end()) {
+    LOG(WARNING) << __func__ << ": stale in_progress_request ptr, ignoring";
+    return;
+  }
+
   in_progress_request->android_results = result;
 
   // If this was part of media request, proceed with requesting media permissions.
