@@ -46,7 +46,7 @@
 #include "content/shell/browser/shell_content_browser_client.h"
 #include "content/shell/browser/shell_content_index_provider.h"
 #include "content/shell/browser/shell_download_manager_delegate.h"
-#include "content/shell/browser/shell_paths.h"
+#include "content/shell/common/shell_paths.h"
 #include "content/shell/browser/shell_permission_manager.h"
 #include "content/shell/common/shell_switches.h"
 #include "content/test/mock_background_sync_controller.h"
@@ -82,7 +82,7 @@ WolvicBrowserContext::WolvicBrowserContext(const base::FilePath& path,
   base::android::ScopedJavaLocalRef<jobject> jobj =
       Java_WolvicBrowserContext_create(env, reinterpret_cast<intptr_t>(this));
 
-  java_obj_.Reset(env, jobj.obj());
+  java_obj_.Reset(env, jobj);
 }
 
 WolvicBrowserContext::~WolvicBrowserContext() {

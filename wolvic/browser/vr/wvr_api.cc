@@ -14,16 +14,15 @@ WvrApi::WvrApi() {
   JNIEnv* env = base::android::AttachCurrentThread();
   shmem_ = reinterpret_cast<mozilla::gfx::VRExternalShmem*>(
       content::Java_VRManager_getExternalContext(env));
-  memset((void*)&browser_state_, 0, sizeof(mozilla::gfx::VRBrowserState));
-  memset((void*)&system_state_, 0, sizeof(mozilla::gfx::VRSystemState));
+  browser_state_ = {};
+  system_state_ = {};
 }
 
 void WvrApi::PushState(NotifyCondition notify_cond) {
   DCHECK(shmem_);
 
   if (pthread_mutex_lock((pthread_mutex_t*)&(shmem_->geckoMutex)) == 0) {
-    memcpy((void*)&(shmem_->geckoState), (void*)&browser_state_,
-           sizeof(mozilla::gfx::VRBrowserState));
+    shmem_->geckoState = browser_state_;
     if (notify_cond == NotifyCondition::YES) {
       pthread_cond_signal((pthread_cond_t*)&(shmem_->geckoCond));
     }
@@ -38,8 +37,7 @@ void WvrApi::PullState(const std::function<bool()>& wait_condition) {
   while (!done) {
     if (pthread_mutex_lock((pthread_mutex_t*)&shmem_->systemMutex) == 0) {
       while (true) {
-        memcpy(&system_state_, (void*)&shmem_->state,
-               sizeof(mozilla::gfx::VRSystemState));
+        system_state_ = shmem_->state;
         if (!wait_condition || wait_condition()) {
           done = true;
           break;

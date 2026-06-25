@@ -56,7 +56,9 @@ class WolvicAutofillManager : public autofill::AutofillManager {
       const autofill::FormData& form,
       const autofill::FieldGlobalId& field_id,
       const gfx::Rect& caret_bounds,
-      autofill::AutofillSuggestionTriggerSource trigger_source) override {}
+      autofill::AutofillSuggestionTriggerSource trigger_source,
+      std::optional<autofill::PasswordSuggestionRequest> password_request)
+      override {}
 
   void OnFocusOnFormFieldImpl(const autofill::FormData& form,
                               const autofill::FieldGlobalId& field_id) override {}

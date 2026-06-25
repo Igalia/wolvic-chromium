@@ -18,7 +18,8 @@ class WolvicWebContentsDelegate
     : public web_contents_delegate_android::WebContentsDelegateAndroid,
       public find_in_page::FindResultObserver {
  public:
-  WolvicWebContentsDelegate(JNIEnv* env, jobject obj);
+  WolvicWebContentsDelegate(JNIEnv* env,
+                            const base::android::JavaRef<jobject>& obj);
   ~WolvicWebContentsDelegate() override;
 
   void OnDidGetManifest(content::WebContents* web_contents,

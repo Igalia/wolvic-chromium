@@ -56,23 +56,23 @@ class WolvicPermissionManager : public content::PermissionControllerDelegate {
       const content::PermissionRequestDescription& request_description,
       PermissionRequestCallback callback) override;
   blink::mojom::PermissionStatus GetPermissionStatus(
-      blink::PermissionType permission,
+      const blink::mojom::PermissionDescriptorPtr& permission,
       const GURL& requesting_origin,
       const GURL& embedding_origin) override;
   content::PermissionResult GetPermissionResultForOriginWithoutContext(
-      blink::PermissionType permission,
+      const blink::mojom::PermissionDescriptorPtr& permission,
       const url::Origin& requesting_origin,
       const url::Origin& embedding_origin) override;
   blink::mojom::PermissionStatus GetPermissionStatusForCurrentDocument(
-      blink::PermissionType permission,
+      const blink::mojom::PermissionDescriptorPtr& permission,
       content::RenderFrameHost* render_frame_host,
       bool should_include_device_status) override;
   blink::mojom::PermissionStatus GetPermissionStatusForWorker(
-      blink::PermissionType permission,
+      const blink::mojom::PermissionDescriptorPtr& permission,
       content::RenderProcessHost* render_process_host,
       const GURL& worker_origin) override;
   blink::mojom::PermissionStatus GetPermissionStatusForEmbeddedRequester(
-      blink::PermissionType permission,
+      const blink::mojom::PermissionDescriptorPtr& permission,
       content::RenderFrameHost* render_frame_host,
       const url::Origin& overridden_origin) override;
   void UnsubscribeFromPermissionStatusChange(

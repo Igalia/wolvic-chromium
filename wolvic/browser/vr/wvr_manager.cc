@@ -148,19 +148,20 @@ device::mojom::XRViewPtr CreateView(
     NOTREACHED();
   }
 
-  view->field_of_view = device::mojom::VRFieldOfView::New();
+  view->geometry = device::mojom::XRViewGeometry::New();
+  view->geometry->field_of_view = device::mojom::VRFieldOfView::New();
 
   auto& eye_fov = display_state.eyeFOV[eye];
-  view->field_of_view->up_degrees = eye_fov.upDegrees;
-  view->field_of_view->down_degrees = eye_fov.downDegrees;
-  view->field_of_view->left_degrees = eye_fov.leftDegrees;
-  view->field_of_view->right_degrees = eye_fov.rightDegrees;
+  view->geometry->field_of_view->up_degrees = eye_fov.upDegrees;
+  view->geometry->field_of_view->down_degrees = eye_fov.downDegrees;
+  view->geometry->field_of_view->left_degrees = eye_fov.leftDegrees;
+  view->geometry->field_of_view->right_degrees = eye_fov.rightDegrees;
 
   if (pose) {
     const gfx::Transform head_mat = WvrPoseToTransform(pose);
     gfx::Transform eye_from_head;
     WvrMatToTransform(display_state.eyeTransform[eye], &eye_from_head);
-    view->mojo_from_view = head_mat * eye_from_head;
+    view->geometry->mojo_from_view = head_mat * eye_from_head;
   }
   return view;
 }

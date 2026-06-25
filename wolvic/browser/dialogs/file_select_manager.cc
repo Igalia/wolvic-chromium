@@ -54,10 +54,10 @@ void FileSelectManager::OnFileSelected(
 void FileSelectManager::OnMultipleFilesSelected(
     JNIEnv* env, const JavaParamRef<jobjectArray>& filepaths) {
   std::vector<base::FilePath> selected_files;
-  jsize length = env->GetArrayLength(filepaths);
+  jsize length = env->GetArrayLength(filepaths.obj());
   for (int i = 0; i < length; ++i) {
     ScopedJavaLocalRef<jstring> path_ref(
-        env, static_cast<jstring>(env->GetObjectArrayElement(filepaths, i)));
+        env, static_cast<jstring>(env->GetObjectArrayElement(filepaths.obj(), i)));
     base::FilePath file_path =
         base::FilePath(ConvertJavaStringToUTF8(env, path_ref));
     selected_files.push_back(file_path);

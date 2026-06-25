@@ -28,6 +28,7 @@ class WolvicDownloadManagerDelegate : public content::DownloadManagerDelegate {
       const std::string& request_origin,
       int64_t content_length,
       bool is_transient,
+      bool is_content_initiated,
       content::WebContents* web_contents) override;
 };
 

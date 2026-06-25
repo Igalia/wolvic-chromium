@@ -19,9 +19,10 @@
 
 namespace wolvic {
 
-WolvicWebContentsDelegate::WolvicWebContentsDelegate(JNIEnv* env, jobject obj)
-    : WebContentsDelegateAndroid(env,
-                                 base::android::JavaParamRef<jobject>(env, obj)),
+WolvicWebContentsDelegate::WolvicWebContentsDelegate(
+    JNIEnv* env,
+    const base::android::JavaRef<jobject>& obj)
+    : WebContentsDelegateAndroid(env, obj),
       javascript_dialog_manager_(
           std::make_unique<WolvicJavascriptDialogManager>()) {}
 

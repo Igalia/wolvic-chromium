@@ -42,17 +42,17 @@ public class TabCompositorView extends ContentViewRenderView {
         assert mNativeContentViewRenderView != 0;
         if (mSurface != surface) {
             // Consider this condition as new surface creation.
-            ContentViewRenderViewJni.get().surfaceCreated(mNativeContentViewRenderView, this);
+            ContentViewRenderViewJni.get().surfaceCreated(mNativeContentViewRenderView);
         }
         mSurface = surface;
 
         try {
             ContentViewRenderViewJni.get().surfaceChanged(
-                    mNativeContentViewRenderView, this, PixelFormat.OPAQUE, width, height, surface,
+                    mNativeContentViewRenderView, PixelFormat.OPAQUE, width, height, surface,
                     /* browserInputToken= */ null);
             if (mWebContents != null) {
                 ContentViewRenderViewJni.get().onPhysicalBackingSizeChanged(
-                        mNativeContentViewRenderView, this, mWebContents, width, height);
+                        mNativeContentViewRenderView, mWebContents, width, height);
             }
             setViewSize(width, height);
         } catch (Exception ex) {
@@ -66,7 +66,7 @@ public class TabCompositorView extends ContentViewRenderView {
         }
 
         assert mNativeContentViewRenderView != 0;
-        ContentViewRenderViewJni.get().surfaceDestroyed(mNativeContentViewRenderView, this);
+        ContentViewRenderViewJni.get().surfaceDestroyed(mNativeContentViewRenderView);
         mSurface = null;
     }
 
