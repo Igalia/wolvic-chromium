@@ -5,6 +5,9 @@
 #ifndef WOLVIC_BROWSER_DIALOGS_USER_DIALOG_MANAGER_BRIDGE_H_
 #define WOLVIC_BROWSER_DIALOGS_USER_DIALOG_MANAGER_BRIDGE_H_
 
+#include <memory>
+#include <vector>
+
 #include "base/no_destructor.h"
 #include "content/public/browser/javascript_dialog_manager.h"
 

@@ -271,6 +271,16 @@ autofill::EntityDataManager* WolvicAutofillClient::GetEntityDataManager() {
   return nullptr;
 }
 
+autofill::ValuablesDataManager*
+WolvicAutofillClient::GetValuablesDataManager() {
+  return nullptr;
+}
+
+credential_management::ContentCredentialManager*
+WolvicAutofillClient::GetContentCredentialManager() {
+  return nullptr;
+}
+
 autofill::SingleFieldFillRouter& WolvicAutofillClient::GetSingleFieldFillRouter() {
   NOTREACHED();
 }
