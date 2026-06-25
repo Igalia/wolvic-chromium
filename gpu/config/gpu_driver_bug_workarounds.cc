@@ -26,11 +26,12 @@ void IntSetToWorkarounds(const std::vector<int32_t>& enabled_workarounds,
         NOTIMPLEMENTED();
     }
   }
-  // TODO(wolvic-chromium): VR experiences are over 4k.
-  if (workarounds->webgl_or_caps_max_texture_size_limit_4096) {
+  // TODO(wolvic-chromium): VR experiences are over 4k, so force a high max
+  // texture size whenever the GPU bug list would otherwise cap it (M140 added
+  // an all-Android 8192 cap that regressed high-res WebXR).
+  if (workarounds->webgl_or_caps_max_texture_size_limit_4096 ||
+      workarounds->webgl_or_caps_max_texture_size_limit_8192) {
     workarounds->webgl_or_caps_max_texture_size = 16384;
-  } else if (workarounds->webgl_or_caps_max_texture_size_limit_8192) {
-    workarounds->webgl_or_caps_max_texture_size = 8192;
   }
 
   if (workarounds->max_3d_array_texture_size_1024)
