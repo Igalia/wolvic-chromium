@@ -331,14 +331,6 @@ void WolvicPasswordStoreBackend::GetAllLoginsInternal(
   Java_PasswordStoreBackend_getAllLogins(env, java_obj_, reply_id_);
 }
 
-void WolvicPasswordStoreBackend::RecordAddLoginAsyncCalledFromTheStore() {
-  NOTIMPLEMENTED();
-}
-
-void WolvicPasswordStoreBackend::RecordUpdateLoginAsyncCalledFromTheStore() {
-  NOTIMPLEMENTED();
-}
-
 base::WeakPtr<password_manager::PasswordStoreBackend>
 WolvicPasswordStoreBackend::AsWeakPtr() {
   return weak_ptr_factory_.GetWeakPtr();

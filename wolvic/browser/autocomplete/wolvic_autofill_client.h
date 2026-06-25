@@ -82,6 +82,9 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   const std::string& GetAppLocale() const override;
   autofill::VotesUploader& GetVotesUploader() override;
   autofill::EntityDataManager* GetEntityDataManager() override;
+  autofill::ValuablesDataManager* GetValuablesDataManager() override;
+  credential_management::ContentCredentialManager* GetContentCredentialManager()
+      override;
   autofill::SingleFieldFillRouter& GetSingleFieldFillRouter() override;
   bool IsAutofillEnabled() const override;
   bool IsAutofillProfileEnabled() const override;

@@ -5,6 +5,7 @@
 #include "wolvic/browser/webapps/manifest_builder.h"
 
 #include "base/json/json_writer.h"
+#include "base/strings/stringprintf.h"
 #include "base/values.h"
 #include "third_party/blink/public/common/manifest/manifest.h"
 #include "third_party/blink/public/mojom/manifest/manifest.mojom.h"

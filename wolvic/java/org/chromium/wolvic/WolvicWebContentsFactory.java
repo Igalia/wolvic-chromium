@@ -4,19 +4,13 @@
 
 package org.chromium.wolvic;
 
-import dagger.Reusable;
-
 import org.jni_zero.JNINamespace;
 import org.jni_zero.NativeMethods;
 
 import org.chromium.content_public.browser.WebContents;
 
-import javax.inject.Inject;
-
 @JNINamespace("wolvic")
-@Reusable
 public class WolvicWebContentsFactory {
-    @Inject
     public WolvicWebContentsFactory() {}
 
     public static WebContents createWebContents(boolean is_off_the_record) {

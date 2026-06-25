@@ -19,6 +19,7 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/media_capture_devices.h"
 #include "content/public/browser/media_stream_request.h"
+#include "content/public/browser/permission_descriptor_util.h"
 #include "content/public/browser/permission_request_description.h"
 #include "content/public/browser/permission_result.h"
 #include "content/public/browser/render_frame_host.h"
@@ -360,10 +361,11 @@ void WolvicPermissionManager::RequestPermissionsFromCurrentDocument(
 }
 
 blink::mojom::PermissionStatus WolvicPermissionManager::GetPermissionStatus(
-    blink::PermissionType permission,
+    const blink::mojom::PermissionDescriptorPtr& permission,
     const GURL& requesting_origin,
     const GURL& embedding_origin) {
-  if (permission == blink::PermissionType::PAYMENT_HANDLER) {
+  if (blink::PermissionDescriptorToPermissionType(permission) ==
+      blink::PermissionType::PAYMENT_HANDLER) {
     return blink::mojom::PermissionStatus::GRANTED;
   }
 
@@ -374,7 +376,7 @@ blink::mojom::PermissionStatus WolvicPermissionManager::GetPermissionStatus(
 
 content::PermissionResult
 WolvicPermissionManager::GetPermissionResultForOriginWithoutContext(
-    blink::PermissionType permission,
+    const blink::mojom::PermissionDescriptorPtr& permission,
     const url::Origin& requesting_origin,
     const url::Origin& embedding_origin) {
   blink::mojom::PermissionStatus status = GetPermissionStatus(
@@ -386,7 +388,7 @@ WolvicPermissionManager::GetPermissionResultForOriginWithoutContext(
 
 blink::mojom::PermissionStatus
 WolvicPermissionManager::GetPermissionStatusForCurrentDocument(
-    blink::PermissionType permission,
+    const blink::mojom::PermissionDescriptorPtr& permission,
     content::RenderFrameHost* render_frame_host,
     bool should_include_device_status) {
   if (render_frame_host->IsNestedWithinFencedFrame()) {
@@ -402,7 +404,7 @@ WolvicPermissionManager::GetPermissionStatusForCurrentDocument(
 
 blink::mojom::PermissionStatus
 WolvicPermissionManager::GetPermissionStatusForWorker(
-    blink::PermissionType permission,
+    const blink::mojom::PermissionDescriptorPtr& permission,
     content::RenderProcessHost* render_process_host,
     const GURL& worker_origin) {
   return GetPermissionStatus(permission, worker_origin, worker_origin);
@@ -410,7 +412,7 @@ WolvicPermissionManager::GetPermissionStatusForWorker(
 
 blink::mojom::PermissionStatus
 WolvicPermissionManager::GetPermissionStatusForEmbeddedRequester(
-    blink::PermissionType permission,
+    const blink::mojom::PermissionDescriptorPtr& permission,
     content::RenderFrameHost* render_frame_host,
     const url::Origin& overridden_origin) {
   if (render_frame_host->IsNestedWithinFencedFrame()) {
@@ -440,7 +442,9 @@ void WolvicPermissionManager::RequestMediaAccessPermission(
   }
 
   content::PermissionRequestDescription description(
-      permissions, /*user_gesture=*/false, request.security_origin);
+      content::PermissionDescriptorUtil::
+          CreatePermissionDescriptorForPermissionTypes(permissions),
+      /*user_gesture=*/false, request.security_origin);
   JNIEnv* env = base::android::AttachCurrentThread();
   in_progress_requests_.emplace_back(std::make_unique<InProgressRequest>(
       description, /*callback=*/absl::nullopt, request, std::move(callback)));
@@ -597,8 +601,9 @@ void WolvicPermissionManager::RequestContentPermissions(
   auto url_java_string = base::android::ScopedJavaGlobalRef<jstring>(
       base::android::ConvertUTF8ToJavaString(
           env, in_progress_request->description.requesting_origin.spec()));
-  auto permissions =
-      ToJavaWolvicPermissionTypes(in_progress_request->description.permissions);
+  auto permissions = ToJavaWolvicPermissionTypes(
+      blink::PermissionDescriptorToPermissionTypes(
+          in_progress_request->description.permissions));
   auto permissions_java_array = base::android::ScopedJavaGlobalRef<jintArray>(
       base::android::ToJavaIntArray(
           env, std::span(permissions.begin(), permissions.end())));
@@ -611,8 +616,9 @@ void WolvicPermissionManager::RequestContentPermissions(
 void WolvicPermissionManager::RequestAndroidPermissions(
     JNIEnv* env,
     InProgressRequest* in_progress_request) {
-  auto android_permissions =
-      ToAndroidPermissionTypes(in_progress_request->description.permissions);
+  auto android_permissions = ToAndroidPermissionTypes(
+      blink::PermissionDescriptorToPermissionTypes(
+          in_progress_request->description.permissions));
   auto java_android_permissions =
       base::android::ScopedJavaGlobalRef<jobjectArray>(
           base::android::ToJavaArrayOfStrings(

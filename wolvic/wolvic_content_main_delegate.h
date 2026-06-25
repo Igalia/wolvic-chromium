@@ -12,7 +12,7 @@
 #include "content/public/app/content_main_delegate.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/web_contents.h"
-#include "content/shell/browser/shell_paths.h"
+#include "content/shell/common/shell_paths.h"
 #include "wolvic/browser/session_settings.h"
 
 class PrefService;

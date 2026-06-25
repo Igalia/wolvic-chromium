@@ -9,7 +9,6 @@
 #include "base/no_destructor.h"
 #include "content/public/browser/render_frame_host.h"
 #include "content/public/browser/web_contents.h"
-#include "device/vr/public/cpp/features.h"
 #include "device/vr/public/mojom/isolated_xr_service.mojom.h"
 #include "device/vr/public/mojom/vr_service.mojom.h"
 #include "ui/android/view_android.h"
@@ -43,10 +42,7 @@ WvrDevice::WvrDevice()
   std::vector<device::mojom::XRSessionFeature> device_features(
       GetSupportedFeatures());
 
-  // Only support hand input if the feature flag is enabled.
-  if (base::FeatureList::IsEnabled(device::features::kWebXrHandInput)) {
-    device_features.emplace_back(device::mojom::XRSessionFeature::HAND_INPUT);
-  }
+  device_features.emplace_back(device::mojom::XRSessionFeature::HAND_INPUT);
 
   SetSupportedFeatures(device_features);
   SetArBlendModeSupported(true);

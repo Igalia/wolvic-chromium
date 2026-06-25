@@ -20,7 +20,7 @@
 #include "ui/gfx/color_space.h"
 #include "ui/gfx/frame_data.h"
 #include "ui/gfx/gpu_fence.h"
-#include "ui/gfx/gpu_memory_buffer.h"
+#include "ui/gfx/gpu_memory_buffer_handle.h"
 #include "ui/gl/android/surface_texture.h"
 #include "ui/gl/gl_bindings.h"
 #include "ui/gl/gl_context.h"
@@ -185,7 +185,7 @@ void WvrGraphicsDelegate::ResizeSharedBuffer(
     device::WebXrSharedBuffer* buffer,
     const gfx::Size& size,
     device::MailboxToSurfaceBridge* mailbox_bridge) {
-  if (buffer->size == size)
+  if (buffer->shared_image && buffer->shared_image->size() == size)
     return;
 
   if (buffer->shared_image) {
@@ -206,7 +206,6 @@ void WvrGraphicsDelegate::ResizeSharedBuffer(
 
   gfx::GpuMemoryBufferHandle gmb_handle;
   gmb_handle.type = gfx::ANDROID_HARDWARE_BUFFER;
-  gmb_handle.id = gfx::GpuMemoryBufferId(1);
   gmb_handle.android_hardware_buffer = buffer->scoped_ahb_handle.Clone();
 
   buffer->shared_image = mailbox_bridge->CreateSharedImage(
@@ -234,7 +233,6 @@ void WvrGraphicsDelegate::ResizeSharedBuffer(
                   GL_LINEAR);
   glEGLImageTargetTexture2DOES(buffer->local_texture.target, egl_image.get());
   buffer->local_eglimage = std::move(egl_image);
-  buffer->size = size;
 }
 
 void WvrGraphicsDelegate::ServerWaitForGpuFence(

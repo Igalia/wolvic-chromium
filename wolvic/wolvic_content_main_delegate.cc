@@ -48,7 +48,7 @@
 #include "content/public/renderer/content_renderer_client.h"
 #include "content/public/utility/content_utility_client.h"
 #include "content/shell/android/shell_descriptors.h"
-#include "content/shell/browser/shell_paths.h"
+#include "content/shell/common/shell_paths.h"
 #include "ipc/ipc_buildflags.h"
 #include "net/cookies/cookie_monster.h"
 #include <variant>
@@ -59,13 +59,6 @@
 #include "wolvic/wolvic_content_browser_client.h"
 #include "wolvic/wolvic_content_client.h"
 #include "wolvic/renderer/wolvic_content_renderer_client.h"
-
-#if BUILDFLAG(IPC_MESSAGE_LOG_ENABLED)
-#define IPC_MESSAGE_MACROS_LOG_ENABLED
-#include "content/public/common/content_ipc_logging.h"
-#define IPC_LOG_TABLE_ADD_ENTRY(msg_id, logger) \
-  content::RegisterIPCLogger(msg_id, logger)
-#endif
 
 #if BUILDFLAG(IS_ANDROID)
 #include "base/android/apk_assets.h"
@@ -358,25 +351,22 @@ void WolvicContentMainDelegate::SetUpFieldTrials() {
               /*entropy_providers=*/nullptr),
           variations_service_client.GetChannelForVariations(),
           variations_service_client.GetVariationsSeedFileDir()),
-      variations::UIStringOverrider(),
-      /*limited_entropy_synthetic_trial=*/nullptr);
+      variations::UIStringOverrider());
 
   variations::SafeSeedManager safe_seed_manager(local_state_.get());
 
   const base::CommandLine* command_line =
       base::CommandLine::ForCurrentProcess();
-  // Since this is a test-only code path, some arguments to SetUpFieldTrials are
-  // null.
+  // Since this is a test-only code path, some arguments to SetUpFieldTrials are null.
   // TODO(crbug/1248066): Consider passing a low entropy source.
   variations::PlatformFieldTrials platform_field_trials;
-  variations::SyntheticTrialRegistry synthetic_trial_registry;
   field_trial_creator.SetUpFieldTrials(
       variation_ids,
       command_line->GetSwitchValueASCII(
           variations::switches::kForceVariationIds),
       content::GetSwitchDependentFeatureOverrides(*command_line),
       std::move(feature_list), metrics_state_manager.get(),
-      &synthetic_trial_registry, &platform_field_trials, &safe_seed_manager,
+      &platform_field_trials, &safe_seed_manager,
       /*add_entropy_source_to_variations_ids=*/false,
       *metrics_state_manager->CreateEntropyProviders(
           /*enable_limited_entropy_mode=*/false));
