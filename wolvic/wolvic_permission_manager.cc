@@ -217,7 +217,7 @@ base::android::ScopedJavaLocalRef<jobject> CreateJavaMediaSource(
       cls, constructor, base::android::ConvertUTF8ToJavaString(env, id).obj(),
       base::android::ConvertUTF8ToJavaString(env, name).obj(),
       static_cast<jint>(source), static_cast<jint>(type));
-  return base::android::ScopedJavaLocalRef<jobject>(env, media_source);
+  return base::android::ScopedJavaLocalRef<jobject>::Adopt(env, media_source);
 }
 
 void ToJavaMediaSources(
@@ -285,6 +285,16 @@ std::vector<content::PermissionStatus> CombineStatuses(
   return result;
 }
 
+std::vector<content::PermissionResult> ToPermissionResults(
+    const std::vector<content::PermissionStatus>& statuses) {
+  std::vector<content::PermissionResult> results;
+  results.reserve(statuses.size());
+  for (auto status : statuses) {
+    results.emplace_back(status, content::PermissionStatusSource::UNSPECIFIED);
+  }
+  return results;
+}
+
 }  // namespace
 
 InProgressRequest::InProgressRequest(
@@ -326,9 +336,10 @@ void WolvicPermissionManager::RequestPermissions(
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
   if (render_frame_host->IsNestedWithinFencedFrame()) {
-    std::move(callback).Run(std::vector<blink::mojom::PermissionStatus>(
-        request_description.permissions.size(),
-        blink::mojom::PermissionStatus::DENIED));
+    std::move(callback).Run(ToPermissionResults(
+        std::vector<blink::mojom::PermissionStatus>(
+            request_description.permissions.size(),
+            blink::mojom::PermissionStatus::DENIED)));
     return;
   }
 
@@ -386,45 +397,55 @@ WolvicPermissionManager::GetPermissionResultForOriginWithoutContext(
       status, content::PermissionStatusSource::UNSPECIFIED);
 }
 
-blink::mojom::PermissionStatus
-WolvicPermissionManager::GetPermissionStatusForCurrentDocument(
+content::PermissionResult
+WolvicPermissionManager::GetPermissionResultForCurrentDocument(
     const blink::mojom::PermissionDescriptorPtr& permission,
     content::RenderFrameHost* render_frame_host,
     bool should_include_device_status) {
   if (render_frame_host->IsNestedWithinFencedFrame()) {
-    return blink::mojom::PermissionStatus::DENIED;
+    return content::PermissionResult(
+        blink::mojom::PermissionStatus::DENIED,
+        content::PermissionStatusSource::UNSPECIFIED);
   }
-  return GetPermissionStatus(
-      permission,
-      permissions::PermissionUtil::GetLastCommittedOriginAsURL(
-          render_frame_host),
-      permissions::PermissionUtil::GetLastCommittedOriginAsURL(
-          render_frame_host->GetMainFrame()));
+  return content::PermissionResult(
+      GetPermissionStatus(
+          permission,
+          permissions::PermissionUtil::GetLastCommittedOriginAsURL(
+              render_frame_host),
+          permissions::PermissionUtil::GetLastCommittedOriginAsURL(
+              render_frame_host->GetMainFrame())),
+      content::PermissionStatusSource::UNSPECIFIED);
 }
 
-blink::mojom::PermissionStatus
-WolvicPermissionManager::GetPermissionStatusForWorker(
+content::PermissionResult
+WolvicPermissionManager::GetPermissionResultForWorker(
     const blink::mojom::PermissionDescriptorPtr& permission,
     content::RenderProcessHost* render_process_host,
     const GURL& worker_origin) {
-  return GetPermissionStatus(permission, worker_origin, worker_origin);
+  return content::PermissionResult(
+      GetPermissionStatus(permission, worker_origin, worker_origin),
+      content::PermissionStatusSource::UNSPECIFIED);
 }
 
-blink::mojom::PermissionStatus
-WolvicPermissionManager::GetPermissionStatusForEmbeddedRequester(
+content::PermissionResult
+WolvicPermissionManager::GetPermissionResultForEmbeddedRequester(
     const blink::mojom::PermissionDescriptorPtr& permission,
     content::RenderFrameHost* render_frame_host,
     const url::Origin& overridden_origin) {
   if (render_frame_host->IsNestedWithinFencedFrame()) {
-    return blink::mojom::PermissionStatus::DENIED;
+    return content::PermissionResult(
+        blink::mojom::PermissionStatus::DENIED,
+        content::PermissionStatusSource::UNSPECIFIED);
   }
-  return GetPermissionStatus(
-      permission, overridden_origin.GetURL(),
-      permissions::PermissionUtil::GetLastCommittedOriginAsURL(
-          render_frame_host->GetMainFrame()));
+  return content::PermissionResult(
+      GetPermissionStatus(
+          permission, overridden_origin.GetURL(),
+          permissions::PermissionUtil::GetLastCommittedOriginAsURL(
+              render_frame_host->GetMainFrame())),
+      content::PermissionStatusSource::UNSPECIFIED);
 }
 
-void WolvicPermissionManager::UnsubscribeFromPermissionStatusChange(
+void WolvicPermissionManager::UnsubscribeFromPermissionResultChange(
     content::PermissionController::SubscriptionId subscription_id) {}
 
 void WolvicPermissionManager::RequestMediaAccessPermission(
@@ -588,10 +609,11 @@ void WolvicPermissionManager::CompleteRequest(
   std::unique_ptr<InProgressRequest> request = std::move(*it);
   in_progress_requests_.erase(it);
 
-  auto result = CombineStatuses(request->content_results.value(),
-                                request->android_results.value());
+  auto results = ToPermissionResults(
+      CombineStatuses(request->content_results.value(),
+                      request->android_results.value()));
   for (auto& callback : request->callbacks) {
-    std::move(callback).Run(result);
+    std::move(callback).Run(results);
   }
 }
 

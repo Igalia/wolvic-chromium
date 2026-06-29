@@ -5,6 +5,7 @@
 #include "wolvic/browser/session_settings.h"
 
 #include "base/check.h"
+#include "base/no_destructor.h"
 #include "components/embedder_support/user_agent_utils.h"
 
 namespace wolvic {
@@ -47,26 +48,23 @@ std::optional<std::string> SessionSettings::GetUserAgentOverride() const {
 }
 
 std::string SessionSettings::GetDefaultUserAgent(UserAgentMode mode) const {
-  static std::string kWolvicUserAgent;
-  static std::string kWolvicUserAgentVR;
-  static std::string kWolvicUserAgentDesktop;
-
-  static std::once_flag once_flag;
-  std::call_once(once_flag, [] {
-    kWolvicUserAgent = embedder_support::GetUserAgent() + " Mobile";
-    kWolvicUserAgentVR = embedder_support::GetUserAgent() + " Mobile VR";
-
+  static const base::NoDestructor<std::string> kWolvicUserAgent(
+      embedder_support::GetUserAgent() + " Mobile");
+  static const base::NoDestructor<std::string> kWolvicUserAgentVR(
+      embedder_support::GetUserAgent() + " Mobile VR");
+  static const base::NoDestructor<std::string> kWolvicUserAgentDesktop([] {
     const char kLinuxInfoStr[] = "X11; Linux x86_64";
-    kWolvicUserAgentDesktop = embedder_support::BuildUserAgentFromOSAndProduct(kLinuxInfoStr, embedder_support::GetProductAndVersion());
-  });
+    return embedder_support::BuildUserAgentFromOSAndProduct(
+        kLinuxInfoStr, embedder_support::GetProductAndVersion());
+  }());
 
   switch (mode) {
     case UserAgentMode::kMobile:
-      return kWolvicUserAgent;
+      return *kWolvicUserAgent;
     case UserAgentMode::kMobileVR:
-      return kWolvicUserAgentVR;
+      return *kWolvicUserAgentVR;
     case UserAgentMode::kDesktop:
-      return kWolvicUserAgentDesktop;
+      return *kWolvicUserAgentDesktop;
   }
 }
 

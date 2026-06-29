@@ -48,7 +48,7 @@ std::string FormToSignonRealmQuery(
   if (form.scheme == password_manager::PasswordForm::Scheme::kHtml &&
       !affiliations::IsValidAndroidFacetURI(form.signon_realm)) {
     // Check federated matches and matches for exact signon realm.
-    return form.url.host();
+    return std::string(form.url.host());
   }
   // Check matches for exact signon realm.
   return form.signon_realm;
@@ -95,7 +95,7 @@ void WolvicPasswordStoreBackend::OnCompleteWithLogins(
     size_t length = base::android::SafeGetArrayLength(
               base::android::AttachCurrentThread(), array);
     for (size_t i = 0; i < length; ++i) {
-      ScopedJavaLocalRef<jobject> j_password_form(
+      ScopedJavaLocalRef<jobject> j_password_form = ScopedJavaLocalRef<jobject>::Adopt(
           env,
           static_cast<jobject>(env->GetObjectArrayElement(array.obj(), i)));
       passwords.push_back(GetPasswordFormFromJavaObject(env, j_password_form));

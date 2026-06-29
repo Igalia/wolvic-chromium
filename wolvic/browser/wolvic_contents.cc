@@ -9,6 +9,7 @@
 #include "components/webapps/browser/installable/installable_manager.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/navigation_handle.h"
+#include "content/public/browser/page.h"
 #include "content/public/browser/web_contents.h"
 #include "third_party/blink/public/common/manifest/manifest_util.h"
 #include "wolvic/browser/webapps/manifest_builder.h"

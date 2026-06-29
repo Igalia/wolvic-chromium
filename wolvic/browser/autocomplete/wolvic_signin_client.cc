@@ -15,6 +15,7 @@
 #include "components/version_info/channel.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/storage_partition.h"
+#include "google_apis/gaia/gaia_auth_fetcher.h"
 #include "wolvic/wolvic_browser_context.h"
 
 namespace wolvic {
@@ -61,8 +62,7 @@ void WolvicSigninClient::RemoveContentSettingsObserver(
     content_settings::Observer* observer) {
 }
 
-bool WolvicSigninClient::IsClearPrimaryAccountAllowed(
-    bool has_sync_account) const {
+bool WolvicSigninClient::IsClearPrimaryAccountAllowed() const {
   return true;
 }
 
@@ -72,14 +72,14 @@ bool WolvicSigninClient::IsRevokeSyncConsentAllowed() const {
 
 void WolvicSigninClient::PreSignOut(
     base::OnceCallback<void(SignoutDecision)> on_signout_decision_reached,
-    signin_metrics::ProfileSignout signout_source_metric,
-    bool has_sync_account) {
+    signin_metrics::ProfileSignout signout_source_metric) {
   DCHECK(on_signout_decision_reached);
   DCHECK(!on_signout_decision_reached_) << "SignOut already in-progress!";
   on_signout_decision_reached_ = std::move(on_signout_decision_reached);
 
     std::move(on_signout_decision_reached_)
-        .Run(GetSignoutDecision(has_sync_account, signout_source_metric));
+        .Run(GetSignoutDecision(/*has_sync_account=*/false,
+                                signout_source_metric));
 }
 
 bool WolvicSigninClient::AreNetworkCallsDelayed() {
@@ -103,6 +103,12 @@ version_info::Channel WolvicSigninClient::GetClientChannel() {
 void WolvicSigninClient::OnPrimaryAccountChanged(
     signin::PrimaryAccountChangeEvent event_details) {
   NOTIMPLEMENTED();
+}
+
+signin::OAuthConsumer WolvicSigninClient::GetOAuthConsumerFromId(
+    signin::OAuthConsumerId oauth_consumer_id) const {
+  return signin::OAuthConsumer(/*name=*/std::string(),
+                               /*scopes=*/signin::ScopeSet());
 }
 
 SigninClient::SignoutDecision WolvicSigninClient::GetSignoutDecision(

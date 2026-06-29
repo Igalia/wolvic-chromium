@@ -142,7 +142,7 @@ void WolvicBrowserContext::CreatePasswordStore() {
       {base::MayBlock(), base::TaskPriority::USER_VISIBLE});
   password_store_ = new password_manager::PasswordStore(
       std::make_unique<WolvicPasswordStoreBackend>());
-  password_store_->Init(GetPrefService(), nullptr);
+  password_store_->Init(/*affiliated_match_helper=*/nullptr);
 }
 
 void WolvicBrowserContext::CreateIdentityManger() {
@@ -200,7 +200,7 @@ WolvicBrowserContext::CreateZoomLevelDelegate(const base::FilePath&) {
   return nullptr;
 }
 
-base::FilePath WolvicBrowserContext::GetPath() {
+base::FilePath WolvicBrowserContext::GetPath() const {
   return path_;
 }
 

@@ -5,12 +5,15 @@
 #ifndef WOLVIC_BROWSER_VR_WVR_MANAGER_H_
 #define WOLVIC_BROWSER_VR_WVR_MANAGER_H_
 
+#include <vector>
+
 #include "base/memory/raw_ptr.h"
 #include "base/memory/weak_ptr.h"
 #include "base/task/single_thread_task_runner.h"
 #include "device/vr/android/web_xr_presentation_state.h"
 #include "device/vr/public/cpp/xr_frame_sink_client.h"
 #include "device/vr/public/mojom/isolated_xr_service.mojom.h"
+#include "device/vr/public/mojom/layer_id.h"
 #include "device/vr/public/mojom/vr_service.mojom.h"
 #include "mojo/public/cpp/bindings/pending_associated_receiver.h"
 #include "mojo/public/cpp/bindings/pending_associated_remote.h"
@@ -58,6 +61,7 @@ class WvrManager : public device::mojom::XRPresentationProvider,
                    const gpu::MailboxHolder& mailbox,
                    base::TimeDelta time_waited) override;
   void SubmitFrameDrawnIntoTexture(int16_t frame_index,
+                                   const std::vector<device::LayerId>& layer_ids,
                                    const gpu::SyncToken&,
                                    base::TimeDelta time_waited) override;
   void UpdateLayerBounds(int16_t frame_index,

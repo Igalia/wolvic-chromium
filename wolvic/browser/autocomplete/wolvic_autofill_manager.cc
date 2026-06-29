@@ -25,4 +25,14 @@ bool WolvicAutofillManager::ShouldParseForms() {
   return false;
 }
 
+autofill::CreditCardAccessManager*
+WolvicAutofillManager::GetCreditCardAccessManager() {
+  return nullptr;
+}
+
+const autofill::CreditCardAccessManager*
+WolvicAutofillManager::GetCreditCardAccessManager() const {
+  return nullptr;
+}
+
 }  // namespace wolvic

@@ -7,10 +7,10 @@
 
 #include <memory>
 
+#include "base/android/scoped_java_ref.h"
 #include "base/cancelable_callback.h"
 #include "base/memory/weak_ptr.h"
 #include "ui/gfx/geometry/size.h"
-#include "ui/gfx/native_widget_types.h"
 #include "ui/gl/android/scoped_a_native_window.h"
 #include "ui/gl/gl_bindings.h"
 
