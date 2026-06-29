@@ -10,6 +10,7 @@
 #include "base/android/scoped_hardware_buffer_handle.h"
 #include "base/functional/callback_helpers.h"
 #include "base/logging.h"
+#include "components/viz/common/resources/shared_image_format.h"
 #include "device/vr/android/mailbox_to_surface_bridge.h"
 #include "device/vr/android/web_xr_presentation_state.h"
 #include "gpu/command_buffer/client/client_shared_image.h"
@@ -194,7 +195,8 @@ void WvrGraphicsDelegate::ResizeSharedBuffer(
   }
   buffer->local_eglimage.reset();
 
-  static constexpr gfx::BufferFormat kFormat = gfx::BufferFormat::RGBA_8888;
+  static constexpr viz::SharedImageFormat kFormat =
+      viz::SinglePlaneFormat::kRGBA_8888;
   static constexpr gfx::BufferUsage kUsage = gfx::BufferUsage::SCANOUT;
 
   gpu::SharedImageUsageSet shared_image_usage =

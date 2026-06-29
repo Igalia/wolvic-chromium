@@ -807,10 +807,18 @@ void WvrManager::SubmitFrame(int16_t frame_index,
   NOTREACHED() << "WVR uses DRAW_INTO_TEXTURE_MAILBOX transport";
 }
 
-void WvrManager::SubmitFrameDrawnIntoTexture(int16_t frame_index,
-                                             const gpu::SyncToken& sync_token,
-                                             base::TimeDelta time_waited) {
+void WvrManager::SubmitFrameDrawnIntoTexture(
+    int16_t frame_index,
+    const std::vector<device::LayerId>& layer_ids,
+    const gpu::SyncToken& sync_token,
+    base::TimeDelta time_waited) {
   DVLOG(2) << __func__ << ": frame=" << frame_index;
+
+  if (!layer_ids.empty()) {
+    presentation_receiver_.ReportBadMessage(
+        "Layers feature not enabled for this session");
+    return;
+  }
 
   if (!IsSubmitFrameExpected(frame_index))
     return;

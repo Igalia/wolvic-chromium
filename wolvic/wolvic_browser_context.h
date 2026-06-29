@@ -18,7 +18,6 @@
 #include "components/visitedlink/browser/visitedlink_delegate.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/content_browser_client.h"
-#include "content/public/browser/resource_context.h"
 #include "wolvic/browser/autocomplete/wolvic_signin_client.h"
 #include "wolvic/browser/downloads/wolvic_download_manager_delegate.h"
 
@@ -50,7 +49,7 @@ class WolvicBrowserContext : public content::BrowserContext,
   PrefService* GetPrefService() const { return user_pref_service_.get(); }
 
   // BrowserContext implementation.
-  base::FilePath GetPath() override;
+  base::FilePath GetPath() const override;
   std::unique_ptr<content::ZoomLevelDelegate> CreateZoomLevelDelegate(
       const base::FilePath& partition_path) override;
   bool IsOffTheRecord() override;

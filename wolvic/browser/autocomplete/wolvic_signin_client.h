@@ -32,12 +32,11 @@ class WolvicSigninClient : public SigninClient {
 
   // SigninClient implementation.
   PrefService* GetPrefs() override;
-  bool IsClearPrimaryAccountAllowed(bool has_sync_account) const override;
+  bool IsClearPrimaryAccountAllowed() const override;
   bool IsRevokeSyncConsentAllowed() const override;
   void PreSignOut(
       base::OnceCallback<void(SignoutDecision)> on_signout_decision_reached,
-      signin_metrics::ProfileSignout signout_source_metric,
-      bool has_sync_account) override;
+      signin_metrics::ProfileSignout signout_source_metric) override;
   scoped_refptr<network::SharedURLLoaderFactory> GetURLLoaderFactory() override;
   network::mojom::CookieManager* GetCookieManager() override;
   network::mojom::NetworkContext* GetNetworkContext() override;
@@ -55,6 +54,8 @@ class WolvicSigninClient : public SigninClient {
   version_info::Channel GetClientChannel() override;
   void OnPrimaryAccountChanged(
       signin::PrimaryAccountChangeEvent event_details) override;
+  signin::OAuthConsumer GetOAuthConsumerFromId(
+      signin::OAuthConsumerId oauth_consumer_id) const override;
 
  private:
   // Returns what kind of signout is possible given `has_sync_account` and the

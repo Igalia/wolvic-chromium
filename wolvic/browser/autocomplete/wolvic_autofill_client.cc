@@ -91,6 +91,10 @@ WolvicAutofillClient::GetCrowdsourcingManager() {
   return *crowdsourcing_manager_;
 }
 
+bool WolvicAutofillClient::HasPersonalDataManager() const {
+  return false;
+}
+
 autofill::PersonalDataManager& WolvicAutofillClient::GetPersonalDataManager() {
   NOTREACHED();
 }
@@ -133,7 +137,7 @@ WolvicAutofillClient::GetPaymentsAutofillClient() {
   return nullptr;
 }
 
-autofill::StrikeDatabase* WolvicAutofillClient::GetStrikeDatabase() {
+strike_database::StrikeDatabase* WolvicAutofillClient::GetStrikeDatabase() {
   return nullptr;
 }
 
@@ -173,12 +177,12 @@ void WolvicAutofillClient::ShowAutofillSettings(
 void WolvicAutofillClient::ConfirmSaveAddressProfile(
     const autofill::AutofillProfile& profile,
     const autofill::AutofillProfile* original_profile,
-    bool is_migration_to_account,
+    SaveAddressBubbleType save_address_bubble_type,
     AddressProfileSavePromptCallback callback) {
   // Not implemented
   std::move(callback).Run(
       AddressPromptUserDecision::kIgnored,
-      autofill::AutofillProfile(AddressCountryCode("")));
+      autofill::AutofillProfile(autofill::AddressCountryCode("")));
 }
 
 void WolvicAutofillClient::OnLoginSelected(JNIEnv* env, jint index) {
@@ -293,10 +297,6 @@ bool WolvicAutofillClient::IsAutofillProfileEnabled() const {
   return false;
 }
 
-bool WolvicAutofillClient::IsAutofillPaymentMethodsEnabled() const {
-  return false;
-}
-
 void WolvicAutofillClient::DidFillForm(
     autofill::AutofillTriggerSource trigger_source,
     bool is_refill) {}
@@ -329,6 +329,10 @@ bool WolvicAutofillClient::IsPasswordManagerEnabled() const {
 }
 
 bool WolvicAutofillClient::IsContextSecure() const {
+  return false;
+}
+
+bool WolvicAutofillClient::IsWalletStorageEnabled() const {
   return false;
 }
 

@@ -56,7 +56,7 @@ void FileSelectManager::OnMultipleFilesSelected(
   std::vector<base::FilePath> selected_files;
   jsize length = env->GetArrayLength(filepaths.obj());
   for (int i = 0; i < length; ++i) {
-    ScopedJavaLocalRef<jstring> path_ref(
+    ScopedJavaLocalRef<jstring> path_ref = ScopedJavaLocalRef<jstring>::Adopt(
         env, static_cast<jstring>(env->GetObjectArrayElement(filepaths.obj(), i)));
     base::FilePath file_path =
         base::FilePath(ConvertJavaStringToUTF8(env, path_ref));

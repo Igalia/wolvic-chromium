@@ -21,17 +21,19 @@ class WolvicAutofillManager : public autofill::AutofillManager {
   // autofill::AutofillManager:
   base::WeakPtr<AutofillManager> GetWeakPtr() override;
   bool ShouldClearPreviewedForm() override;
+  autofill::CreditCardAccessManager* GetCreditCardAccessManager() override;
+  const autofill::CreditCardAccessManager* GetCreditCardAccessManager()
+      const override;
 
   void OnFocusOnNonFormFieldImpl() override {}
 
-  void OnDidFillAutofillFormDataImpl(const autofill::FormData& form,
-                                     const base::TimeTicks timestamp) override {
-  }
+  void OnDidAutofillFormImpl(const autofill::FormData& form) override {}
 
   void OnDidEndTextFieldEditingImpl() override {}
   void OnHidePopupImpl() override {}
   void OnSelectFieldOptionsDidChangeImpl(
-      const autofill::FormData& form) override {}
+      const autofill::FormData& form,
+      const autofill::FieldGlobalId& field_id) override {}
 
   void Reset() override {}
 

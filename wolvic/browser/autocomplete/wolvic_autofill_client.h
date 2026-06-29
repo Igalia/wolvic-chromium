@@ -15,6 +15,7 @@
 #include "components/autofill/content/browser/content_autofill_client.h"
 #include "components/autofill/core/browser/foundations/autofill_client.h"
 #include "components/autofill/core/browser/filling/filling_product.h"
+#include "components/autofill/core/common/form_interactions_flow.h"
 
 namespace payments {
 class PaymentsClient;
@@ -39,6 +40,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   scoped_refptr<network::SharedURLLoaderFactory>
   GetURLLoaderFactory() override;
   autofill::AutofillCrowdsourcingManager& GetCrowdsourcingManager() override;
+  bool HasPersonalDataManager() const override;
   autofill::PersonalDataManager& GetPersonalDataManager() override;
   autofill::AutocompleteHistoryManager*
   GetAutocompleteHistoryManager() override;
@@ -50,7 +52,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   autofill::FormDataImporter* GetFormDataImporter() override;
   autofill::payments::PaymentsAutofillClient* GetPaymentsAutofillClient()
       override;
-  autofill::StrikeDatabase* GetStrikeDatabase() override;
+  strike_database::StrikeDatabase* GetStrikeDatabase() override;
   ukm::UkmRecorder* GetUkmRecorder() override;
   autofill::AddressNormalizer* GetAddressNormalizer() override;
   const GURL& GetLastCommittedPrimaryMainFrameURL() const override;
@@ -63,7 +65,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   void ConfirmSaveAddressProfile(
       const autofill::AutofillProfile& profile,
       const autofill::AutofillProfile* original_profile,
-      bool is_migration_to_account,
+      SaveAddressBubbleType save_address_bubble_type,
       AddressProfileSavePromptCallback callback) override;
   autofill::AutofillClient::SuggestionUiSessionId ShowAutofillSuggestions(
       const PopupOpenArgs& open_args,
@@ -88,7 +90,6 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   autofill::SingleFieldFillRouter& GetSingleFieldFillRouter() override;
   bool IsAutofillEnabled() const override;
   bool IsAutofillProfileEnabled() const override;
-  bool IsAutofillPaymentMethodsEnabled() const override;
   void DidFillForm(autofill::AutofillTriggerSource trigger_source,
                    bool is_refill) override;
   autofill::autofill_metrics::FormInteractionsUkmLogger&
@@ -97,6 +98,7 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   bool IsAutocompleteEnabled() const override;
   bool IsPasswordManagerEnabled() const override;
   bool IsContextSecure() const override;
+  bool IsWalletStorageEnabled() const override;
   autofill::FormInteractionsFlowId GetCurrentFormInteractionsFlowId() override;
 
   // autofill::ContentAutofillClient:

@@ -7,11 +7,14 @@
 #include "base/android/jni_android.h"
 #include "base/android/jni_string.h"
 #include "base/containers/to_vector.h"
+#include "base/functional/callback_helpers.h"
 #include "base/memory/raw_ptr.h"
 #include "base/notimplemented.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/types/expected.h"
+#include "components/autofill/content/browser/content_autofill_client.h"
 #include "components/autofill/content/browser/renderer_forms_from_browser_form.h"
+#include "components/autofill/core/browser/autofill_server_prediction.h"
 #include "components/autofill/core/browser/logging/log_manager.h"
 #include "components/password_manager/core/browser/form_parsing/form_data_parser.h"
 #include "components/password_manager/core/browser/passkey_credential.h"
@@ -23,6 +26,7 @@
 #include "components/site_isolation/site_isolation_policy.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/browser/navigation_controller.h"
 #include "content/public/browser/navigation_handle.h"
 #include "content/public/browser/navigation_entry.h"
 #include "content/public/browser/render_frame_host.h"
@@ -115,8 +119,9 @@ WolvicPasswordManagerClient::WolvicPasswordManagerClient(
       web_contents, this);
 
   autofill_managers_observation_.Observe(
-      web_contents, autofill::ScopedAutofillManagersObservation::
-                        InitializationPolicy::kObservePreexistingManagers);
+      autofill::ContentAutofillClient::FromWebContents(web_contents),
+      autofill::ScopedAutofillManagersObservation::InitializationPolicy::
+          kObservePreexistingManagers);
 
   JNIEnv* env = AttachCurrentThread();
   java_obj_ = Java_PasswordManager_create(
@@ -316,7 +321,7 @@ void WolvicPasswordManagerClient::PasswordWasAutofilled(
 void WolvicPasswordManagerClient::AutofillHttpAuth(
     const password_manager::PasswordForm& preferred_match,
     const password_manager::PasswordFormManagerForUI* form_manager) {
-  httpauth_manager_.Autofill(preferred_match, form_manager);
+  httpauth_manager_.Autofill(preferred_match, form_manager, base::DoNothing());
   DCHECK(!form_manager->GetBestMatches().empty());
   PasswordWasAutofilled(form_manager->GetBestMatches(),
                         url::Origin::Create(form_manager->GetURL()),
