@@ -14,7 +14,7 @@
 using base::android::AttachCurrentThread;
 using base::android::ConvertJavaStringToUTF16;
 using base::android::ConvertUTF16ToJavaString;
-using base::android::JavaParamRef;
+using base::android::JavaRef;
 using base::android::ScopedJavaGlobalRef;
 
 namespace wolvic {
@@ -108,7 +108,7 @@ void UserDialogManagerBridge::OnDialogClosed(InProgressDialog* dialog,
 void JNI_UserDialogManagerBridge_ConfirmDialog(
     JNIEnv* env,
     jlong in_progress_dialog_ptr,
-    const JavaParamRef<jstring>& java_user_input) {
+    const JavaRef<jstring>& java_user_input) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
   auto* dialog = reinterpret_cast<InProgressDialog*>(in_progress_dialog_ptr);
   std::u16string user_input;

@@ -44,10 +44,6 @@ class WolvicPermissionManager : public content::PermissionControllerDelegate {
   static WolvicPermissionManager* GetInstance(bool off_the_record);
 
   // PermissionControllerDelegate overrides:
-  void RequestPermissions(
-      content::RenderFrameHost* render_frame_host,
-      const content::PermissionRequestDescription& request_description,
-      PermissionRequestCallback callback) override;
   void ResetPermission(blink::PermissionType permission,
                        const GURL& requesting_origin,
                        const GURL& embedding_origin) override;

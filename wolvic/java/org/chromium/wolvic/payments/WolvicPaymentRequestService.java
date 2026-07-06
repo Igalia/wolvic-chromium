@@ -17,6 +17,7 @@ import org.chromium.components.payments.DialogController;
 import org.chromium.components.payments.ErrorStrings;
 import org.chromium.components.payments.JourneyLogger;
 import org.chromium.components.payments.PaymentApp;
+import org.chromium.components.payments.PaymentAppError;
 import org.chromium.components.payments.PaymentAppType;
 import org.chromium.components.payments.PaymentHandlerHost;
 import org.chromium.components.payments.PaymentRequestParams;
@@ -166,24 +167,6 @@ public class WolvicPaymentRequestService
     public void onSpecValidated(PaymentRequestSpec spec) {
         mSpec = spec;
         mPaymentUiService.initialize(mSpec.getPaymentDetails());
-    }
-
-    // Implements BrowserPaymentRequest:
-    @Override
-    public boolean disconnectIfExtraValidationFails(
-            WebContents webContents,
-            Map<String, PaymentMethodData> methodData,
-            PaymentDetails details,
-            PaymentOptions options) {
-        assert methodData != null;
-        assert details != null;
-
-        if (!parseAndValidateDetailsFurtherIfNeeded(details)) {
-            mJourneyLogger.setAborted(AbortReason.INVALID_DATA_FROM_RENDERER);
-            disconnectFromClientWithDebugMessage(ErrorStrings.INVALID_PAYMENT_DETAILS);
-            return true;
-        }
-        return false;
     }
 
     // Implements BrowserPaymentRequest:
@@ -458,7 +441,7 @@ public class WolvicPaymentRequestService
 
             @Override
             public void showLeavingIncognitoWarning(
-                    Callback<String> denyCallback, Runnable approveCallback) {
+                    Callback<PaymentAppError> denyCallback, Runnable approveCallback) {
                 approveCallback.run();
             }
         };

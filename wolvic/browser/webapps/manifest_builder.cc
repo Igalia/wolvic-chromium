@@ -29,8 +29,8 @@ std::string GetDisplayMode(blink::mojom::DisplayMode display) {
       return "window-controls-overlay";
     case blink::mojom::DisplayMode::kTabbed:
       return "tabbed";
-    case blink::mojom::DisplayMode::kBorderless:
-      return "borderless";
+    case blink::mojom::DisplayMode::kUnframed:
+      return "unframed";
     case blink::mojom::DisplayMode::kPictureInPicture:
       return "picture-in-picture";
     default:
@@ -73,7 +73,7 @@ std::string GetScreenOrientationLockType(
 // static
 std::string ManifestBuilder::FromMojoToJson(
     const blink::mojom::Manifest& manifest) {
-  auto json = base::Value::Dict();
+  auto json = base::DictValue();
   if (manifest.name.has_value()) {
     json.Set("name", *manifest.name);
   }
@@ -101,9 +101,9 @@ std::string ManifestBuilder::FromMojoToJson(
     json.Set("description", *manifest.description);
   }
 
-  base::Value::List icons;
+  base::ListValue icons;
   for (const auto& icon : manifest.icons) {
-    auto value = base::Value::Dict().Set("src", icon.src.spec());
+    auto value = base::DictValue().Set("src", icon.src.spec());
     if (!icon.type.empty()) {
       value.Set("type", icon.type);
     }
@@ -126,7 +126,7 @@ std::string ManifestBuilder::FromMojoToJson(
 
   if (manifest.share_target.has_value()) {
     auto share_target =
-        base::Value::Dict()
+        base::DictValue()
             .Set("action", manifest.share_target->action.spec())
             .Set("method",
                  manifest.share_target->method ==
@@ -139,7 +139,7 @@ std::string ManifestBuilder::FromMojoToJson(
                                 ? "application/x-www-form-urlencoded"
                                 : "multipart/form-data");
 
-    base::Value::Dict param;
+    base::DictValue param;
     if (manifest.share_target->params.title.has_value()) {
       param.Set("title", *manifest.share_target->params.title);
     }
@@ -150,19 +150,19 @@ std::string ManifestBuilder::FromMojoToJson(
       param.Set("url", *manifest.share_target->params.url);
     }
 
-    base::Value::List files;
+    base::ListValue files;
     for (const auto& file : manifest.share_target->params.files) {
       if (!file.name.empty()) {
         continue;
       }
-      base::Value::List value;
+      base::ListValue value;
       for (const auto& accept : file.accept) {
         value.Append(accept);
       }
       if (value.empty()) {
         continue;
       }
-      files.Append(base::Value::Dict()
+      files.Append(base::DictValue()
                        .Set("name", file.name)
                        .Set("accept", std::move(value)));
     }
@@ -176,9 +176,9 @@ std::string ManifestBuilder::FromMojoToJson(
     json.Set("share_target", std::move(share_target));
   }
 
-  base::Value::List related_applications;
+  base::ListValue related_applications;
   for (const auto& app : manifest.related_applications) {
-    base::Value::Dict related_application;
+    base::DictValue related_application;
     if (app.platform.has_value()) {
       related_application.Set("platform", *app.platform);
     }
@@ -199,14 +199,14 @@ std::string ManifestBuilder::FromMojoToJson(
   json.Set("prefer_related_applications",
            manifest.prefer_related_applications ? "true" : "false");
 
-  if (manifest.has_theme_color) {
+  if (manifest.theme_color) {
     json.Set("theme_color",
-             color_utils::SkColorToRgbaString(manifest.theme_color));
+             color_utils::SkColorToRgbaString(*manifest.theme_color));
   }
 
-  if (manifest.has_background_color) {
+  if (manifest.background_color) {
     json.Set("background_color",
-             color_utils::SkColorToRgbaString(manifest.background_color));
+             color_utils::SkColorToRgbaString(*manifest.background_color));
   }
 
   return base::WriteJsonWithOptions(json, base::OPTIONS_PRETTY_PRINT).value();

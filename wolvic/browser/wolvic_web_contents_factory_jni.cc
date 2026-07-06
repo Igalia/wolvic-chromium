@@ -11,7 +11,7 @@
 #include "wolvic/wolvic_browser_context.h"
 #include "wolvic/wolvic_content_browser_client.h"
 
-using base::android::JavaParamRef;
+using base::android::JavaRef;
 using base::android::ScopedJavaLocalRef;
 using content::WebContents;
 

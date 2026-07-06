@@ -38,9 +38,9 @@ class FileSelectManager : public base::RefCountedThreadSafe<FileSelectManager,
       const blink::mojom::FileChooserParams& params);
 
   void OnFileSelected(
-      JNIEnv* env, const base::android::JavaParamRef<jstring>& filepath);
+      JNIEnv* env, const base::android::JavaRef<jstring>& filepath);
   void OnMultipleFilesSelected(
-      JNIEnv* env, const base::android::JavaParamRef<jobjectArray>& filepaths);
+      JNIEnv* env, const base::android::JavaRef<jobjectArray>& filepaths);
   void OnFileSelectionCanceled(JNIEnv* env);
 
  private:

@@ -20,10 +20,11 @@ class WolvicInstallHelper : public content::XrInstallHelper {
 
   // content::XrInstallHelper implementation.
   void EnsureInstalled(
-      int render_process_id,
-      int render_frame_id,
-      base::OnceCallback<void(bool)> install_callback) override {
-    std::move(install_callback).Run(true);
+      const content::GlobalRenderFrameHostId& frame_id,
+      base::OnceCallback<void(content::XrInstallResult)> install_callback)
+      override {
+    std::move(install_callback)
+        .Run(content::XrInstallResult::kSuccessAlreadyInstalled);
   }
 };
 

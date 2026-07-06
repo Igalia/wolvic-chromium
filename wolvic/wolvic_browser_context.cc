@@ -21,6 +21,7 @@
 #include "components/keyed_service/core/simple_factory_key.h"
 #include "components/keyed_service/core/simple_key_map.h"
 #include "components/leveldb_proto/public/proto_database_provider.h"
+#include "components/metrics/profile_metrics_service.h"
 #include "components/network_session_configurator/common/network_switches.h"
 #include "components/origin_trials/browser/leveldb_persistence_provider.h"
 #include "components/origin_trials/browser/origin_trials.h"
@@ -142,7 +143,7 @@ void WolvicBrowserContext::CreatePasswordStore() {
       {base::MayBlock(), base::TaskPriority::USER_VISIBLE});
   password_store_ = new password_manager::PasswordStore(
       std::make_unique<WolvicPasswordStoreBackend>());
-  password_store_->Init(/*affiliated_match_helper=*/nullptr);
+  password_store_->Init();
 }
 
 void WolvicBrowserContext::CreateIdentityManger() {
@@ -154,6 +155,7 @@ void WolvicBrowserContext::CreateIdentityManger() {
   params.pref_service = GetPrefService();
   params.profile_path = GetPrefStorePath();
   params.image_decoder = std::make_unique<WolvicImageDecoder>();
+  params.profile_metrics_service = GetProfileMetricsService();
   identity_manager_ = signin::BuildIdentityManager(&params);
 }
 
@@ -349,6 +351,18 @@ password_manager::FieldInfoManager* WolvicBrowserContext::GetFieldInfoManager() 
   return field_info_manager_.get();
 }
 
+metrics::ProfileMetricsService*
+WolvicBrowserContext::GetProfileMetricsService() {
+  // Wolvic uses a single profile, so no per-profile histogram suffix is needed
+  // (only global histograms are logged). Password manager code requires this to
+  // be non-null (PasswordFormMetricsRecorder CHECK_DEREFs it).
+  if (!profile_metrics_service_) {
+    profile_metrics_service_ =
+        std::make_unique<metrics::ProfileMetricsService>();
+  }
+  return profile_metrics_service_.get();
+}
+
 signin::IdentityManager* WolvicBrowserContext::GetIdentityManager() {
   if (!identity_manager_)
     CreateIdentityManger();
@@ -374,7 +388,7 @@ jlong WolvicBrowserContext::GetBrowserContextPointer(JNIEnv* env) {
 base::android::ScopedJavaLocalRef<jobject>
 JNI_WolvicBrowserContext_FromWebContents(
     JNIEnv* env,
-    const base::android::JavaParamRef<jobject>& jweb_contents) {
+    const base::android::JavaRef<jobject>& jweb_contents) {
   auto* web_contents = content::WebContents::FromJavaWebContents(jweb_contents);
   if (!web_contents) {
     return base::android::ScopedJavaLocalRef<jobject>();

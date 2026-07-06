@@ -18,6 +18,7 @@
 #include "components/autofill/core/browser/logging/log_manager.h"
 #include "components/password_manager/core/browser/form_parsing/form_data_parser.h"
 #include "components/password_manager/core/browser/passkey_credential.h"
+#include "components/password_manager/core/browser/password_store/password_form_converters.h"
 #include "components/password_manager/core/browser/password_ui_utils.h"
 #include "components/password_manager/core/browser/webauthn_credentials_delegate.h"
 #include "components/password_manager/content/browser/bad_message.h"
@@ -132,7 +133,7 @@ WolvicPasswordManagerClient::~WolvicPasswordManagerClient() = default;
 
 void WolvicPasswordManagerClient::OnLoginSaved(
     JNIEnv* env,
-    const base::android::JavaParamRef<jobject>& jobj) {
+    const base::android::JavaRef<jobject>& jobj) {
   if (!save_password_callback_)
     return;
 
@@ -143,7 +144,7 @@ void WolvicPasswordManagerClient::OnLoginSaved(
 
 void WolvicPasswordManagerClient::OnLoginSelected(
     JNIEnv* env,
-    const base::android::JavaParamRef<jobject>& jobj) {
+    const base::android::JavaRef<jobject>& jobj) {
   if (!credentials_callback_)
     return;
   auto form =
@@ -193,6 +194,11 @@ bool WolvicPasswordManagerClient::IsFillingEnabled(const GURL& url) const {
   JNIEnv* env = AttachCurrentThread();
   return Java_PasswordManager_isFillingEnabled(
       env, java_obj_, window_android->GetJavaObject());
+}
+
+password_manager::UndoPasswordChangeController*
+WolvicPasswordManagerClient::GetUndoPasswordChangeController() {
+  return &undo_password_change_controller_;
 }
 
 bool WolvicPasswordManagerClient::PromptUserToSaveOrUpdatePassword(
@@ -305,9 +311,9 @@ void WolvicPasswordManagerClient::AutomaticPasswordSave(
 }
 
 void WolvicPasswordManagerClient::PasswordWasAutofilled(
-    base::span<const password_manager::PasswordForm> best_matches,
+    base::span<const password_manager::StoredCredential> best_matches,
     const url::Origin& origin,
-    base::span<const password_manager::PasswordForm> federated_matches,
+    base::span<const password_manager::StoredCredential> federated_matches,
     bool was_autofilled_on_pageload) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
   if (!best_matches.size() || !best_matches[0].primary_key.has_value())
@@ -315,7 +321,9 @@ void WolvicPasswordManagerClient::PasswordWasAutofilled(
 
   JNIEnv* env = AttachCurrentThread();
   Java_PasswordManager_onPasswordAutofilled(
-      env, java_obj_, CreatePasswordFormJavaObject(env, best_matches[0]));
+      env, java_obj_,
+      CreatePasswordFormJavaObject(
+          env, password_manager::ToPasswordForm(best_matches[0])));
 }
 
 void WolvicPasswordManagerClient::AutofillHttpAuth(
@@ -371,6 +379,12 @@ WolvicPasswordManagerClient::GetNetworkContext() const {
 PrefService* WolvicPasswordManagerClient::GetPrefs() const {
   return WolvicBrowserContext::FromWebContents(*web_contents())
       ->GetPrefService();
+}
+
+metrics::ProfileMetricsService*
+WolvicPasswordManagerClient::GetProfileMetricsService() {
+  return WolvicBrowserContext::FromWebContents(*web_contents())
+      ->GetProfileMetricsService();
 }
 
 PrefService* WolvicPasswordManagerClient::GetLocalStatePrefs() const {
@@ -533,7 +547,8 @@ bool WolvicPasswordManagerClient::IsIsolationForPasswordSitesEnabled() const {
 void WolvicPasswordManagerClient::OnFieldTypesDetermined(
     autofill::AutofillManager& manager,
     autofill::FormGlobalId form_id,
-    FieldTypeSource source) {
+    FieldTypeSource source,
+    bool small_forms_were_parsed) {
   if (source == FieldTypeSource::kHeuristicsOrAutocomplete) {
     return;
   }

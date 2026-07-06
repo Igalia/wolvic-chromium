@@ -26,6 +26,7 @@
 #include "components/password_manager/core/browser/password_manager_client_helper.h"
 #include "components/password_manager/core/browser/password_store/password_store_backend_error.h"
 #include "components/password_manager/core/browser/sync_credentials_filter.h"
+#include "components/password_manager/core/browser/undo_password_change_controller.h"
 #include "content/public/browser/web_contents_observer.h"
 #include "content/public/browser/web_contents_user_data.h"
 #include "url/origin.h"
@@ -53,14 +54,16 @@ class WolvicPasswordManagerClient
   ~WolvicPasswordManagerClient() override;
 
   void OnLoginSaved(
-        JNIEnv* env, const base::android::JavaParamRef<jobject>& jobj);
+        JNIEnv* env, const base::android::JavaRef<jobject>& jobj);
   void OnLoginSelected(
-        JNIEnv* env, const base::android::JavaParamRef<jobject>& jobj);
+        JNIEnv* env, const base::android::JavaRef<jobject>& jobj);
   void OnDismissed(JNIEnv* env);
 
   // password_manager::PasswordManagerClient implementation.
   bool IsSavingAndFillingEnabled(const GURL& url) const override;
   bool IsFillingEnabled(const GURL& url) const override;
+  password_manager::UndoPasswordChangeController* GetUndoPasswordChangeController()
+      override;
   bool PromptUserToSaveOrUpdatePassword(
       std::unique_ptr<password_manager::PasswordFormManagerForUI> form_to_save,
       bool is_update) override;
@@ -86,9 +89,9 @@ class WolvicPasswordManagerClient
           saved_form_manager,
       bool is_update_confirmation) override;
   void PasswordWasAutofilled(
-      base::span<const password_manager::PasswordForm> best_matches,
+      base::span<const password_manager::StoredCredential> best_matches,
       const url::Origin& origin,
-      base::span<const password_manager::PasswordForm> federated_matches,
+      base::span<const password_manager::StoredCredential> federated_matches,
       bool was_autofilled_on_pageload) override;
   void AutofillHttpAuth(
       const password_manager::PasswordForm& preferred_match,
@@ -118,6 +121,7 @@ class WolvicPasswordManagerClient
   network::mojom::NetworkContext* GetNetworkContext() const override;
 
   PrefService* GetPrefs() const override;
+  metrics::ProfileMetricsService* GetProfileMetricsService() override;
   PrefService* GetLocalStatePrefs() const override;
   const syncer::SyncService* GetSyncService() const override;
   affiliations::AffiliationService* GetAffiliationService() override;
@@ -183,7 +187,8 @@ class WolvicPasswordManagerClient
   // autofill::AutofillManager::Observer:
   void OnFieldTypesDetermined(autofill::AutofillManager& manager,
                               autofill::FormGlobalId form_id,
-                              FieldTypeSource source) override;
+                              FieldTypeSource source,
+                              bool small_forms_were_parsed) override;
 
   password_manager::ContentPasswordManagerDriverFactory* GetDriverFactory()
       const;
@@ -193,6 +198,8 @@ class WolvicPasswordManagerClient
   password_manager::HttpAuthManagerImpl httpauth_manager_;
 
   const password_manager::SyncCredentialsFilter credentials_filter_;
+
+  password_manager::UndoPasswordChangeController undo_password_change_controller_;
 
   // Wolvic does not support passkeys/WebAuthn, but since M128 the password
   // suggestion show/accept paths unconditionally dereference this delegate, so

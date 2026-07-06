@@ -57,13 +57,12 @@ class WvrManager : public device::mojom::XRPresentationProvider,
 
   // XRPresentationProvider
   void SubmitFrameMissing(int16_t frame_index, const gpu::SyncToken&) override;
-  void SubmitFrame(int16_t frame_index,
-                   const gpu::MailboxHolder& mailbox,
-                   base::TimeDelta time_waited) override;
-  void SubmitFrameDrawnIntoTexture(int16_t frame_index,
-                                   const std::vector<device::LayerId>& layer_ids,
-                                   const gpu::SyncToken&,
-                                   base::TimeDelta time_waited) override;
+  void SubmitFrame(int16_t frame_index, base::TimeDelta time_waited) override;
+  void SubmitFrameDrawnIntoTexture(
+      int16_t frame_index,
+      std::vector<device::mojom::XRLayerUpdatePtr> layer_updates,
+      const std::vector<gpu::SyncToken>& camera_sync_tokens,
+      base::TimeDelta time_waited) override;
   void UpdateLayerBounds(int16_t frame_index,
                          const gfx::RectF& left_bounds,
                          const gfx::RectF& right_bounds,

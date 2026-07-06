@@ -29,8 +29,8 @@ class HttpAuthManager : public content::LoginDelegate {
   ~HttpAuthManager() override;
 
   void Proceed(JNIEnv* env,
-               const base::android::JavaParamRef<jstring>& username,
-               const base::android::JavaParamRef<jstring>& password);
+               const base::android::JavaRef<jstring>& username,
+               const base::android::JavaRef<jstring>& password);
   void Cancel(JNIEnv* env);
 
  private:

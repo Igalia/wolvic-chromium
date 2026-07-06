@@ -208,7 +208,7 @@ WvrManager::WvrManager(WvrApi *wvr_api, WvrGraphicsDelegate* graphics)
 
 WvrManager::~WvrManager() {
   ClosePresentationBindings();
-  ExitWebXRPresentation(base::NullCallback());
+  ExitWebXRPresentation(base::OnceClosure());
   webxr_.EndPresentation();
 }
 
@@ -398,7 +398,7 @@ void WvrManager::ClosePresentationBindings() {
 
 void WvrManager::OnSubmitClientMojoConnectionError() {
   ClosePresentationBindings();
-  ExitWebXRPresentation(base::NullCallback());
+  ExitWebXRPresentation(base::OnceClosure());
 }
 
 // See
@@ -802,21 +802,28 @@ void WvrManager::SubmitFrameMissing(int16_t frame_index,
 }
 
 void WvrManager::SubmitFrame(int16_t frame_index,
-                             const gpu::MailboxHolder& mailbox,
                              base::TimeDelta time_waited) {
   NOTREACHED() << "WVR uses DRAW_INTO_TEXTURE_MAILBOX transport";
 }
 
 void WvrManager::SubmitFrameDrawnIntoTexture(
     int16_t frame_index,
-    const std::vector<device::LayerId>& layer_ids,
-    const gpu::SyncToken& sync_token,
+    std::vector<device::mojom::XRLayerUpdatePtr> layer_updates,
+    const std::vector<gpu::SyncToken>& camera_sync_tokens,
     base::TimeDelta time_waited) {
   DVLOG(2) << __func__ << ": frame=" << frame_index;
 
-  if (!layer_ids.empty()) {
+  // |layer_updates| is expected to contain only the base layer.
+  if (layer_updates.size() != 1) {
     presentation_receiver_.ReportBadMessage(
         "Layers feature not enabled for this session");
+    return;
+  }
+
+  // WVR has no camera shared image, so no camera sync tokens are expected.
+  if (!camera_sync_tokens.empty()) {
+    presentation_receiver_.ReportBadMessage(
+        "Received unexpected camera sync tokens.");
     return;
   }
 
@@ -825,7 +832,8 @@ void WvrManager::SubmitFrameDrawnIntoTexture(
 
   webxr_.ProcessOrDefer(
       base::BindOnce(&WvrManager::ProcessFrameDrawnIntoTexture,
-                     weak_ptr_factory_.GetWeakPtr(), frame_index, sync_token));
+                     weak_ptr_factory_.GetWeakPtr(), frame_index,
+                     layer_updates[0]->sync_token));
 }
 
 void WvrManager::ProcessFrameDrawnIntoTexture(int16_t frame_index,
@@ -842,8 +850,8 @@ void WvrManager::ProcessFrameDrawnIntoTexture(int16_t frame_index,
   // Ask the GPU bridge to create a fence from the renderer's sync token.
   // OnWebXrTokenSignaled fires on the mailbox bridge thread; we post back to
   // the VR thread before doing GL work.
+  mailbox_bridge_->WaitSyncToken(sync_token);
   mailbox_bridge_->CreateGpuFence(
-      sync_token,
       base::BindPostTask(
           task_runner_,
           base::BindOnce(&WvrManager::OnWebXrTokenSignaled,

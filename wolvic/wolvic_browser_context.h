@@ -32,6 +32,10 @@ namespace visitedlink {
 class VisitedLinkWriter;
 }
 
+namespace metrics {
+class ProfileMetricsService;
+}
+
 namespace wolvic {
 
 class WolvicBrowserContext : public content::BrowserContext,
@@ -90,6 +94,7 @@ class WolvicBrowserContext : public content::BrowserContext,
   autofill::AutocompleteHistoryManager* GetAutocompleteHistoryManager();
   password_manager::PasswordStore* GetPasswordStore();
   password_manager::FieldInfoManager* GetFieldInfoManager();
+  metrics::ProfileMetricsService* GetProfileMetricsService();
   signin::IdentityManager* GetIdentityManager();
   WolvicSigninClient* GetSigninClient();
 
@@ -131,6 +136,7 @@ class WolvicBrowserContext : public content::BrowserContext,
   std::unique_ptr<autofill::AutocompleteHistoryManager> autocomplete_history_manager_;
   scoped_refptr<password_manager::PasswordStore> password_store_;
   std::unique_ptr<password_manager::FieldInfoManager> field_info_manager_;
+  std::unique_ptr<metrics::ProfileMetricsService> profile_metrics_service_;
   std::unique_ptr<signin::IdentityManager> identity_manager_;
   std::unique_ptr<WolvicSigninClient> signin_client_;
   base::android::ScopedJavaGlobalRef<jobject> java_obj_;

@@ -7,7 +7,7 @@
 #include "base/android/jni_string.h"
 #include "wolvic/browser/session_settings.h"
 
-using base::android::JavaParamRef;
+using base::android::JavaRef;
 using base::android::ScopedJavaLocalRef;
 
 namespace wolvic {
@@ -23,7 +23,7 @@ jint JNI_SessionSettings_GetUserAgentMode(JNIEnv* env) {
 
 void JNI_SessionSettings_SetUserAgentOverride(
     JNIEnv*,
-    const JavaParamRef<jstring>& value) {
+    const JavaRef<jstring>& value) {
   auto* settings = SessionSettings::Get();
   if (value) {
     settings->SetUserAgentOverride(

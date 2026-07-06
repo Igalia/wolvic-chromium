@@ -14,7 +14,7 @@
 
 using base::android::AttachCurrentThread;
 using base::android::ConvertJavaStringToUTF8;
-using base::android::JavaParamRef;
+using base::android::JavaRef;
 using base::android::ToJavaArrayOfStrings;
 using base::android::ScopedJavaLocalRef;
 
@@ -46,13 +46,13 @@ FileSelectManager::~FileSelectManager() {
 }
 
 void FileSelectManager::OnFileSelected(
-    JNIEnv* env, const JavaParamRef<jstring>& filepath) {
+    JNIEnv* env, const JavaRef<jstring>& filepath) {
   std::string path = ConvertJavaStringToUTF8(env, filepath);
   ConvertToFileChooserFileInfoList({base::FilePath(path)});
 }
 
 void FileSelectManager::OnMultipleFilesSelected(
-    JNIEnv* env, const JavaParamRef<jobjectArray>& filepaths) {
+    JNIEnv* env, const JavaRef<jobjectArray>& filepaths) {
   std::vector<base::FilePath> selected_files;
   jsize length = env->GetArrayLength(filepaths.obj());
   for (int i = 0; i < length; ++i) {

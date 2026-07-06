@@ -28,6 +28,7 @@
 #include "components/prefs/pref_registry_simple.h"
 #include "components/prefs/pref_service_factory.h"
 #include "components/variations/android/variations_seed_bridge.h"
+#include "components/variations/feature_overrides.h"
 #include "components/variations/platform_field_trials.h"
 #include "components/variations/pref_names.h"
 #include "components/variations/service/safe_seed_manager.h"
@@ -41,6 +42,7 @@
 #include "content/public/browser/browser_main_runner.h"
 #include "content/public/browser/content_browser_client.h"
 #include "content/public/common/content_client.h"
+#include "content/public/common/content_features.h"
 #include "content/public/common/content_switch_dependent_feature_overrides.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/main_function_params.h"
@@ -114,9 +116,6 @@ class ShellVariationsServiceClient
     return false;
   }
   bool IsEnterprise() override { return false; }
-  // Profiles aren't supported, so nothing to do here.
-  void RemoveGoogleGroupsFromPrefsForDeletedProfiles(
-      PrefService* local_state) override {}
 };
 
 void BindNetworkHintsHandler(
@@ -331,6 +330,18 @@ void WolvicContentMainDelegate::SetUpFieldTrials() {
   std::vector<std::string> variation_ids;
   auto feature_list = std::make_unique<base::FeatureList>();
 
+  // Wolvic does not implement FedCM. Since M150, content::webid::RequestService's
+  // constructor CHECK-fails when the FederatedIdentity permission-context
+  // delegates are null (which they are here) -> browser-process crash on any site
+  // that invokes the FedCM API. Disable the feature so the renderer never exposes
+  // it and the interface is never bound. Mirrors android_webview (aw_field_trials).
+  // The override is registered on `feature_list` when this scope's destructor runs,
+  // before the list is finalized below.
+  {
+    variations::FeatureOverrides feature_overrides(*feature_list);
+    feature_overrides.DisableFeature(::features::kFedCm);
+  }
+
   std::unique_ptr<variations::SeedResponse> initial_seed;
 #if BUILDFLAG(IS_ANDROID)
   if (!local_state_->HasPrefPath(variations::prefs::kVariationsSeedSignature)) {
@@ -351,8 +362,7 @@ void WolvicContentMainDelegate::SetUpFieldTrials() {
               variations_service_client.GetChannelForVariations(),
               /*entropy_providers=*/nullptr),
           variations_service_client.GetChannelForVariations(),
-          variations_service_client.GetVariationsSeedFileDir()),
-      variations::UIStringOverrider());
+          variations_service_client.GetVariationsSeedFileDir()));
 
   variations::SafeSeedManager safe_seed_manager(local_state_.get());
 
@@ -363,8 +373,6 @@ void WolvicContentMainDelegate::SetUpFieldTrials() {
   variations::PlatformFieldTrials platform_field_trials;
   field_trial_creator.SetUpFieldTrials(
       variation_ids,
-      command_line->GetSwitchValueASCII(
-          variations::switches::kForceVariationIds),
       content::GetSwitchDependentFeatureOverrides(*command_line),
       std::move(feature_list), metrics_state_manager.get(),
       &platform_field_trials, &safe_seed_manager,

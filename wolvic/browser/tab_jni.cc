@@ -19,7 +19,7 @@
 #include "wolvic/wolvic_browser_context.h"
 #include "wolvic/wolvic_content_browser_client.h"
 
-using base::android::JavaParamRef;
+using base::android::JavaRef;
 using base::android::ScopedJavaLocalRef;
 using content::WebContents;
 
@@ -27,7 +27,7 @@ namespace wolvic {
 
 namespace {
 
-void doPageZoom(const JavaParamRef<jobject>& jweb_contents,
+void doPageZoom(const JavaRef<jobject>& jweb_contents,
                 content::PageZoom zoom) {
   WebContents* web_contents = WebContents::FromJavaWebContents(jweb_contents);
   DCHECK(web_contents);
@@ -37,7 +37,7 @@ void doPageZoom(const JavaParamRef<jobject>& jweb_contents,
 }  // namespace
 
 void JNI_Tab_AttachWebContents(JNIEnv* env,
-                            const JavaParamRef<jobject>& jweb_contents) {
+                            const JavaRef<jobject>& jweb_contents) {
   WebContents* web_contents = WebContents::FromJavaWebContents(jweb_contents);
   DCHECK(web_contents);
   auto wolvic_contents = std::make_unique<WolvicContents>(
@@ -47,7 +47,7 @@ void JNI_Tab_AttachWebContents(JNIEnv* env,
 }
 
 void JNI_Tab_ReleaseWebContents(JNIEnv* env,
-                                const JavaParamRef<jobject>& jweb_contents) {
+                                const JavaRef<jobject>& jweb_contents) {
   WebContents* web_contents = WebContents::FromJavaWebContents(jweb_contents);
   DCHECK(web_contents);
 
@@ -58,8 +58,8 @@ void JNI_Tab_ReleaseWebContents(JNIEnv* env,
 
 void JNI_Tab_SetWebContentsDelegate(
     JNIEnv* env,
-    const JavaParamRef<jobject>& jweb_contents,
-    const JavaParamRef<jobject>& jweb_contents_delegate) {
+    const JavaRef<jobject>& jweb_contents,
+    const JavaRef<jobject>& jweb_contents_delegate) {
   WebContents* web_contents = WebContents::FromJavaWebContents(jweb_contents);
   DCHECK(web_contents);
 
@@ -74,22 +74,22 @@ void JNI_Tab_SetWebContentsDelegate(
 }
 
 void JNI_Tab_PageZoomIn(JNIEnv* env,
-                        const JavaParamRef<jobject>& jweb_contents) {
+                        const JavaRef<jobject>& jweb_contents) {
   doPageZoom(jweb_contents, content::PAGE_ZOOM_IN);
 }
 
 void JNI_Tab_PageZoomOut(JNIEnv* env,
-                         const JavaParamRef<jobject>& jweb_contents) {
+                         const JavaRef<jobject>& jweb_contents) {
   doPageZoom(jweb_contents, content::PAGE_ZOOM_OUT);
 }
 
 void JNI_Tab_PageZoomReset(JNIEnv* env,
-                           const JavaParamRef<jobject>& jweb_contents) {
+                           const JavaRef<jobject>& jweb_contents) {
   doPageZoom(jweb_contents, content::PAGE_ZOOM_RESET);
 }
 
 jint JNI_Tab_GetCurrentZoomLevel(JNIEnv* env,
-                                 const JavaParamRef<jobject>& jweb_contents) {
+                                 const JavaRef<jobject>& jweb_contents) {
   WebContents* web_contents = WebContents::FromJavaWebContents(jweb_contents);
   DCHECK(web_contents);
 

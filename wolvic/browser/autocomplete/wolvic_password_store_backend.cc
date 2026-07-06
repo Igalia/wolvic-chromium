@@ -12,6 +12,7 @@
 #include "base/barrier_callback.h"
 #include "base/functional/bind.h"
 #include "base/functional/callback.h"
+#include "base/logging.h"
 #include "base/memory/weak_ptr.h"
 #include "base/no_destructor.h"
 #include "base/notimplemented.h"
@@ -20,6 +21,7 @@
 #include "components/affiliations/core/browser/affiliation_utils.h"
 #include "components/password_manager/core/browser/password_form.h"
 #include "components/password_manager/core/browser/password_store/get_logins_with_affiliations_request_handler.h"
+#include "components/password_manager/core/browser/password_store/password_form_converters.h"
 #include "components/password_manager/core/browser/password_store/password_store_backend.h"
 #include "components/sync/model/data_type_controller_delegate.h"
 #include "components/password_manager/core/browser/password_store/password_store_util.h"
@@ -87,7 +89,7 @@ WolvicPasswordStoreBackend::~WolvicPasswordStoreBackend()  {
 void WolvicPasswordStoreBackend::OnCompleteWithLogins(
     JNIEnv* env,
     int reply_id,
-    const base::android::JavaParamRef<jobjectArray>& array) {
+    const base::android::JavaRef<jobjectArray>& array) {
   DCHECK_CALLED_ON_VALID_SEQUENCE(main_sequence_checker_);
 
   password_manager::LoginsResult passwords;
@@ -98,7 +100,8 @@ void WolvicPasswordStoreBackend::OnCompleteWithLogins(
       ScopedJavaLocalRef<jobject> j_password_form = ScopedJavaLocalRef<jobject>::Adopt(
           env,
           static_cast<jobject>(env->GetObjectArrayElement(array.obj(), i)));
-      passwords.push_back(GetPasswordFormFromJavaObject(env, j_password_form));
+      passwords.push_back(password_manager::FromPasswordForm(
+          GetPasswordFormFromJavaObject(env, j_password_form)));
     }
   }
 
@@ -132,7 +135,7 @@ void WolvicPasswordStoreBackend::OnLoginChanged(JNIEnv* env, int reply_id) {
 void WolvicPasswordStoreBackend::OnError(
     JNIEnv* env,
     int reply_id,
-    const base::android::JavaParamRef<jstring> jError) {
+    const base::android::JavaRef<jstring>& jError) {
   DCHECK_CALLED_ON_VALID_SEQUENCE(main_sequence_checker_);
 
   std::string error = base::android::ConvertJavaStringToUTF8(jError);
@@ -170,11 +173,9 @@ void WolvicPasswordStoreBackend::OnError(
 }
 
 void WolvicPasswordStoreBackend::InitBackend(
-    password_manager::AffiliatedMatchHelper* affiliated_match_helper,
     RemoteChangesReceived remote_form_changes_received,
     base::RepeatingClosure sync_enabled_or_disabled_cb,
     base::OnceCallback<void(bool)> completion) {
-  affiliated_match_helper_ = affiliated_match_helper;
   std::move(completion).Run(/*success=*/true);
 
   main_task_runner_ = base::SequencedTaskRunner::GetCurrentDefault();
@@ -189,12 +190,11 @@ void WolvicPasswordStoreBackend::InitBackend(
 
 void WolvicPasswordStoreBackend::Shutdown(
     base::OnceClosure shutdown_completed) {
-  affiliated_match_helper_ = nullptr;
   std::move(shutdown_completed).Run();
 }
 
-bool WolvicPasswordStoreBackend::IsAbleToSavePasswords() {
-  return true;
+password_manager::ActionableError WolvicPasswordStoreBackend::GetError() {
+  return password_manager::ActionableError::kNoError;
 }
 
 void WolvicPasswordStoreBackend::GetAllLoginsAsync(
@@ -245,43 +245,47 @@ void WolvicPasswordStoreBackend::GetGroupedMatchingLoginsAsync(
     const password_manager::PasswordFormDigest& form_digest,
     password_manager::LoginsOrErrorReply callback) {
   GetLoginsWithAffiliationsRequestHandler(
-      form_digest, this, affiliated_match_helper_.get(), std::move(callback));
+      form_digest, this, /*affiliated_match_helper=*/nullptr,
+      std::move(callback));
 }
 
 void WolvicPasswordStoreBackend::AddLoginAsync(
-    const password_manager::PasswordForm& form,
+    password_manager::StoredCredential cred,
     password_manager::PasswordChangesOrErrorReply callback) {
   AddReplayCallback(std::move(callback));
 
   JNIEnv* env = AttachCurrentThread();
   Java_PasswordStoreBackend_addLogin(
-      env, java_obj_, reply_id_, CreatePasswordFormJavaObject(env, form));
+      env, java_obj_, reply_id_,
+      CreatePasswordFormJavaObject(
+          env, password_manager::ToPasswordForm(std::move(cred))));
 }
 
 void WolvicPasswordStoreBackend::UpdateLoginAsync(
-    const password_manager::PasswordForm& form,
+    password_manager::StoredCredential cred,
     password_manager::PasswordChangesOrErrorReply callback) {
-  DCHECK(!form.blocked_by_user ||
-         (form.username_value.empty() && form.password_value.empty()));
+  DCHECK(!cred.blocked_by_user ||
+         (cred.username_value.empty() && cred.password_value.empty()));
   AddReplayCallback(std::move(callback));
 
   JNIEnv* env = AttachCurrentThread();
   Java_PasswordStoreBackend_updateLogin(
-      env, java_obj_, reply_id_, CreatePasswordFormJavaObject(env, form));
+      env, java_obj_, reply_id_,
+      CreatePasswordFormJavaObject(
+          env, password_manager::ToPasswordForm(std::move(cred))));
 }
 
 void WolvicPasswordStoreBackend::RemoveLoginAsync(
     const base::Location& location,
-    const password_manager::PasswordForm& form,
+    password_manager::StoredCredential cred,
     password_manager::PasswordChangesOrErrorReply callback) {
-  RemoveLoginInternal(form, std::move(callback));
+  RemoveLoginInternal(std::move(cred), std::move(callback));
 }
 
 void WolvicPasswordStoreBackend::RemoveLoginsCreatedBetweenAsync(
     const base::Location& location,
     base::Time delete_begin,
     base::Time delete_end,
-    base::OnceCallback<void(bool)> sync_completion,
     password_manager::PasswordChangesOrErrorReply callback) {
   GetAllLoginsInternal(
       base::BindOnce(&WolvicPasswordStoreBackend::FilterAndRemoveLogins,
@@ -358,13 +362,15 @@ void WolvicPasswordStoreBackend::GetAutofillableLoginsAsyncInternal(
 }
 
 void WolvicPasswordStoreBackend::RemoveLoginInternal(
-    const password_manager::PasswordForm& form,
+    password_manager::StoredCredential cred,
     password_manager::PasswordChangesOrErrorReply callback) {
   AddReplayCallback(std::move(callback));
 
   JNIEnv* env = AttachCurrentThread();
   Java_PasswordStoreBackend_removeLogin(
-      env, java_obj_, reply_id_, CreatePasswordFormJavaObject(env, form));
+      env, java_obj_, reply_id_,
+      CreatePasswordFormJavaObject(
+          env, password_manager::ToPasswordForm(std::move(cred))));
 }
 
 void WolvicPasswordStoreBackend::FilterAndRemoveLogins(
@@ -383,8 +389,8 @@ void WolvicPasswordStoreBackend::FilterAndRemoveLogins(
 
   password_manager::LoginsResult logins =
       std::move(std::get<password_manager::LoginsResult>(result));
-  std::vector<password_manager::PasswordForm> logins_to_remove;
-  for (const auto& login : logins) {
+  std::vector<password_manager::StoredCredential> logins_to_remove;
+  for (auto& login : logins) {
     if (login.date_created >= delete_begin &&
         login.date_created < delete_end && url_filter.Run(login.url)) {
       logins_to_remove.push_back(std::move(login));
@@ -401,7 +407,7 @@ void WolvicPasswordStoreBackend::FilterAndRemoveLogins(
 
   // Create and run the callback chain that removes the logins.
   base::OnceClosure callbacks_chain = base::DoNothing();
-  for (const auto& login : logins_to_remove) {
+  for (auto& login : logins_to_remove) {
     callbacks_chain = base::BindOnce(
         &WolvicPasswordStoreBackend::RemoveLoginInternal,
         weak_ptr_factory_.GetWeakPtr(), std::move(login),
@@ -424,8 +430,8 @@ void WolvicPasswordStoreBackend::FilterAndDisableAutoSignIn(
 
   password_manager::LoginsResult logins =
       std::move(std::get<password_manager::LoginsResult>(result));
-  std::vector<password_manager::PasswordForm> logins_to_update;
-  for (password_manager::PasswordForm& login : logins) {
+  std::vector<password_manager::StoredCredential> logins_to_update;
+  for (password_manager::StoredCredential& login : logins) {
     // Update login if it matches |origin_filer| and has autosignin enabled.
     if (origin_filter.Run(login.url) && !login.skip_zero_click) {
       logins_to_update.push_back(std::move(login));
@@ -441,7 +447,7 @@ void WolvicPasswordStoreBackend::FilterAndDisableAutoSignIn(
 
   // Create and run a callbacks chain that updates the logins.
   base::OnceClosure callbacks_chain = base::DoNothing();
-  for (password_manager::PasswordForm& login : logins_to_update) {
+  for (password_manager::StoredCredential& login : logins_to_update) {
     callbacks_chain = base::BindOnce(
         &WolvicPasswordStoreBackend::UpdateLoginAsync,
         weak_ptr_factory_.GetWeakPtr(), std::move(login),

@@ -17,6 +17,7 @@
 #include "base/time/time.h"
 #include "components/autofill/content/browser/content_autofill_driver.h"
 #include "components/autofill/content/browser/content_autofill_driver_factory.h"
+#include "components/autofill/content/browser/renderer_forms_from_browser_form.h"
 #include "components/autofill/core/browser/autofill_type.h"
 #include "components/autofill/core/browser/country_type.h"
 #include "components/autofill/core/browser/data_model/payments/autofill_offer_data.h"
@@ -25,7 +26,6 @@
 #include "components/autofill/core/browser/form_structure.h"
 #include "components/autofill/core/browser/ui/autofill_suggestion_delegate.h"
 #include "components/autofill/core/common/autofill_clock.h"
-#include "components/autofill/core/common/form_interactions_flow.h"
 #include "components/autofill/core/common/unique_ids.h"
 #include "components/password_manager/content/browser/content_password_manager_driver.h"
 #include "components/password_manager/core/browser/password_manager_settings_service.h"
@@ -128,6 +128,25 @@ const signin::IdentityManager* WolvicAutofillClient::GetIdentityManager()
   return nullptr;
 }
 
+metrics::ProfileMetricsService*
+WolvicAutofillClient::GetProfileMetricsService() {
+  return WolvicBrowserContext::FromWebContents(*web_contents())
+      ->GetProfileMetricsService();
+}
+
+autofill::PasswordManagerDelegate*
+WolvicAutofillClient::GetPasswordManagerDelegate(
+    const autofill::FieldGlobalId& field_id) {
+  content::RenderFrameHost* rfh = autofill::FindRenderFrameHostByToken(
+      *web_contents(), field_id.frame_token);
+  if (!rfh)
+    return nullptr;
+  password_manager::ContentPasswordManagerDriver* driver =
+      password_manager::ContentPasswordManagerDriver::GetForRenderFrameHost(
+          rfh);
+  return driver ? driver->GetPasswordAutofillManager() : nullptr;
+}
+
 autofill::FormDataImporter* WolvicAutofillClient::GetFormDataImporter() {
   return nullptr;
 }
@@ -188,7 +207,7 @@ void WolvicAutofillClient::ConfirmSaveAddressProfile(
 void WolvicAutofillClient::OnLoginSelected(JNIEnv* env, jint index) {
   if (!delegate_)
     return;
- 
+
   if (index < 0 || static_cast<size_t>(index) >= suggestions_.size()) {
     delegate_->ClearPreviewedForm();
     return;
@@ -239,7 +258,8 @@ WolvicAutofillClient::GetAutofillSuggestions() const {
 void WolvicAutofillClient::UpdateAutofillSuggestions(
     const std::vector<autofill::Suggestion>& suggestions,
     autofill::FillingProduct main_filling_product,
-    autofill::AutofillSuggestionTriggerSource trigger_source) {
+    autofill::AutofillSuggestionTriggerSource trigger_source,
+    autofill::AutofillSuggestionsIgnoreFocusLoss ignore_focus_loss) {
   if (!delegate_)
     return;
 
@@ -250,13 +270,30 @@ void WolvicAutofillClient::UpdateAutofillSuggestions(
   Java_AutofillManager_showAutofillPopup(env, java_obj_);
 }
 
-void WolvicAutofillClient::HideAutofillSuggestions(
-    autofill::SuggestionHidingReason reason) {
+void WolvicAutofillClient::HideSuggestions(
+    autofill::SuggestionHidingReason reason,
+    std::optional<autofill::FillingProduct> product) {
+  // Wolvic's credential picker is an asynchronous, modal VR surface rather than
+  // an inline popup. Opening it blurs the underlying web input, so the autofill
+  // core emits focus/renderer-driven hide requests. Honoring those would tear
+  // down `delegate_`/`suggestions_` before the user taps a row, silently
+  // dropping the fill. Only dismiss for reasons that reflect an explicit
+  // accept/abort or genuine teardown; ignore the spurious focus churn.
+  switch (reason) {
+    case autofill::SuggestionHidingReason::kAcceptSuggestion:
+    case autofill::SuggestionHidingReason::kUserAborted:
+    case autofill::SuggestionHidingReason::kNavigation:
+    case autofill::SuggestionHidingReason::kTabGone:
+    case autofill::SuggestionHidingReason::kViewDestroyed:
+      break;
+    default:
+      return;
+  }
   JNIEnv* env = AttachCurrentThread();
   Java_AutofillManager_dismissPrompt(env, java_obj_);
   if (delegate_) {
     delegate_->ClearPreviewedForm();
-    delegate_->OnSuggestionsHidden();
+    delegate_->OnSuggestionsHidden(reason);
   }
   suggestions_.clear();
   delegate_.reset();
@@ -297,10 +334,6 @@ bool WolvicAutofillClient::IsAutofillProfileEnabled() const {
   return false;
 }
 
-void WolvicAutofillClient::DidFillForm(
-    autofill::AutofillTriggerSource trigger_source,
-    bool is_refill) {}
-
 autofill::autofill_metrics::FormInteractionsUkmLogger&
 WolvicAutofillClient::GetFormInteractionsUkmLogger() {
   NOTREACHED();
@@ -332,20 +365,8 @@ bool WolvicAutofillClient::IsContextSecure() const {
   return false;
 }
 
-bool WolvicAutofillClient::IsWalletStorageEnabled() const {
+bool WolvicAutofillClient::IsWalletPublicPassStorageEnabled() const {
   return false;
-}
-
-autofill::FormInteractionsFlowId
-WolvicAutofillClient::GetCurrentFormInteractionsFlowId() {
-  constexpr base::TimeDelta max_flow_time = base::Minutes(20);
-  base::Time now = autofill::AutofillClock::Now();
-
-  if (now - flow_id_date_ > max_flow_time || now < flow_id_date_) {
-    flow_id_ = autofill::FormInteractionsFlowId();
-    flow_id_date_ = now;
-  }
-  return flow_id_;
 }
 
 std::unique_ptr<autofill::AutofillManager> WolvicAutofillClient::CreateManager(

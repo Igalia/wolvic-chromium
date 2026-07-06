@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "base/path_service.h"
+#include "components/autofill/content/browser/content_autofill_driver_factory.h"
 #include "components/cdm/browser/media_drm_storage_impl.h"
 #include "components/embedder_support/user_agent_utils.h"
 #include "components/password_manager/content/browser/content_password_manager_driver_factory.h"
@@ -207,6 +208,10 @@ void WolvicContentBrowserClient::
     RegisterAssociatedInterfaceBindersForRenderFrameHost(
     content::RenderFrameHost& render_frame_host,
     blink::AssociatedInterfaceRegistry& associated_registry) {
+  associated_registry.AddInterface<autofill::mojom::AutofillDriver>(
+      base::BindRepeating(
+          &autofill::ContentAutofillDriverFactory::BindAutofillDriver,
+          &render_frame_host));
   associated_registry.AddInterface<
       autofill::mojom::PasswordManagerDriver>(base::BindRepeating(
       [](content::RenderFrameHost* render_frame_host,

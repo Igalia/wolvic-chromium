@@ -78,8 +78,6 @@ WolvicPermissionType ToWolvicPermissionType(blink::PermissionType permission) {
       return WolvicPermissionType::kGeolocation;
     case blink::PermissionType::NOTIFICATIONS:
       return WolvicPermissionType::kDesktopNotification;
-    case blink::PermissionType::DURABLE_STORAGE:
-      return WolvicPermissionType::kPersistentStorage;
     case blink::PermissionType::VR:
     case blink::PermissionType::AR:
       return WolvicPermissionType::kXr;
@@ -329,7 +327,11 @@ WolvicPermissionManager* WolvicPermissionManager::GetInstance(
   return g_instance;
 }
 
-void WolvicPermissionManager::RequestPermissions(
+void WolvicPermissionManager::ResetPermission(blink::PermissionType permission,
+                                              const GURL& requesting_origin,
+                                              const GURL& embedding_origin) {}
+
+void WolvicPermissionManager::RequestPermissionsFromCurrentDocument(
     content::RenderFrameHost* render_frame_host,
     const content::PermissionRequestDescription& request_description,
     PermissionRequestCallback callback) {
@@ -357,18 +359,6 @@ void WolvicPermissionManager::RequestPermissions(
       request_description, std::move(callback)));
 
   RequestContentPermissions(env, in_progress_requests_.back().get());
-}
-
-void WolvicPermissionManager::ResetPermission(blink::PermissionType permission,
-                                              const GURL& requesting_origin,
-                                              const GURL& embedding_origin) {}
-
-void WolvicPermissionManager::RequestPermissionsFromCurrentDocument(
-    content::RenderFrameHost* render_frame_host,
-    const content::PermissionRequestDescription& request_description,
-    PermissionRequestCallback callback) {
-  RequestPermissions(render_frame_host, request_description,
-                     std::move(callback));
 }
 
 blink::mojom::PermissionStatus WolvicPermissionManager::GetPermissionStatus(
@@ -668,7 +658,7 @@ static void JNI_PermissionManagerBridge_OnContentPermissionResult(
     JNIEnv* env,
     jboolean is_off_the_record,
     jlong in_progress_request_ptr,
-    const base::android::JavaParamRef<jintArray>& results) {
+    const jni_zero::JavaRef<jintArray>& results) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
   auto* in_progress_request =
@@ -689,7 +679,7 @@ static void JNI_PermissionManagerBridge_OnAndroidPermissionResult(
     JNIEnv* env,
     jboolean is_off_the_record,
     jlong in_progress_request_ptr,
-    const base::android::JavaParamRef<jintArray>& results) {
+    const jni_zero::JavaRef<jintArray>& results) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
   auto* in_progress_request =
@@ -711,8 +701,8 @@ static void JNI_PermissionManagerBridge_OnMediaPermissionResult(
     jboolean is_off_the_record,
     jlong in_progress_request_ptr,
     jboolean granted,
-    const base::android::JavaParamRef<jstring>& java_video_id,
-    const base::android::JavaParamRef<jstring>& java_audio_id) {
+    const jni_zero::JavaRef<jstring>& java_video_id,
+    const jni_zero::JavaRef<jstring>& java_audio_id) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
 
   auto* in_progress_request =

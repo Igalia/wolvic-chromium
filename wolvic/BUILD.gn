@@ -318,6 +318,10 @@ jinja_template("content_manifest") {
 }
 
 generate_jni("jni_headers") {
+  # M150 defaults enable_definition_macros on, wrapping glue in DEFINE_JNI(Class)
+  # macros that each implementing .cc must invoke. Wolvic includes the generated
+  # headers per-file expecting auto-defined entrypoints, so keep classic codegen.
+  enable_definition_macros = false
   sources = [
     "java/org/chromium/wolvic/AutofillManager.java",
     "java/org/chromium/wolvic/ColorChooserManager.java",
@@ -390,6 +394,7 @@ android_library("wolvic_java") {
     "//content/public/android:content_java",
     "//components/payments/content/android:java",
     "//components/payments/content/android:service_java",
+    "//components/payments/content/android:service_impl_java",
     "//components/payments/content/android/ui:java",
     "//components/payments/mojom:mojom_java",
     "//mojo/public/java:bindings_java",

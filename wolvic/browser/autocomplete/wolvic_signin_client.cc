@@ -66,10 +66,6 @@ bool WolvicSigninClient::IsClearPrimaryAccountAllowed() const {
   return true;
 }
 
-bool WolvicSigninClient::IsRevokeSyncConsentAllowed() const {
-  return false;
-}
-
 void WolvicSigninClient::PreSignOut(
     base::OnceCallback<void(SignoutDecision)> on_signout_decision_reached,
     signin_metrics::ProfileSignout signout_source_metric) {
@@ -131,7 +127,7 @@ void WolvicSigninClient::OnCloseBrowsersAborted(
     const base::FilePath& profile_path) {
   // Disallow sign-out (aborted).
   std::move(on_signout_decision_reached_)
-      .Run(SignoutDecision::REVOKE_SYNC_DISALLOWED);
+      .Run(SignoutDecision::CLEAR_PRIMARY_ACCOUNT_DISALLOWED);
 }
 
 } // namespace wolvic

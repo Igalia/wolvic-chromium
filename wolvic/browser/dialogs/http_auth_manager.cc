@@ -50,8 +50,8 @@ void HttpAuthManager::CloseDialog() {
 
 void HttpAuthManager::Proceed(
     JNIEnv* env,
-    const base::android::JavaParamRef<jstring>& username,
-    const base::android::JavaParamRef<jstring>& password) {
+    const base::android::JavaRef<jstring>& username,
+    const base::android::JavaRef<jstring>& password) {
   DCHECK_CURRENTLY_ON(content::BrowserThread::UI);
   if (callback_) {
     std::move(callback_).Run(net::AuthCredentials(

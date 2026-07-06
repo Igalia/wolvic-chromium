@@ -35,22 +35,21 @@ class WolvicPasswordStoreBackend
   void OnCompleteWithLogins(
       JNIEnv* env,
       int reply_id,
-      const base::android::JavaParamRef<jobjectArray>& array);
+      const base::android::JavaRef<jobjectArray>& array);
   void OnLoginChanged(JNIEnv* env, int reply_id);
   void OnError(JNIEnv* env, int reply_id,
-               const base::android::JavaParamRef<jstring> jError);
+               const base::android::JavaRef<jstring>& jError);
 
  private:
   SEQUENCE_CHECKER(main_sequence_checker_);
 
   // Implements password_manager::PasswordStoreBackend interface.
   void InitBackend(
-      password_manager::AffiliatedMatchHelper* affiliated_match_helper,
       RemoteChangesReceived remote_form_changes_received,
       base::RepeatingClosure sync_enabled_or_disabled_cb,
       base::OnceCallback<void(bool)> completion) override;
   void Shutdown(base::OnceClosure shutdown_completed) override;
-  bool IsAbleToSavePasswords() override;
+  password_manager::ActionableError GetError() override;
   void GetAllLoginsAsync(
       password_manager::LoginsOrErrorReply callback) override;
   void GetAllLoginsWithAffiliationAndBrandingAsync(
@@ -65,20 +64,19 @@ class WolvicPasswordStoreBackend
       const password_manager::PasswordFormDigest& form_digest,
       password_manager::LoginsOrErrorReply callback) override;
   void AddLoginAsync(
-      const password_manager::PasswordForm& form,
+      password_manager::StoredCredential cred,
       password_manager::PasswordChangesOrErrorReply callback) override;
   void UpdateLoginAsync(
-      const password_manager::PasswordForm& form,
+      password_manager::StoredCredential cred,
       password_manager::PasswordChangesOrErrorReply callback) override;
   void RemoveLoginAsync(
       const base::Location& location,
-      const password_manager::PasswordForm& form,
+      password_manager::StoredCredential cred,
       password_manager::PasswordChangesOrErrorReply callback) override;
   void RemoveLoginsCreatedBetweenAsync(
       const base::Location& location,
       base::Time delete_begin,
       base::Time delete_end,
-      base::OnceCallback<void(bool)> sync_completion,
       password_manager::PasswordChangesOrErrorReply callback) override;
   void DisableAutoSignInForOriginsAsync(
       const base::RepeatingCallback<bool(const GURL&)>& origin_filter,
@@ -97,7 +95,7 @@ class WolvicPasswordStoreBackend
   void GetAutofillableLoginsAsyncInternal(
       password_manager::LoginsOrErrorReply callback);
   void RemoveLoginInternal(
-      const password_manager::PasswordForm& form,
+      password_manager::StoredCredential cred,
       password_manager::PasswordChangesOrErrorReply callback);
   void FilterAndRemoveLogins(
       const base::RepeatingCallback<bool(const GURL&)>& url_filter,
@@ -122,7 +120,6 @@ class WolvicPasswordStoreBackend
       password_manager::LoginsOrErrorReply,
       password_manager::PasswordChangesOrErrorReply>>> reply_map_
           GUARDED_BY_CONTEXT(main_sequence_checker_);
-  raw_ptr<password_manager::AffiliatedMatchHelper> affiliated_match_helper_;
 
   // TaskRunner to run responses on the correct thread.
   scoped_refptr<base::SequencedTaskRunner> main_task_runner_;

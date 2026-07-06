@@ -39,6 +39,15 @@ class WolvicAutofillManager : public autofill::AutofillManager {
 
   void ReportAutofillWebOTPMetrics(bool used_web_otp) override {}
 
+  void FillOrPreviewField(
+      autofill::mojom::ActionPersistence action_persistence,
+      autofill::mojom::FieldActionType action_type,
+      const autofill::FormData& form,
+      const autofill::FormFieldData& field,
+      const std::u16string& value,
+      autofill::FillingProduct filling_product,
+      std::optional<autofill::FieldType> field_type_used) override {}
+
  protected:
   void OnFormSubmittedImpl(const autofill::FormData& form,
                            autofill::mojom::SubmissionSource source) override {}
@@ -60,7 +69,7 @@ class WolvicAutofillManager : public autofill::AutofillManager {
       const gfx::Rect& caret_bounds,
       autofill::AutofillSuggestionTriggerSource trigger_source,
       std::optional<autofill::PasswordSuggestionRequest> password_request)
-      override {}
+      override;
 
   void OnFocusOnFormFieldImpl(const autofill::FormData& form,
                               const autofill::FieldGlobalId& field_id) override {}
@@ -82,8 +91,11 @@ class WolvicAutofillManager : public autofill::AutofillManager {
   }
 
   void OnLoadedServerPredictionsImpl(
-      base::span<const raw_ptr<autofill::FormStructure, VectorExperimental>>
-          forms) override {}
+      base::span<const raw_ref<autofill::FormStructure>> forms) override {}
+
+  void SuppressAutomaticRefillsImpl(
+      const autofill::FillId& fill_id) override {}
+  void RequestRefillImpl(const autofill::FillId& fill_id) override {}
 
  private:
   base::WeakPtrFactory<WolvicAutofillManager> weak_ptr_factory_{this};

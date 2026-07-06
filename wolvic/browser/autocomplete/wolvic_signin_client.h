@@ -33,7 +33,6 @@ class WolvicSigninClient : public SigninClient {
   // SigninClient implementation.
   PrefService* GetPrefs() override;
   bool IsClearPrimaryAccountAllowed() const override;
-  bool IsRevokeSyncConsentAllowed() const override;
   void PreSignOut(
       base::OnceCallback<void(SignoutDecision)> on_signout_decision_reached,
       signin_metrics::ProfileSignout signout_source_metric) override;

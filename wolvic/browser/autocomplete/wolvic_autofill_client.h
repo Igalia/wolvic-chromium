@@ -6,6 +6,7 @@
 #define WOLVIC_BROWSER_AUTOCOMPLETE_WOLVIC_AUTOFILL_CLIENT_H_
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -15,7 +16,6 @@
 #include "components/autofill/content/browser/content_autofill_client.h"
 #include "components/autofill/core/browser/foundations/autofill_client.h"
 #include "components/autofill/core/browser/filling/filling_product.h"
-#include "components/autofill/core/common/form_interactions_flow.h"
 
 namespace payments {
 class PaymentsClient;
@@ -49,6 +49,9 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   syncer::SyncService* GetSyncService() override;
   signin::IdentityManager* GetIdentityManager() override;
   const signin::IdentityManager* GetIdentityManager() const override;
+  metrics::ProfileMetricsService* GetProfileMetricsService() override;
+  autofill::PasswordManagerDelegate* GetPasswordManagerDelegate(
+      const autofill::FieldGlobalId& field_id) override;
   autofill::FormDataImporter* GetFormDataImporter() override;
   autofill::payments::PaymentsAutofillClient* GetPaymentsAutofillClient()
       override;
@@ -77,9 +80,11 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   void UpdateAutofillSuggestions(
       const std::vector<autofill::Suggestion>& suggestions,
       autofill::FillingProduct main_filling_product,
-      autofill::AutofillSuggestionTriggerSource trigger_source) override;
-  void HideAutofillSuggestions(
-      autofill::SuggestionHidingReason reason) override;
+      autofill::AutofillSuggestionTriggerSource trigger_source,
+      autofill::AutofillSuggestionsIgnoreFocusLoss ignore_focus_loss) override;
+  void HideSuggestions(
+      autofill::SuggestionHidingReason reason,
+      std::optional<autofill::FillingProduct> product) override;
 
   const std::string& GetAppLocale() const override;
   autofill::VotesUploader& GetVotesUploader() override;
@@ -90,16 +95,13 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   autofill::SingleFieldFillRouter& GetSingleFieldFillRouter() override;
   bool IsAutofillEnabled() const override;
   bool IsAutofillProfileEnabled() const override;
-  void DidFillForm(autofill::AutofillTriggerSource trigger_source,
-                   bool is_refill) override;
   autofill::autofill_metrics::FormInteractionsUkmLogger&
   GetFormInteractionsUkmLogger() override;
 
   bool IsAutocompleteEnabled() const override;
   bool IsPasswordManagerEnabled() const override;
   bool IsContextSecure() const override;
-  bool IsWalletStorageEnabled() const override;
-  autofill::FormInteractionsFlowId GetCurrentFormInteractionsFlowId() override;
+  bool IsWalletPublicPassStorageEnabled() const override;
 
   // autofill::ContentAutofillClient:
   std::unique_ptr<autofill::AutofillManager> CreateManager(
@@ -119,8 +121,6 @@ class WolvicAutofillClient : public autofill::ContentAutofillClient {
   // Therefore, do not access the members directly.
   std::unique_ptr<autofill::AutofillCrowdsourcingManager> crowdsourcing_manager_;
 
-  autofill::FormInteractionsFlowId flow_id_{};
-  base::Time flow_id_date_;
   raw_ptr<content::WebContents> web_contents_;
   std::vector<autofill::Suggestion> suggestions_;
   autofill::AutofillSuggestionTriggerSource trigger_source_{

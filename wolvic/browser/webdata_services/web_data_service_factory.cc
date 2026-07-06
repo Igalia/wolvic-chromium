@@ -37,8 +37,7 @@ std::unique_ptr<KeyedService> BuildWebDataService(
   return std::make_unique<WebDataServiceWrapper>(
       path, "" /* application locale */,
       content::GetUIThreadTaskRunner({}),
-      base::BindRepeating(&ContextErrorCallback), os_crypt.get(),
-      /*use_in_memory_autofill_account_database=*/false);
+      base::BindRepeating(&ContextErrorCallback), os_crypt.get());
 }
 
 } // namespace
