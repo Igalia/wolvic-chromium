@@ -11,6 +11,7 @@
 #include "content/public/browser/navigation_controller.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/page_zoom.h"
+#include "third_party/blink/public/common/page/page_zoom.h"
 #include "url/gurl.h"
 #include "wolvic/browser/autocomplete/wolvic_autofill_client.h"
 #include "wolvic/browser/autocomplete/wolvic_password_manager_client.h"
@@ -43,6 +44,10 @@ void JNI_Tab_AttachWebContents(JNIEnv* env,
   auto wolvic_contents = std::make_unique<WolvicContents>(
       std::unique_ptr<WebContents>(web_contents));
   wolvic_contents.release()->Init();
+  // WebContents reaching this path were created by the web engine itself (for
+  // example target=_blank navigations) rather than by WolvicWebContentsFactory,
+  // so they still need a ZoomController of their own.
+  zoom::ZoomController::CreateForWebContents(web_contents);
   web_contents->ResumeLoadingCreatedWebContents();
 }
 
@@ -95,7 +100,12 @@ jint JNI_Tab_GetCurrentZoomLevel(JNIEnv* env,
 
   zoom::ZoomController* zoom_controller =
       zoom::ZoomController::FromWebContents(web_contents);
-  return zoom_controller->GetZoomPercent();
+  if (zoom_controller)
+    return zoom_controller->GetZoomPercent();
+
+  double zoom_factor = blink::ZoomLevelToZoomFactor(
+      zoom::ZoomController::GetZoomLevelForWebContents(web_contents));
+  return static_cast<int>(zoom_factor * 100 + 0.5);
 }
 
 }  // namespace wolvic
