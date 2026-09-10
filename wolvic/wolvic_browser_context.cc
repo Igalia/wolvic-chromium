@@ -27,6 +27,7 @@
 #include "components/origin_trials/browser/origin_trials.h"
 #include "components/password_manager/core/browser/password_manager.h"
 #include "components/password_manager/core/browser/password_manager_constants.h"
+#include "components/payments/core/payment_prefs.h"
 #include "components/pref_registry/pref_registry_syncable.h"
 #include "components/prefs/in_memory_pref_store.h"
 #include "components/prefs/json_pref_store.h"
@@ -195,6 +196,7 @@ void WolvicBrowserContext::RegisterPrefs(
   password_manager::PasswordManager::RegisterProfilePrefs(registry);
   signin::IdentityManager::RegisterProfilePrefs(registry);
   safe_browsing::RegisterProfilePrefs(registry);
+  payments::RegisterProfilePrefs(registry);
 }
 
 std::unique_ptr<content::ZoomLevelDelegate>

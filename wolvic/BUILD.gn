@@ -129,6 +129,7 @@ shared_library("libcontent_native") {
     "//components/os_crypt/async/browser",
     "//components/page_info/android",
     "//components/payments/content/android",
+    "//components/payments/core",
     "//components/webdata_services",
     "//components/crash/content/browser",
     "//components/zoom",
