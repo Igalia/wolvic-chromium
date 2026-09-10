@@ -5,14 +5,21 @@
 #ifndef WOLVIC_BROWSER_SESSION_SETTINGS_H_
 #define WOLVIC_BROWSER_SESSION_SETTINGS_H_
 
+#include <optional>
 #include <string>
 
-#include "third_party/abseil-cpp/absl/types/optional.h"
+#include "base/memory/raw_ptr.h"
+#include "base/supports_user_data.h"
+
+namespace content {
+class WebContents;
+}
 
 namespace wolvic {
 
-// A singleton class holding all settings for the current session.
-class SessionSettings {
+// The user agent and viewport settings of a single session. Java owns the
+// values, this applies them to the WebContents the session is showing.
+class SessionSettings : public base::SupportsUserData::Data {
  public:
   enum class UserAgentMode {
     // values have to be synchronized with SessionSettings.java
@@ -21,24 +28,30 @@ class SessionSettings {
     kMobileVR = 2,
   };
 
-  explicit SessionSettings();
+  // The user agent Wolvic sends when a session does not ask for anything else.
+  // Sessions in any other mode override it on their own WebContents.
+  static constexpr UserAgentMode kDefaultUserAgentMode =
+      UserAgentMode::kMobileVR;
+
+  static std::string GetDefaultUserAgent(UserAgentMode mode);
+
+  static SessionSettings* GetOrCreateForWebContents(
+      content::WebContents* web_contents);
+
   SessionSettings(const SessionSettings&) = delete;
   SessionSettings& operator=(const SessionSettings&) = delete;
-  ~SessionSettings();
+  ~SessionSettings() override;
 
-  // Returns the singleton instance.
-  static SessionSettings* Get();
-
-  void SetUserAgentMode(UserAgentMode value);
-  UserAgentMode GetUserAgentMode() const;
-  void SetUserAgentOverride(const absl::optional<std::string>& value);
-  absl::optional<std::string> GetUserAgentOverride() const;
-
-  std::string GetDefaultUserAgent(UserAgentMode mode) const;
+  void Apply(UserAgentMode user_agent_mode,
+             const std::optional<std::string>& user_agent_override);
 
  private:
-  UserAgentMode user_agent_mode_ = UserAgentMode::kMobile;
-  absl::optional<std::string> user_agent_override_;
+  explicit SessionSettings(content::WebContents* web_contents);
+
+  void ApplyUserAgent(UserAgentMode mode,
+                      const std::optional<std::string>& override);
+
+  const raw_ptr<content::WebContents> web_contents_;
 };
 
 }  // namespace wolvic

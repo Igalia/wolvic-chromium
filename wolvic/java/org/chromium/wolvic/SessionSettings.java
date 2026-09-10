@@ -9,6 +9,13 @@ import androidx.annotation.Nullable;
 import org.jni_zero.JNINamespace;
 import org.jni_zero.NativeMethods;
 
+import org.chromium.content_public.browser.WebContents;
+
+/**
+ * The user agent settings of a session. The values live here
+ * because a session is configured before its WebContents exists; they are
+ * applied to the WebContents once it is available.
+ */
 @JNINamespace("wolvic")
 public class SessionSettings {
     public enum UserAgentMode {
@@ -17,7 +24,6 @@ public class SessionSettings {
         DESKTOP(1),
         MOBILE_VR(2);
 
-        private static final UserAgentMode[] modes = UserAgentMode.values();
         private final int value;
 
         private UserAgentMode(int value) {
@@ -27,42 +33,55 @@ public class SessionSettings {
         private int getValue() {
             return value;
         }
-
-        private static UserAgentMode fromValue(int value) {
-            return modes[value];
-        }
     };
+
+    // Has to match SessionSettings::kDefaultUserAgentMode.
+    private UserAgentMode mUserAgentMode = UserAgentMode.MOBILE_VR;
+    private @Nullable String mUserAgentOverride;
+    private @Nullable WebContents mWebContents;
 
     public SessionSettings() {}
 
+    /** Binds the settings to the WebContents of the session, or unbinds them. */
+    public void setWebContents(@Nullable WebContents webContents) {
+        mWebContents = webContents;
+        apply();
+    }
+
     public void setUserAgentMode(UserAgentMode mode) {
-        SessionSettingsJni.get().setUserAgentMode(mode.getValue());
+        mUserAgentMode = mode;
+        apply();
     }
 
     public UserAgentMode getUserAgentMode() {
-        return UserAgentMode.fromValue(SessionSettingsJni.get().getUserAgentMode());
+        return mUserAgentMode;
     }
 
     public void setUserAgentOverride(@Nullable String value) {
-        SessionSettingsJni.get().setUserAgentOverride(value);
+        mUserAgentOverride = value;
+        apply();
     }
 
     @Nullable
     public String getUserAgentOverride() {
-        return SessionSettingsJni.get().getUserAgentOverride();
+        return mUserAgentOverride;
     }
 
     public String getDefaultUserAgent(UserAgentMode mode) {
         return SessionSettingsJni.get().getDefaultUserAgent(mode.getValue());
     }
 
+    private void apply() {
+        if (mWebContents == null) return;
+
+        SessionSettingsJni.get().apply(
+                mWebContents, mUserAgentMode.getValue(), mUserAgentOverride);
+    }
+
     @NativeMethods
     public interface Natives {
-        void setUserAgentMode(int value);
-        int getUserAgentMode();
-        void setUserAgentOverride(@Nullable String value);
-        @Nullable
-        String getUserAgentOverride();
-        String getDefaultUserAgent(int value);
+        void apply(WebContents webContents, int userAgentMode,
+                @Nullable String userAgentOverride);
+        String getDefaultUserAgent(int mode);
     }
 }

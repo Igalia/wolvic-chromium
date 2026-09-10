@@ -5,47 +5,39 @@
 #include "wolvic/jni_headers/SessionSettings_jni.h"
 
 #include "base/android/jni_string.h"
+#include "content/public/browser/web_contents.h"
 #include "wolvic/browser/session_settings.h"
 
+using base::android::ConvertJavaStringToUTF8;
+using base::android::ConvertUTF8ToJavaString;
 using base::android::JavaRef;
 using base::android::ScopedJavaLocalRef;
 
 namespace wolvic {
 
-void JNI_SessionSettings_SetUserAgentMode(JNIEnv* env, jint value) {
-  SessionSettings::Get()->SetUserAgentMode(
-      static_cast<SessionSettings::UserAgentMode>(value));
-}
+void JNI_SessionSettings_Apply(JNIEnv* env,
+                               const JavaRef<jobject>& jweb_contents,
+                               jint user_agent_mode,
+                               const JavaRef<jstring>& juser_agent_override) {
+  auto* web_contents = content::WebContents::FromJavaWebContents(jweb_contents);
+  if (!web_contents)
+    return;
 
-jint JNI_SessionSettings_GetUserAgentMode(JNIEnv* env) {
-  return static_cast<jint>(SessionSettings::Get()->GetUserAgentMode());
-}
-
-void JNI_SessionSettings_SetUserAgentOverride(
-    JNIEnv*,
-    const JavaRef<jstring>& value) {
-  auto* settings = SessionSettings::Get();
-  if (value) {
-    settings->SetUserAgentOverride(
-        base::android::ConvertJavaStringToUTF8(value));
-  } else {
-    settings->SetUserAgentOverride(absl::nullopt);
-  }
-}
-
-ScopedJavaLocalRef<jstring> JNI_SessionSettings_GetUserAgentOverride(
-    JNIEnv* env) {
-  auto userAgentOverride = SessionSettings::Get()->GetUserAgentOverride();
-  if (!userAgentOverride) {
-    return ScopedJavaLocalRef<jstring>();
+  std::optional<std::string> user_agent_override;
+  if (juser_agent_override) {
+    user_agent_override = ConvertJavaStringToUTF8(juser_agent_override);
   }
 
-  return base::android::ConvertUTF8ToJavaString(env, *userAgentOverride);
+  SessionSettings::GetOrCreateForWebContents(web_contents)
+      ->Apply(static_cast<SessionSettings::UserAgentMode>(user_agent_mode),
+              user_agent_override);
 }
 
-ScopedJavaLocalRef<jstring> JNI_SessionSettings_GetDefaultUserAgent(JNIEnv* env, jint value) {
-  return base::android::ConvertUTF8ToJavaString(
-      env, SessionSettings::Get()->GetDefaultUserAgent(static_cast<SessionSettings::UserAgentMode>(value)));
+ScopedJavaLocalRef<jstring> JNI_SessionSettings_GetDefaultUserAgent(JNIEnv* env,
+                                                                   jint value) {
+  auto mode = static_cast<SessionSettings::UserAgentMode>(value);
+  return ConvertUTF8ToJavaString(env,
+                                 SessionSettings::GetDefaultUserAgent(mode));
 }
 
 }  // namespace wolvic
