@@ -13,7 +13,6 @@
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/web_contents.h"
 #include "content/shell/common/shell_paths.h"
-#include "wolvic/browser/session_settings.h"
 
 class PrefService;
 
@@ -67,7 +66,6 @@ class WolvicContentMainDelegate : public content::ContentMainDelegate {
   std::unique_ptr<PrefService> CreateLocalState();
   void SetUpFieldTrials();
 
-  std::unique_ptr<SessionSettings> session_settings_;
   std::unique_ptr<PrefService> local_state_;
   std::unique_ptr<WolvicContentBrowserClient> browser_client_;
   std::unique_ptr<content::ContentGpuClient> gpu_client_;

@@ -135,28 +135,14 @@ WolvicContentBrowserClient::GetXrIntegrationClient() {
 #endif
 
 std::string WolvicContentBrowserClient::GetUserAgent() {
-  auto* settings = SessionSettings::Get();
-  if (auto user_agent_override = settings->GetUserAgentOverride())
-    return *user_agent_override;
-
-  return settings->GetDefaultUserAgent(settings->GetUserAgentMode());
+  // Sessions wanting another UA override it per WebContents (SessionSettings).
+  return SessionSettings::GetDefaultUserAgent(
+      SessionSettings::kDefaultUserAgentMode);
 }
 
 blink::UserAgentMetadata WolvicContentBrowserClient::GetUserAgentMetadata() {
-  typedef SessionSettings::UserAgentMode UserAgentMode;
-
-  auto metadata = embedder_support::GetUserAgentMetadata();
-  auto user_agent_mode = SessionSettings::Get()->GetUserAgentMode();
-  switch (user_agent_mode) {
-    case UserAgentMode::kMobile:
-    case UserAgentMode::kMobileVR:
-      metadata.mobile = true;
-      break;
-    case UserAgentMode::kDesktop:
-      metadata.mobile = false;
-      break;
-  }
-  return metadata;
+  // A session overriding the UA carries its own hints, see SessionSettings.
+  return embedder_support::GetUserAgentMetadata();
 }
 
 void WolvicContentBrowserClient::ConfigureNetworkContextParams(
@@ -185,9 +171,8 @@ void WolvicContentBrowserClient::ConfigureNetworkContextParams(
   // header. All network requests created by renderer(web page) already have
   // the http header, so the value will be used only for the network requests
   // created by the native code like the payment request.
-  auto* settings = SessionSettings::Get();
-  network_context_params->user_agent =
-      settings->GetDefaultUserAgent(SessionSettings::UserAgentMode::kDesktop);
+  network_context_params->user_agent = SessionSettings::GetDefaultUserAgent(
+      SessionSettings::UserAgentMode::kDesktop);
   network_context_params->accept_language = "en-us,en";
 }
 

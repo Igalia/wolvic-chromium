@@ -129,8 +129,7 @@ base::flat_set<url::Origin> GetIsolatedContextOriginSetFromFlag() {
   return {};
 }
 
-WolvicContentMainDelegate::WolvicContentMainDelegate()
-    : session_settings_(std::make_unique<SessionSettings>()) {}
+WolvicContentMainDelegate::WolvicContentMainDelegate() = default;
 
 WolvicContentMainDelegate::~WolvicContentMainDelegate() {}
 
