@@ -172,6 +172,12 @@ void WolvicContentBrowserClient::ConfigureNetworkContextParams(
   network_context_params->file_paths->http_cache_directory =
       user_data_path.Append(FILE_PATH_LITERAL("Cache"));
 
+  network_context_params->file_paths->data_directory = user_data_path;
+  network_context_params->file_paths->cookie_database_name =
+      base::FilePath(FILE_PATH_LITERAL("Cookies"));
+  network_context_params->restore_old_session_cookies = true;
+  network_context_params->persist_session_cookies = true;
+
   // TODO: Set the desktop user agent by the default, and revisit this to set
   // the setting value if the payment request solves the UA issue.
 
