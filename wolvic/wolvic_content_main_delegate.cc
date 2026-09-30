@@ -52,7 +52,6 @@
 #include "content/public/utility/content_utility_client.h"
 #include "content/shell/android/shell_descriptors.h"
 #include "content/shell/common/shell_paths.h"
-#include "ipc/ipc_buildflags.h"
 #include "net/cookies/cookie_monster.h"
 #include <variant>
 #include "ui/base/page_transition_types.h"
