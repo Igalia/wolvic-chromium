@@ -71,6 +71,7 @@ shared_library("libcontent_native") {
     "browser/mojo/wolvic_interface_registrar.cc",
     "browser/mojo/wolvic_interface_registrar.h",
     "browser/payments/service_worker_payment_app_bridge.cc",
+    "browser/browsing_data_bridge_jni.cc",
     "browser/session_settings.cc",
     "browser/session_settings.h",
     "browser/session_settings_jni.cc",
@@ -325,6 +326,7 @@ generate_jni("jni_headers") {
   enable_definition_macros = false
   sources = [
     "java/org/chromium/wolvic/AutofillManager.java",
+    "java/org/chromium/wolvic/BrowsingDataBridge.java",
     "java/org/chromium/wolvic/ColorChooserManager.java",
     "java/org/chromium/wolvic/DownloadManagerBridge.java",
     "java/org/chromium/wolvic/FileSelectManager.java",
@@ -350,6 +352,7 @@ generate_jni("jni_headers") {
 android_library("wolvic_java") {
   sources = [
     "java/org/chromium/wolvic/AutofillManager.java",
+    "java/org/chromium/wolvic/BrowsingDataBridge.java",
     "java/org/chromium/wolvic/ColorChooserManager.java",
     "java/org/chromium/wolvic/DownloadManagerBridge.java",
     "java/org/chromium/wolvic/FileSelectManager.java",
